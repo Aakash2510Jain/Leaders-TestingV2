@@ -1,0 +1,49 @@
+<apex:component controller="AttachmentComponentCtrl" allowDML="true">
+	
+	<apex:attribute name="parentId" description="Id of the parent record" type="String" required="true" assignTo="{!mandateId}"/>
+	
+     <apex:pageBlock title="Attachments">
+     	
+     	<apex:pageblockButtons >
+			<apex:commandButton value="Attach File" action="{!attachFile}"/>
+		</apex:pageblockButtons>  
+     
+     	<apex:outputPanel id="list">		
+      	<apex:variable value="{!0}" var="eNum"/>  
+      	<apex:outputText value="No records to display" rendered="{!(attachmentList.size == 0)}" />
+      	<apex:pageblocktable value="{!attachmentList}" var="a"  rendered="{!(attachmentList.size != 0)}" >
+      	
+      		<apex:column headerValue="Action">
+      			 <apex:outputLink value="/{!a.Id}/e" target="_blank" style="color:#015ba7">Edit</apex:outputLink>
+      			 <apex:outputText value=" | " />
+      			 <apex:outputLink value="/servlet/servlet.FileDownload?file={!a.Id}" target="_blank" style="color:#015ba7">View</apex:outputLink>
+      			 <apex:outputText value=" | " />
+	         <apex:commandLink value="Del" style="color:#015ba7" action="{!removeRowToAttachmentList}" rerender="list" immediate="true" >
+	             <apex:param value="{!eNum}" name="rowToRemove" assignTo="{!rowToRemove}"/>
+	         </apex:commandLink>
+	         <apex:variable var="eNum" value="{!eNum + 1}"/>
+	    </apex:column>
+	    
+	    <apex:column headerValue="Type">
+              	<apex:outputText value="Attachment" />
+    			</apex:column>
+    			
+    			<apex:column headerValue="Title">
+	        <apex:outputLink value="/{!a.Id}" target="_blank">{!a.Name}</apex:outputLink>
+	    </apex:column>
+	    
+	    <apex:column headerValue="Last Modified">
+	        <apex:outputField value="{!a.LastModifiedDate}" />
+	    </apex:column>
+	    
+	    <apex:column headerValue="Created By">
+	        <apex:outputField value="{!a.CreatedBy.Name}" />
+	    </apex:column>
+      	 
+      	</apex:pageblocktable>
+     	</apex:outputPanel>
+     </apex:pageBlock>
+        
+    
+	
+</apex:component>

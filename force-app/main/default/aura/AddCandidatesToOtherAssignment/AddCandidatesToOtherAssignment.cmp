@@ -1,0 +1,154 @@
+<!--
+ - Created by ET-MARLABS on 06-03-2019.
+ -->
+
+<aura:component description="AddCandidatesToOtherAssignment" controller="AddApplicationToAssignmentLightning">
+    
+    <!-- Aura Attributes-->
+    <aura:attribute name="selectedcandidateIds" type="List" />
+    <aura:attribute name="potentialCandidateIds" type="List"/>
+    <aura:attribute name="showAssignmentForm" type="Boolean" default="true"/>
+    <aura:attribute name="copyNotes" type="Boolean" default="false"/>
+    <aura:attribute name="isAssignmentResearch" type="Boolean" default="true"/>
+    <aura:attribute name="showSpinner" type="Boolean"/>
+    <aura:attribute name="mandateRecId" type="String"/>
+    <aura:attribute name="contactRecId" type="String[]"/>
+    <aura:attribute name="selectedCount" type="Integer" />
+    
+    <aura:attribute name="isSelectAll" type="boolean" default="false"/>
+    
+    <aura:attribute name="recordList" type="List" />
+    <aura:attribute name="SSLValues" type="List" />
+    <aura:attribute name="OriginValues" type="List" />
+    <aura:attribute name="selectedSSLValue" type="String" />
+    <aura:attribute name="selectedOriginValue" type="String" />
+    <aura:attribute name="description" type="String" />
+    <aura:attribute name="ObjectApi" type="String" />
+    <aura:attribute name="displayAddCandidateToOtherAssignment" type="boolean" default = "false"/>
+    <aura:attribute name="ShowCandidate" type="boolean" default = "false"/>
+    
+    <aura:attribute name="selectedRecord" type="Map" default="{}" /> 
+    <aura:handler name="doneEvent" event="c:done" action="{!c.doneEventHandler}"/>
+    
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>    
+    <!-- Lightning Component Event to get Mandate Id -->
+    <aura:handler name="oSelectedAccountEvent" event="c:selectedAccountEvent" action="{!c.handleComponentEvent}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <div class="slds-modal__container" style="width:80%!important">
+            
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="large" />
+        </div>
+    </aura:if>
+            <header class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close"
+                                      onclick="{! c.closeModal }"
+                                      alternativeText="close"
+                                      variant="bare-inverse"
+                                      class="slds-modal__close"/>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Selected Candidate to Other Assignment</h2>
+            </header>
+            
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-3"></div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <lightning:input type="text" label="Search Assignment" value="{!v.selectedRecord.Name}" onchange="{!c.changeSelectedRecord}" />
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <aura:if isTrue="{!v.selectedRecord.Id==undefined}">
+                                <lightning:button variant="brand" label="Go" title="Search Assginment" class="margin38" onclick="{!c.searchAssignment}"/>
+                         </aura:if>
+                    </div>
+                </div>
+                <aura:if isTrue="{!v.selectedRecord.Id!=undefined}">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col slds-size_1-of-3"></div>
+                        <div class="slds-col slds-size_2-of-3">
+                            <lightning:input type="text" name="input1" label="Company Name" value="{!v.selectedRecord.Company__r.Name}" disabled="true" />
+                        </div>
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.selectedRecord.Id!=undefined}">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col slds-size_1-of-3" >
+                           
+                        </div>
+                        <div class="slds-col slds-size_2-of-3">
+                            <Lightning:select aura:id="SSL" label="Status Summary Line" value="{!v.selectedSSLValue}" >
+                                <option value="">--None--</option>
+                                <aura:iteration items="{!v.SSLValues}" var="SSL" >
+                                    <option value="{!SSL}" text="{!SSL}"/>
+                                </aura:iteration>
+                            </Lightning:select>
+                            <br/>
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_4-of-6" >
+                                      <ui:inputCheckbox value="{!v.copyNotes}" change="{!c.copyNotes}" label = "Copy Notes to other Assignment" aura:id="CopyNotes"/>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </aura:if>
+                
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-3"></div>
+                    <div class="slds-col slds-size_2-of-3">
+                        <aura:if isTrue="{!and(v.selectedRecord.Id!=undefined,v.isAssignmentResearch==false)}">
+                            <Lightning:select aura:id="origin" label="Origin" value="{!v.selectedOriginValue}" >
+                                <option value="">--None--</option>
+                                <aura:iteration items="{!v.OriginValues}" var="origin" >
+                                    <option value="{!origin}" text="{!origin}"/>
+                                </aura:iteration>
+                            </Lightning:select>
+                        </aura:if>
+                    </div>
+                </div>
+                
+                <br/>
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-3"></div>
+                    <div class="slds-col slds-size_2-of-3">
+                        <aura:if isTrue="{!and(v.selectedRecord.Id!=undefined,v.isAssignmentResearch==false)}">
+                            <lightning:inputRichText value="{!v.description}" placeholder="Type Here"/>
+                        </aura:if>
+                    </div>
+                </div>
+                
+                <aura:if isTrue="{!and(v.selectedRecord.Id !=undefined,v.isAssignmentResearch)}">
+                    <c:CandidatesListDynamicComp recordList="{!v.recordList}" />
+                </aura:if>
+                <br/>
+                <br/>
+                <aura:if isTrue="{!v.showAssignmentForm}">
+                    <div style="width:100%">
+                        <lightning:layout pullToBoundary="medium">
+                            <lightning:layoutItem >
+                                <!--c:StaticTableComponent aura:id="dtcContact" fieldAPIs="['Name','Company__r.Name','Company_Name_French__c','Assignment_Status__c','Partner__r.Name','Partner_2__r.Name']" objectAPI="Mandate__c" initialSearchString="{!v.selectedRecord.Name}" selectedRecord="{!v.selectedRecord}" whereClause="" clauseValue="Active" replaceHeaders="Company__r.Name:Company Name,Partner__r.Name:Partner,Partner_2__r.Name:Second Partner"/-->
+                                <div style="margin-left:15%">
+                                    <c:SearchEnginDisplayObjectRecord_V1  aura:id="AsignmentTable"    objName="Mandate__c"   replaceHeaders="Id:Record Id,Name:Assignment name,Company_Name_French__c:Company Name,Assignment_Status__c:Assignment Status,Partner__r.Name:Partner,Partner_2__r.Name:Second Partner" selectedRecord="{!v.selectedRecord}"/>
+                                </div>
+                                
+                                
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </div>
+                    
+                </aura:if>
+            </div>
+            
+            
+            
+            <!--###### MODAL BOX FOOTER Part Start ######-->
+            <footer class="slds-modal__footer">
+                <lightning:button label="Cancel"  onclick="{!c.closeModal }"  />
+                <lightning:button label="Submit" variant="brand" onclick="{!c.handleSelectAllContact }"  />
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</aura:component>

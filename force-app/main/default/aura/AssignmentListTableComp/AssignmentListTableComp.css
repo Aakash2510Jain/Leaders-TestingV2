@@ -1,0 +1,26 @@
+.THIS.centered {
+    margin: 0 auto;
+    text-align: centre;
+    width: 800px;
+}
+.THIS .button {
+  background-color: #2874A6; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 30px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 2px 2px;
+  cursor: pointer;
+}
+.THIS .tableFixHead th { 
+position: sticky;
+top: 0;
+z-index: 2; 
+margin-left:1% !important;
+}
+.THIS .FixedHead {
+            position: static;
+            border-top: 0;
+}

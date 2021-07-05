@@ -1,0 +1,191 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="newPeopleLightningController" >
+ 
+    <aura:attribute name="openSearchModal" type="boolean" />
+    <aura:attribute name="displayNewPeople" type="boolean" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="newContact" type="Object" description="The record object to be displayed" />
+    <aura:attribute name="newContactRecord" type="Object" description=" A simplified view record object to be displayed" />
+    <aura:attribute name="searchPeople" type="String"></aura:attribute>
+    <aura:attribute name="recordSaveError" type="String" description="An Error message bound to force:recordData" />
+    
+    <aura:attribute name="sObjectName" type="String" default="Contact" />
+    
+    <aura:attribute name="selectFA1" type="String" />
+    <aura:attribute name="FA1PicklistValues" type="String"></aura:attribute>
+    <aura:attribute name="MCPicklistValues" type="String" />
+    <aura:attribute name="LevelPicklistValues" type="String" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <force:recordData aura:id="newConRec"
+                      layoutType="FULL"
+                      targetRecord="{!v.newContact}"
+                      targetFields="{!v.newContactRecord}"
+                      targetError="{!v.recordSaveError}"
+                     />
+    
+    <aura:attribute name="account" type="Object"/>
+    <aura:attribute name="simpleAccount" type="Object"/>
+    <aura:attribute name="accountError" type="String"/>
+    <force:recordData aura:id="accountRecordLoader"
+        recordId="{!v.recordId}"
+        fields="Name,BillingCity,BillingState"
+        targetRecord="{!v.account}"
+        targetFields="{!v.simpleAccount}"
+        targetError="{!v.accountError}"
+    />
+    
+   <!-- <lightning:recordForm aura:id="recordViewForm"
+     					  objectApiName="{!v.sObjectName}"
+                          columns="2"
+                          fields="FirstName,LastName,Title,Contact.Account.Name,Functional_Area1__c"
+                          layoutType="Full"
+                          mode="edit"
+                          onsuccess="{!c.onSuccess}"
+                          onsubmit="{!c.onSubmit}"
+                          onload="{!c.onLoad}"
+                          onerror="{!c.onError}"></lightning:recordForm> -->
+       <!-- add recordUpdated parameter in force:recordData -->
+    
+    <section aura:id="Modalbox" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add People</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <!-- <p><b>The goal of this blog is to provide tips and tricks/workarounds for salesforce developer and admins.
+                            Many of us face the same issues and have the same questions when using and implementing Salesforce.
+                            As a community of users and developers, it is important for us to share our experiences.
+                            I try to reach out to other users and help the Salesforce community in general.
+                            Much of this blog will focus on Lightning(code &amp; config.) but I will also
+                            cover some of the more basic topics in salesforce.
+                            </b>
+                        </p> -->
+                        
+                        <div class="slds-grid slds-gutters slds-text-title_bold">
+                            <div class="slds-col ">
+                              <span>
+                                <lightning:input aura:id="contactField" label="First Name" value="{!v.newContactRecord.FirstName}"/>
+                                <lightning:input aura:id="contactField" label="Title" value="{!v.newContactRecord.Title}" />
+                                <c:customLookup objectAPIName="account" IconName="standard:account" label="Account Name" selectedRecord="{!v.selectedLookUpRecord}"/>
+                                 <lightning:input aura:id="contactField" label="Mailing Street" value="{!v.newContactRecord.MailingStreet}" />   
+                                  
+                                  <lightning:select aura:id="MailingCountry" name="MC" label="Mailing Country" value="{!v.newContactRecord.MailingCountryCode}" > 
+                            	   <option value="">--None--</option>
+                                
+                                   <aura:iteration items="{!v.MCPicklistValues}" var="MC">
+                            		   <option value="{!MC.value}">
+                                        {!MC}
+                                       </option>
+                                   </aura:iteration>
+                                       
+                            	  </lightning:select>
+                                  
+                                  <lightning:input aura:id="contactField" label="Mailing Zip/Code" value="{!v.newContactRecord.MailingPostalCode}" />
+                                  <lightning:input aura:id="contactField" label="Phone" value="{!v.newContactRecord.Phone}" />
+                                  <lightning:input aura:id="contactField" label="Mobile" value="{!v.newContactRecord.MobilePhone}" />
+                              </span>
+                            
+                            </div>
+                            
+                            <div class="slds-col">
+                                <span>
+                                <lightning:input aura:id="contactField" label="Last Name" value="{!v.newContactRecord.LastName}" />
+                                <lightning:input aura:id="contactField" label="Title (2nd language)" value="{!v.newContactRecord.Title_FR__c}" /> 
+                                
+                                <lightning:select aura:id="FA1" name="FA1" label="Functional Area1" required="true" value="{!v.newContactRecord.Functional_Area_1__c}" > 
+                            	        <option value="">--None--</option>
+                                
+                                       <aura:iteration items="{!v.FA1PicklistValues}" var="FA1">
+                            		   <option value="{!FA1.value}">
+                                        {!FA1}
+                                       </option>
+                                       </aura:iteration>
+                                </lightning:select>
+                                   
+                                    <lightning:input aura:id="contactField" label="Mailing City" value="{!v.newContactRecord.MailingCity}" />
+                                    
+                                    
+                                 <!--   <lightning:input aura:id="contactField" label="Mailing State" value="{!v.newContactRecord.MailingState}" /> -->
+                                    
+                                   <lightning:select aura:id="MS" name="MS" label="Mailing State" value="{!v.newContactRecord.MailingStateCode}" > 
+                            	        <option value="">--None--</option>
+                                
+                                       <aura:iteration items="{!v.MSPicklistValues}" var="MS">
+                            		   <option value="{!MS.value}">
+                                        {!MS}
+                                       </option>
+                                       </aura:iteration>
+                                   </lightning:select> 
+                                    
+                                    
+                                     <force:inputField   value="{!v.newContactRecord.MailingStateCode}" /> 
+                                     <force:inputField   value="{!v.newContactRecord.MailingCountryCode}" /> 
+                                    
+                                 <!--   <lightning:input aura:id="contactField" label="Level" value="{!v.newContactRecord.Job_Level__c}" /> -->
+                                    
+                                    <lightning:select aura:id="Level" name="Level" label="Level" value="{!v.newContactRecord.Job_Level__c}" > 
+                            	        <option value="">--None--</option>
+                                
+                                       <aura:iteration items="{!v.LevelPicklistValues}" var="Level">
+                            		   <option value="{!Level.value}">
+                                        {!Level}
+                                       </option>
+                                       </aura:iteration>
+                                      </lightning:select>
+                                   
+                                    <lightning:input aura:id="contactField" label="Email" value="{!v.newContactRecord.Email}" />
+                                    <lightning:input aura:id="contactField" label="LinkedIn URL" value="{!v.newContactRecord.LinkedIn_URL__c}" />
+                                </span>
+                            
+                            </div>
+                      
+                          
+
+                            
+                            
+                          <!--  <lightning:recordForm aura:id="recordForm"
+     					  objectApiName="{!v.sObjectName}"
+                          columns="2"
+                          fields="FirstName,LastName,Title,Contact.Account.Name,Functional_Area1__c"
+                          LayoutType="FULL"
+                          mode="edit"
+                          onsuccess="{!c.onSuccess}"
+                          onsubmit="{!c.onSubmit}"
+                          onload="{!c.onLoad}"
+                          onerror="{!c.onError}"></lightning:recordForm> -->
+                        </div>
+                        
+                        
+                        
+                        
+                         
+                        
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{!c.closeModel }"/>
+                        <lightning:button variant="brand" 
+                                          label="Save"
+                                          title="Save"
+                                          onclick="{!c.handleSaveContact}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+              
+    
+        
+    
+ 
+</aura:component>

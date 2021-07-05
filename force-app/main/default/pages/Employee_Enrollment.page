@@ -1,0 +1,15 @@
+<apex:page showHeader="false" sidebar="false">
+    <apex:includeLightning />    
+    <div id="LightningComponentid" />    
+    <script>
+    $Lightning.use("c:Employee_Enr_LWC_App", function() {
+        $Lightning.createComponent("c:employee_Enrollment",
+          { 
+          },
+          "LightningComponentid",
+          function(cmp) {
+             console.log('Employe_Enrollment_LWC Componenet added in VF page');
+          });
+    });
+    </script>
+</apex:page>

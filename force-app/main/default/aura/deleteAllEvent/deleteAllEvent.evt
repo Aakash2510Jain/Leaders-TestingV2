@@ -1,0 +1,6 @@
+<aura:event type="APPLICATION" >
+  <!--  <aura:attribute name="sobjectList" type="SObject[]"/>-->
+    <aura:attribute name="objCount" type="Integer"/>
+    <aura:attribute name="objName" type="String"/>
+
+</aura:event>

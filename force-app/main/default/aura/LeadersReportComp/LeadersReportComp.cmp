@@ -1,0 +1,359 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="LeadersReportCompController" >
+    
+    <aura:attribute name="wrapperData" type="CommonWrapperClass"  />
+    <aura:attribute name="selectedcandidateIds" type="List" />
+    <aura:attribute name="potentialCandidateIds" type="List"/>
+    <aura:attribute name="CompetencyList" type="String[]"/>
+    <aura:attribute name="mandateRecId" type="String"/>
+    <aura:attribute name="selectedPartners" type="String[]"/>
+    <aura:attribute name="CompetencyFromLrn" type="String[]"/>
+    <aura:attribute name="selectedCount" type="Integer" />
+    
+    <aura:attribute name="selectHumanCapitalStudy" type="String" default="Company Name"/>
+    <aura:attribute name="CompetencyNameFromLrn" type="String[]"/>
+    <aura:attribute name="candidatesData" type="sObject" />
+    <aura:attribute name="candidateNameMapById" type="sObject" />
+    <aura:attribute name="partnerList" type="sObject[]" />
+    <aura:attribute name="ResearcherList" type="sObject[]" />
+    <aura:attribute name="partner_1" type="Boolean" default="false"/>
+    <aura:attribute name="CandidatestoDiscuss_v1" type="Boolean" default="false"/>
+    <aura:attribute name="partner_2" type="Boolean" default="false"/>
+    <aura:attribute name="partner_3" type="Boolean" default="false"/>
+    <aura:attribute name="displayCompetency" type="boolean" />
+    <aura:attribute name="activeSections" type="List" default="['A']" />
+    <aura:attribute name="options" type="List" 
+                    default="[{'label': 'Overnight Report', 'value': 'Overnight Report'},
+                             {'label': 'Report sent to Client', 'value': 'Report sent to Client'}]"/>
+    
+    <aura:attribute name="optionsModule" type="List"
+                    default="[{'label':'Identification', 'value':'Identification'},
+                             {'label':'Selection','value':'Selection'}]" />
+    <aura:attribute name="CandidatesToDiscussvalue" type="List"
+                    default="[{'label':'By Name', 'value':'By Name'},
+                             {'label':'By Company Name','value':'By Company Name'},
+                             {'label':'By Status', 'value':'By Status'}]" />
+    
+    <aura:attribute name="optionsHCS" type="List"
+                    default="[{'label':'Company Name', 'value':'Company Name'},
+                             {'label':'Status Summary Line','value':'Status Summary Line'},
+                             {'label':'Candidate Name', 'value':'Candidate Name'}]" />
+    
+    <aura:attribute name="reportType" Type="String" />
+    <aura:attribute name="coverPage" Type="boolean" />
+    <aura:attribute name="candidateCoverPage" Type="boolean" />
+    <aura:attribute name="selectToDiscuss" Type="boolean" default = "false"/>
+    <aura:attribute name="module" Type="String"/>
+    <aura:attribute name="nextFollowupDate" Type="String"  />
+    <aura:attribute name="jobDescription" Type="boolean" />
+    <aura:attribute name="researchStrategy" Type="boolean"/>
+    <aura:attribute name="BoardCv" Type="boolean"/>
+    <aura:attribute name="OnBoarding" Type="boolean"/>
+    <aura:attribute name="executiveSummary" Type="boolean"/>
+    <aura:attribute name="executiveSummary_1" Type="boolean"/>
+    <aura:attribute name="candidatestoDiscuss" Type="boolean" />
+    <aura:attribute name="candidatestoDiscussByTeam" Type="boolean" />
+    <aura:attribute name="biography" Type="boolean" />
+    <aura:attribute name="CV" Type="boolean"/>
+    <aura:attribute name="onePager" Type="boolean" />
+    <aura:attribute name="PsyTest" Type="boolean" />
+    <aura:attribute name="CandIntr" Type="boolean" />
+    <aura:attribute name="SelfAss" Type="boolean" />
+    <aura:attribute name="RadarGraph" Type="boolean" />
+    <aura:attribute name="SelAgenda" Type="boolean" />
+    <aura:attribute name="selectRef" Type="boolean" />
+    <aura:attribute name="selectedComp" Type="String[]" />
+    <aura:attribute name="selectedsubComp" Type="String[]" />
+    <aura:attribute name="InterviewQuestionnaire" Type="boolean" />
+    <aura:attribute name="CompSelected" Type="boolean" />
+    <aura:attribute name="hcs" Type="boolean" default="false" />
+    <aura:attribute name="partner" Type="boolean" default="false" />
+    <aura:attribute name="hcsSortBy" Type="String" />
+    <aura:attribute name="startDate" Type="date" />
+    <aura:attribute name="endDate" Type="date" />
+    <aura:attribute name="spinner" type="boolean" default="false" />
+    <aura:attribute name="displayLeadersReportModal" type="boolean" /> 
+    
+    <aura:method name="passAllCandidateIds" action="{!c.doInit}" description="Sample method with parameters"> 
+        <aura:attribute name="param1" type="String[]" default="parameter 1"/> 
+    </aura:method>
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <!--###### MODAL BOX Start######--> 
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large ">
+        
+        <div class="modal__container">
+            <div class="slds-scrollable--y">
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header" style="background-color:#004d99;">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <div >
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                            <div>
+                                <b style="color:white">
+                                    Leaders Report<span>&#174;</span>
+                                </b> 
+                                <!--div style="font-size:96px;">
+                            Registered<span style="vertical-align:2.7em; font-size:0.2em;">&reg;</span>
+                            </div-->
+                            </div>
+                        </h2>
+                    </div>
+                </header>
+                <!--###### MODAL BOX BODY Part Start######-->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    
+                    
+                    <aura:if isTrue="{!v.spinner}">
+                        <div aura:id="spinnerId" class="slds-spinner_container">
+                            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                                <span class="slds-assistive-text">Loading...</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                    </aura:if>
+                    
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <span>
+                                <lightning:combobox name="Report Type" label="Report Type" value="Overnight Report"  placeholder="Overnight Report" options="{! v.options }" class="slds-size--2-of-4" onchange="{! c.handleChangeReportType }"/><br/>
+                                
+                                
+                                <div title="Cover Page">
+                                    <ui:inputCheckbox aura:id="CoverPage" class="myCheckbox" label="Cover Page" change="{!c.selectCoverPage}" value="{!v.wrapperData.selectCoverPage}"></ui:inputCheckbox>
+                                </div>
+                                
+                                <div title="Partner_List">
+                                    <ui:inputCheckbox aura:id="candByStatus" class="myCheckbox"  value="{!v.wrapperData.selectPartnerPage}" ></ui:inputCheckbox>
+                                    Select Leaders Team Members -<div style="color:red;display: inline;"> (Under Construction)</div>
+                                    <br/>
+                                    <aura:if isTrue="{!v.wrapperData.selectPartnerPage}">
+                                        <div class="slds-grid slds-gutters" style="margin-left:2%">
+                                            <div class="slds-col">
+                                                <br/>
+                                                <span>
+                                                    <b>
+                                                        Partners :
+                                                    </b>
+                                                    <br/>
+                                                    <aura:if isTrue="{!v.partnerList.length >0}">
+                                                        <aura:iteration items="{!v.partnerList}" var="partner">
+                                                            <div title="Partner_1">
+                                                                <ui:inputCheckbox  class="myCheckbox" label="{!partner.Name}" name="{!partner.Id}" change="{!c.updatePartner}"></ui:inputCheckbox>
+                                                                <lightning:input type="text" name="Title" label="Title" value="{!partner.Title}"/>
+                                                                <lightning:input type="text" name="Phone" label="Phone" value="{!partner.Phone}"/>
+                                                            </div>
+                                                            <br/>
+                                                        </aura:iteration>
+                                                        <aura:set attribute="else">
+                                                            No Partner available !!!
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </span>
+                                                <br/>
+                                            </div>
+                                            <div class="slds-col">
+                                                <br/>
+                                                <span>
+                                                    <b>
+                                                        Researchers:
+                                                    </b>
+                                                    <br/>
+                                                    <aura:if isTrue="{!v.ResearcherList.length >0}">
+                                                        <aura:iteration items="{!v.ResearcherList}" var="Researcher">
+                                                            <div title="Partner_1">
+                                                                <ui:inputCheckbox  class="myCheckbox" label="{!Researcher.Name}" name="{!Researcher.Id}"   change="{!c.updatePartner}"></ui:inputCheckbox>
+                                                                <lightning:input type="text" name="Title" label="Title" value="{!Researcher.Title}"/>
+                                                                <lightning:input type="text" name="Phone" label="Phone" value="{!Researcher.Phone}"/>
+                                                            </div>
+                                                            <br/>
+                                                        </aura:iteration>
+                                                        <aura:set attribute="else">
+                                                            No Researcher available !!!
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </span>
+                                                <br/>
+                                            </div>
+                                        </div>
+                                    </aura:if>
+                                </div>     
+                                
+                                <div title="Executive Summary">
+                                    <ui:inputCheckbox aura:id="ExecutiveSummary" class="myCheckbox" label="Executive Summary" change="{!c.selectExecutiveSummary}" value="{!v.wrapperData.executiveSummary}"></ui:inputCheckbox> 
+                                </div>
+                                
+                                <div title="Agenda">
+                                    <ui:inputCheckbox aura:id="Agenda" class="myCheckbox" change="{!c.selectAgenda}" value="{!v.wrapperData.Agenda}" ></ui:inputCheckbox>
+                                    Interview Schedule -<div style="color:red;display: inline;"> (Under Construction)</div>
+                                </div>
+                                <!-- <div title="Executive Summary 1">
+                    <ui:inputCheckbox aura:id="ExecutiveSummary_1" class="myCheckbox" change="{!c.selectExecutiveSummary_1}" value="{!v.wrapperData.executiveSummary_1}" ></ui:inputCheckbox>
+                    Executive Summary 1 -<div style="color:red;display: inline;"> (Under Construction)</div>
+                </div> -->
+                                
+                                
+                                
+                                <lightning:combobox name="Module" label="Module"  placeholder="Identification" options="{! v.optionsModule }" onchange="{! c.handleChangeModule}" class="slds-size--2-of-4"/>
+                                
+                                <br/>                            
+                                <lightning:input  type="date" name="nextfollowupdate" label="Next Follow Up Date" value="{!v.wrapperData.nextfollowupdate}" class="slds-size--2-of-4"/><br/>
+                                
+                                
+                            </span>
+                        </div>
+                        <div class="slds-col">
+                            <span>  
+                                <br/>
+                                <div title="Job Description">
+                                    <ui:inputCheckbox aura:id="JobDescription" class="myCheckbox" label="Job Description" change="{!c.selectJobDescription}" value="{!v.wrapperData.selectJobDescription}"></ui:inputCheckbox>
+                                </div>
+                                <div title="Research Strategy">
+                                    <ui:inputCheckbox aura:id="ResearchStrategy" class="myCheckbox" label="Research Strategy" change="{!c.selectResearchStrategy}" value="{!v.wrapperData.researchStrategy}"></ui:inputCheckbox> 
+                                </div> 
+                                <div title="Candidate Count by Status">
+                                    <ui:inputCheckbox aura:id="candByStatus" class="myCheckbox"  value="{!v.wrapperData.candidateByStatus}"></ui:inputCheckbox>
+                                    Candidates Count by Status  
+                                </div>
+                                <div title="Candidate To discuss" >
+                                    <ui:inputCheckbox aura:id="selectToDiscuss" class="myCheckbox" label="Candidates to Discuss" change="{!c.selectToDiscuss}" value="{!v.wrapperData.selectToDiscuss}" ></ui:inputCheckbox>
+                                    <ui:inputCheckbox aura:id="CandidatestoDiscuss"  class="myCheckbox" label="Candidates to Discuss - By Candidate Name"  change="{!c.selectCandidatestoDiscuss}" value="{!v.wrapperData.selectCandidatestoDiscuss}"></ui:inputCheckbox>
+                                    <ui:inputCheckbox aura:id="CandidatestoDiscuss"  class="myCheckbox" label="Candidates to Discuss - By Company Name"  change="{!c.selectCandidatestoDiscussByTeam}" value="{!v.wrapperData.selectCandidatestoDiscussByTeam}"></ui:inputCheckbox>
+                                    <ui:inputCheckbox aura:id="CandidatestoDiscussByStatus"  class="myCheckbox" label="Candidates to Discuss - By Status"   value="{!v.wrapperData.selectCandidatestoDiscussByStatus}"></ui:inputCheckbox>
+                                </div>
+                                <div title="Candidate Cover Page" class="slds-size--2-of-4">
+                                    <ui:inputCheckbox aura:id="CandidateCoverPage" class="myCheckbox" label="Candidate Cover Page" change="{!c.selectCanCoverPage}" value="{!v.wrapperData.selectCanCoverPage}" ></ui:inputCheckbox>
+                                </div>
+                                <div title="RADAR">
+                                    <ui:inputCheckbox  class="myCheckbox" label="Radar Graph" change="{!c.selectRadar}" value="{!v.wrapperData.selectRadarGraph}" ></ui:inputCheckbox>
+                                </div>
+                                <div title="One Pager">
+                                    <ui:inputCheckbox aura:id="OnePager" class="myCheckbox" label="One Pager" change="{!c.selectOnePager}" value="{!v.wrapperData.selectOnePager}" ></ui:inputCheckbox>
+                                </div>
+                                <div title="Biography">
+                                    <ui:inputCheckbox aura:id="Biography"  class="myCheckbox" label="Biography" change="{!c.selectBiography}" value="{!v.wrapperData.selectBiography}"></ui:inputCheckbox>
+                                </div>
+                                <div title="Candidate Introduction Letter">
+                                    <ui:inputCheckbox aura:id="CandIntr" class="myCheckbox" label="Candidate Introduction Letter" change="{!c.selectCandidateIntro}" value="{!v.wrapperData.selectCandidateIntro}"></ui:inputCheckbox>
+                                </div>
+                                
+                                <div title="CV">
+                                    <ui:inputCheckbox aura:id="CV" class="myCheckbox" label="CV" change="{!c.selectCV}" value="{!v.wrapperData.selectCV}" ></ui:inputCheckbox>
+                                </div>
+                                
+                                <div title="Board CV">
+                                    <ui:inputCheckbox aura:id="Board_CV"  class="myCheckbox" label="Board CV" change="{!c.selectBoardCV}" value="{!v.wrapperData.selectBoardCV}"></ui:inputCheckbox>
+                                </div>
+                                
+                                <div title="Self Assessment">
+                                    <ui:inputCheckbox aura:id="SelfAss" class="myCheckbox" label="Self Assessment" change="{!c.selectSelfAss}" value="{!v.wrapperData.selectSelfAss}"></ui:inputCheckbox>
+                                </div>
+                                
+                                <div title="Psy Test">
+                                    <ui:inputCheckbox aura:id="PsyTest" class="myCheckbox" label="Psychometric Test" change="{!c.selectPsyTest}" value="{!v.wrapperData.selectPsyTest}"></ui:inputCheckbox>
+                                </div>
+                                
+                                <div title="References">
+                                    <ui:inputCheckbox aura:id="References" class="myCheckbox" label="References" change="{!c.selectReferences}" value="{!v.wrapperData.selectReferences}"></ui:inputCheckbox>
+                                </div>
+                                
+                                <div title="On Boarding">
+                                    <ui:inputCheckbox aura:id="On_Boarding"  class="myCheckbox" label="On Boarding" change="{!c.selectOnboarding}" value="{!v.wrapperData.selectOnboarding}"></ui:inputCheckbox>
+                                </div>
+                                
+                                <div title="Interview Questionnaire">
+                                    <ui:inputCheckbox aura:id="InterviewQuestionnaire" class="myCheckbox" label="Interview Questionnaire" change="{!c.selectInterviewQuestionnaire}" value="{!v.wrapperData.selectInterviewQuestionnaire}" ></ui:inputCheckbox>
+                                </div>
+                                
+                                <!--div title="Candidate To Discuss">
+                                    <ui:inputCheckbox aura:id="CandidatestoDiscuss" class="myCheckbox" label="Candidate To Discuss"  value="{!v.CandidatestoDiscuss_v1}"></ui:inputCheckbox>
+                                    <aura:if isTrue="{!v.CandidatestoDiscuss_v1}">
+                                        <lightning:combobox name="HCS Sort By" label="Sort By"   placeholder="By Name"  options="{! v.CandidatesToDiscussvalue}" />
+                                    </aura:if>     
+                                </div->-->
+                                
+                                <div title="Human Capital Study">
+                                    <ui:inputCheckbox aura:id="HumanCapitalStudy" class="myCheckbox" label="Human Capital Study" change="{!c.selectHumanCapitalStudy}" value="{!v.wrapperData.selectHumanCapitalStudy}"></ui:inputCheckbox>
+                                    <aura:if isTrue="{!v.wrapperData.selectHumanCapitalStudy}">
+                                        <lightning:combobox name="HCS Sort By" label="Sort By"   placeholder="Company Name" value="{!v.wrapperData.sortByHCS}" options="{! v.optionsHCS }" onchange="{! c.handleChangeHCS }"/>
+                                        <lightning:input type="date" name="Start Date" label="Start Date" value="{!v.wrapperData.hcsStartDate}"/>
+                                        <lightning:input type="date" name="End Date" label="End Date" value="{!v.wrapperData.hcsEndDate}"/>
+                                    </aura:if>     
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <br/>
+                    <Aura:if isTrue="{!v.displayCompetency}">
+                        <div class="vl">
+                        </div>
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-size--4-of-7" style="margin-left: 20px;">    
+                                <br/>
+                                <div title="COMPETENCIES">
+                                    <b>
+                                        COMPETENCIES
+                                    </b>
+                                    <br/>
+                                    <br/>
+                                    <aura:iteration items="{!v.CompetencyFromLrn}" var="comp">
+                                        <ui:inputCheckbox  class="myCheckbox" label="{!comp}" change="{!c.selectCompetency}" value="false" ></ui:inputCheckbox>
+                                    </aura:iteration>
+                                </div>
+                            </div>
+                        </div>
+                    </Aura:if>
+                    <!--/aura:set>
+                    </lightning:accordionSection-->
+                    <!--   <lightning:accordionSection name="B" label="Select Research Analytics reports to generate">
+                        <aura:set attribute="body">
+                            
+                            <div title="All competencies for all candidates">All competencies for all candidates<Br></Br>
+                                <ui:inputCheckbox value="{!v.wrapperData.allCompitencies}"></ui:inputCheckbox>
+                                
+                                <aura:if isTrue="{!v.wrapperData.allCompitencies}">
+                                    
+                                    <lightning:input type="text" value="{!v.wrapperData.allCompitenciesTitle}" label="Title"/>
+                                    <lightning:input type="text" value="{!v.wrapperData.allCompitenciesNotes}" label="Notes"/>
+                                </aura:if>
+                            </div>
+                            
+                            <div title="Candidate to discuss">Candidate to discuss<Br></Br>
+                                <ui:inputCheckbox value="{!v.wrapperData.Candidatetodiscuss}"></ui:inputCheckbox>
+                                
+                                <aura:if isTrue="{!v.wrapperData.Candidatetodiscuss}">
+                                    
+                                    <lightning:input type="text" value="{!v.wrapperData.CandidatetodiscussTitle}" label="Title"/>
+                                    <lightning:input type="text" value="{!v.wrapperData.CandidatetodiscussNotes}" label="Notes"/>
+                                </aura:if>
+                            </div>
+                        </aura:set>
+                    </lightning:accordionSection> -->
+                    
+                    
+                    <!--/lightning:accordion-->
+                    
+                </div>
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.closeModel }"/>
+                    <lightning:button variant="brand" 
+                                      label="Create"
+                                      title="Create"
+                                      onclick="{!c.generate}" 
+                                      />
+                </footer>
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    
+</aura:component>

@@ -1,0 +1,70 @@
+<apex:page standardController="Mandate__c" tabStyle="Mandate__c"
+	extensions="updateRelatedAssignmentCtrl" id="thepage">
+ <script>
+     function showSSL()
+    {
+        var plist = Document.getElementByID("changestatus").value;
+        if(plist = "Status Summary Line")
+            { displaySSL();}
+    }
+    
+    
+ </script>   
+  
+	<apex:form >
+		<apex:pageBlock id="theblock" title="Change SSL & Origin">
+			<apex:pageBlockButtons >
+			<!--	<apex:commandButton value="Save" action="{!CreateApps}"
+					rerender="theblock" oncomplete="Done()" /> -->
+                <apex:commandButton value="Save Status Summary Line" action="{!changeSSL}" id="buttonSSL"  />
+                <apex:commandButton value="Save Origin" action="{!changeOrigin}" />
+                <apex:commandButton value="Save Both" action="{!UpdateApps}"></apex:commandButton>
+                               
+				<apex:commandButton value="Cancel" action="{!back}" immediate="true"/>
+			</apex:pageBlockButtons>
+			<apex:pageMessages /> 
+            
+              <!--   <apex:pageBlockSection>
+                <apex:outputLabel Value="Change : ">
+                 <apex:selectList id="changestatus" value="{!selectedOption}" size="1" >
+                  <apex:selectOptions value="{!selectOption}" ></apex:selectOptions>
+                 </apex:selectList>
+                  </apex:outputLabel>  
+            </apex:pageBlockSection> -->
+            
+            
+            
+            
+			<apex:pageBlockSection >
+			<!--	<apex:inputField value="{!AppToSelectMandate.Mandate__c}" label="Assignment" /> -->
+                <apex:inputField value="{!leadersNote.Status_Summary_Line__c}" label="Status Summary Line" />
+             <!--     <apex:actionSupport event="onchnage" rendered="{!showSSL}" reRender="theblock"/> -->
+                <apex:inputField value="{!AppToSelectMandate.Origin__c}" Label="Origin" />
+                
+			</apex:pageBlockSection>
+			<apex:commandButton value="Select All" action="{!SelectAll}"
+				rerender="theblock" />
+			<apex:commandButton value="Deselect All" action="{!DeselectAll}"
+				rerender="theblock" />
+
+			<apex:pageBlockTable value="{!Applications}" var="c" id="table">
+
+				<apex:column >
+
+					<!-- This is our selected Boolean property in our wrapper class -->
+					<apex:inputCheckbox value="{!c.selected}" />
+				</apex:column>
+				<!-- This is how we access the contact values within our cContact container/wrapper -->
+				<apex:column value="{!c.app.Name}" />
+				<apex:column value="{!c.app.Contact__r.Name}" />
+				<apex:column value="{!c.app.Stage__c}" />
+			</apex:pageBlockTable>
+
+
+
+		</apex:pageBlock>
+	</apex:form>
+
+
+
+</apex:page>

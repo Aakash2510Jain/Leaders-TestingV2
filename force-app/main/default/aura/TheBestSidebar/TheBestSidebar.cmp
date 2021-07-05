@@ -1,0 +1,168 @@
+<aura:component implements="force:appHostable,lightning:isUrlAddressable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="SearchEnginApexCtrl" >
+    
+    <aura:attribute name="SearchValue" type="String"  />
+    
+    <aura:attribute name="assValue" type="String"  />
+    
+    <aura:attribute name="urlvalue" type="String"  />
+    
+    <aura:attribute name="FirstName" type="String"  />
+    
+    <aura:attribute name="LastName" type="String"  />
+    
+    <aura:attribute name="showMining" type="boolean" default="true" />
+    
+    <aura:attribute name="AssName" type="String"  />
+    <aura:attribute name="ConLength" type="String"  />
+    <aura:attribute name="AccLength" type="String"  />
+    <aura:attribute name="AssId" type="String"  />
+    
+    <aura:attribute name="pageReference" type="Object"/>
+    
+    <aura:attribute name="sobject" type="SearchResultWrapper[]"  />
+    <aura:attribute name="recentSearch" type="list"  />
+    <aura:attribute name="isSerachRequired" type="boolean"  default="true"/>
+    <aura:attribute name="showElements" type="boolean"  default="true"/>
+    <aura:attribute name="isMergeDuplicateNeeded" type="list" />
+    <aura:attribute name="isOnload" type="boolean" default="true" />
+    <aura:attribute name="isRelatedAssigment" type="boolean" default="false" />
+    <aura:handler event="c:deleteAllEvent" action="{!c.handleDeleteAllEvent}"/>
+    <aura:attribute name="checkSpinner" type="boolean" default="false"/> 
+    <aura:handler name="init" value="{!this}" action="{!c.getRecentSearch}"/>
+    <aura:attribute name="NoRecordFound" 						type="boolean" 			default="false"		/>
+    
+    <aura:attribute name="displayAddCandidateToOtherAssignment" type="boolean" 			default="false"		/>
+    
+    <aura:attribute name="objName" 								type="string"			default="People"    />
+    <aura:attribute name="objList" 								type="List"			    	    			/>
+    <aura:attribute name="ShowCompany" 							type="Boolean" 			default="false"		/>
+    <aura:attribute name="ShowCandidate" 						type="Boolean" 			default="false"		/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:if isTrue="{!v.checkSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </div>
+    </aura:if>
+    <div class="c-container" style="background:white">
+        <lightning:layout verticalAlign="stretch" class="x-large btm-brdr">
+            <lightning:layoutItem flexibility="auto" padding="around-small" class="custom-box" size="2">
+                
+                <div class="slds-scrollable"  >
+                    
+                    <br/>
+                    <div class="vertical-menu" >                   
+                        
+                        <!--aura:if isTrue="{!v.showMining}">
+                            <li class="active" >Data Mining</li>
+                              <c:DataMiningButton/>
+                        </aura:if-->
+                        <!--li class="active" >Search Result</li>
+                        <br/>
+                        <aura:iteration items="{!v.sobject}" var="res">
+                            <li  name="{!res.objName}">{!res.objName} <span class="slds-badge" style="float:right">{!res.recordCount}</span></li>  
+                            <br/>
+                        </aura:iteration-->
+                        <li class="active">Recent Search</li>
+                        <br/>
+                        <aura:iteration items="{!v.recentSearch}" var="search">
+                            
+                            <aura:if isTrue="{!search.SearchValue__c != null}">
+                                <li onclick="{!c.showrelatedSearch}" name="{!search.SearchValue__c}"><span class="slds-badge">{!search.SearchValue__c}</span>
+                                    <span style="float:right">
+                                        <lightning:buttonIcon iconName="utility:delete" variant="container" alternativeText="Settings" title="{!search.Id}" size="medium" onclick="{!c.deleteHistoryItem}" />
+                                    </span>
+                                </li>  
+                            </aura:if>
+                            <br/>
+                        </aura:iteration>
+                    </div>
+                </div>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem flexibility="auto" padding="around-small" class="custom-box" size="9">
+                
+                <span onkeypress="{!c.keyCheck}" class="slds-size--11-of-12" >
+                    
+                    <lightning:layout horizontalAlign="right">  
+                        
+                        <lightning:input  variant = "label-hidden" placeholder="Enter Value for Search" name="searchValue" value="{!v.SearchValue}" class="slds-size--4-of-12"  style=" border: 2px solid #0066cc;border-radius: 4px; margin: 15px;" />
+                        
+                        
+                        <aura:if isTrue="{!v.showElements}">
+                            
+                            <lightning:input  variant = "label-hidden" placeholder="Assignment Name" name="assValue" value="{!v.AssName}" class="slds-size--3-of-12"  style=" border: 2px solid #0066cc;border-radius: 4px; margin: 15px;" disabled="true"/>
+                            
+                            <lightning:button label="Back To Assignment" class="topbutton"  onclick="{!c.Backtoassgn}" />
+                            
+                        </aura:if>
+                        
+                    </lightning:layout>
+                    
+                </span>
+                
+                <aura:iteration items="{!v.sobject}" var="res" indexVar="index">      
+                    <!-- {!v.res.viewAll}-->
+                    <c:SearchEnginDisplayObjectRecord ConLength="{!v.ConLength}" AccLength="{!v.AccLength}"  RecordList="{!res.recordList}"  FirstName="{!v.FirstName}"   LastName="{!v.LastName}"  objName="{!res.objName}" objFieldList="{!res.objFields}" mergeDuplicate="{!res.isMergeRequired}" sobjectVariable="{!res}" NoRecordFound="{!v.NoRecordFound}"/>
+                    <br/>
+                </aura:iteration>  
+                <aura:if isTrue="{!v.NoRecordFound}">
+                    <aura:iteration items="{!v.objList}" var="objName">
+                        <div class="slds-page-header slds-box slds-theme_shade slds-m-top--large" >
+                            <div class="slds-page-header__row">
+                                <div class="slds-page-header__col-title">
+                                    <div class="slds-media">
+                                        <div class="slds-media__body">
+                                            <div class="slds-page-header__name">
+                                                <div class="slds-page-header__name-title">
+                                                    <h1 >
+                                                        <div class="slds-float_right"> 		
+                                                        </div>    
+                                                        <span class="slds-page-header__title slds-truncate" title="Rohde Corp - 80,000 Widgets">{!objName}</span>
+                                                    </h1>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-page-header__col-actions">
+                                    <div class="slds-page-header__controls">
+                                        <div class="slds-page-header__control">
+                                            <ul class="slds-button-group-list">
+                                                <li>
+                                                    <aura:if isTrue="{!objName == 'Company'}" >
+                                                        <lightning:button label="Create New Company"  onclick="{!c.ShowCompany}"/>
+                                                    </aura:if>   
+                                                </li>
+                                                <li>
+                                                    <aura:if isTrue="{!objName == 'People'}" >
+                                                        <lightning:button label="Create New People"  onclick="{!c.ShowCandidate}"/>
+                                                    </aura:if>   
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aura:iteration>  
+                </aura:if>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem flexibility="auto" padding="around-small" class="custom-box" size="1">
+                <!-- <lightning:button label="Search" onclick="{!c.doSearch}" /> -->
+            </lightning:layoutItem>
+        </lightning:layout>  
+        
+    </div>
+    <aura:if isTrue="{!v.ShowCompany}" >
+        <c:AddCompany ShowCompany= "{!v.ShowCompany}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.ShowCandidate}">
+        <c:AddCandidateNew FirstName="{!v.FirstName}" LastName="{!v.LastName}" displayNewCandidate= "{!v.ShowCandidate}"  />
+    </aura:if>
+    <aura:if isTrue="{!v.displayAddCandidateToOtherAssignment}">
+        <c:AddCandidatesToOtherAssignment isAssignmentResearch="false"  displayAddCandidateToOtherAssignment="{!v.displayAddCandidateToOtherAssignment}"></c:AddCandidatesToOtherAssignment>
+    </aura:if >
+</aura:component>

@@ -1,0 +1,100 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="RelatedFilesCompController">
+    <aura:attribute name="attachments" type="List" />
+    <aura:attribute name="mandateId" type="String"></aura:attribute>
+    <aura:attribute name="appId" type="String"></aura:attribute>
+    <aura:attribute name = "allCandidateList" type = "String[]" />
+    <aura:attribute name = "AttId" type = "String" />
+    <aura:attribute type="Boolean" name="FromContact" default="false"/>
+    <aura:attribute type="Boolean" name="deleteWarning" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute type="Boolean" name="showThisModal" default="false"/>
+    <lightning:navigation aura:id="navService"/>
+    
+    <!-- <aura:iteration items="{!v.attachments}" var="files">
+
+        {!files.Id}<br></br> -->
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header">
+              <lightning:buttonIcon iconName="utility:close"
+                                    onclick="{! c.closeModal }"
+                                    alternativeText="close"
+                                    variant="bare-inverse"
+                                    class="slds-modal__close"/>
+              <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Files</h2>
+          </header>
+          <div class="slds-scrollable" style="width:100%;max-height:50%;">
+              <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                  <thead>
+                      <tr class="slds-line-height_reset">
+                          <th class="" scope="col">
+                              <div class="slds-truncate" title="Title">Title</div>
+                          </th>
+                          <th class="" scope="col">
+                              <div class="slds-truncate" title="Owner">Owner</div>
+                          </th>
+                          <th class="" scope="col">
+                              <div class="slds-truncate" title="LastModifiedDate">LastModifiedDate</div>
+                          </th>
+                          <th class="" scope="col">
+                              <div class="slds-truncate" title="Action">Delete</div>
+                          </th>
+                          
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <aura:iteration items="{!v.attachments}" var="files">
+                          <tr class="slds-hint-parent">
+                              
+                              <th data-label="Title" scope="row">
+                                  <div class="slds-truncate" title="Cloudhub"><a onclick="{!c.openAttDetail}" tabindex="-1" name="{!files.Id}" target="_blank" style="color:black;">{!files.Name}</a></div>
+                              </th>
+                              <td data-label="Owner">
+                                  <div class="slds-truncate" title="Owner">{!files.Owner.Name}</div>
+                              </td>
+                              <td data-label="LastModifiedDate">
+                                  <div class="slds-truncate" title="LastModifiedDate"><lightning:formattedDateTime value="{!files.LastModifiedDate}" year="2-digit" month="short" day="2-digit" weekday="long"/></div>
+                              </td>
+                              <th data-label="Title" scope="row">
+                                  <a onclick="{!c.delAtt}" name="{!files.Id}">Delete</a>
+                              </th>
+                              
+                          </tr>
+                      </aura:iteration>
+                  </tbody>
+              </table>
+            
+          </div>
+            <!--###### MODAL BOX FOOTER Part Start ######-->
+            <footer class="slds-modal__footer">
+                <!--lightning:buttonGroup-->
+                <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{! c.closeModal }" />
+                <!--/lightning:buttonGroup-->
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    
+    <aura:if isTrue="{!v.deleteWarning}">
+        <div style="height:100px" >
+            <section role="dialog" tabindex="-1" class="slds-modal slds-modal_x-small slds-fade-in-open" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                <div class="slds-modal__container ">
+                    <header class="slds-modal__header border">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Reminder</b></h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium slds-p-left_large border" id="modal-content-id-1">
+                        <div style='margin-left:10%'>
+                            <p ><b>Are You Sure You want To delete th File ? </b></p><br/>
+                            <br/>
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer border">
+                        <br/>
+                        <lightning:button class="slds-button slds-button_brand" name='OK,' label='Yes' onclick='{!c.delAttYes}'/>
+                        <lightning:button class="slds-button slds-button_brand" name='OK,' label='No' onclick='{!c.delAttNo}'/>
+                    </footer>
+                </div>
+            </section>
+        </div>
+    </aura:if>
+</aura:component>

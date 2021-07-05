@@ -1,0 +1,28 @@
+<apex:page standardController="Mandate__c" tabStyle="Contact"
+    extensions="AssignmentAddAdvertiseCtrl">
+    <apex:sectionHeader title="Contact" subtitle="Attach Advertisement"/>
+    
+    
+    
+<!--<apex:pageBlock title="Add a standard file">
+<apex:form >
+<apex:panelGrid columns="2">
+  <apex:outputLabel value="Select a File"/>
+  <apex:selectList value="{!fileOptions}" size="1" rendered="true">
+   <apex:actionSupport event="onchange" rerender="list"/> 
+   <apex:selectOptions value="{!fileType}"/>
+  </apex:selectList>
+</apex:panelGrid>
+</apex:form>
+</apex:pageBlock> -->
+<c:UploadFile fileName="{!reportName}" parentId="{!parentId}" isCV="false" />  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+</apex:page>

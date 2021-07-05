@@ -1,0 +1,94 @@
+<aura:component controller="AddApplicationToAssignmentLightning" implements="flexipage:availableForRecordHome,force:hasRecordId">
+    
+    <aura:attribute name="ShowCompany" type="Boolean" default="false"/>
+    
+    <aura:attribute name="SearchKeyWord" type="String" default=""/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:registerEvent name="oSelectedRecordEvent" type="c:selectedsObjectRecordEvent"/>
+    <aura:attribute name="selectedRecord" type="String" />
+    <aura:attribute name="CountryValue" type="String"/>
+
+    
+    
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <div class="slds-modal__container">
+            
+            <header class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close"
+                                      onclick="{! c.closeModal }"
+                                      alternativeText="close"
+                                      variant="bare-inverse"
+                                      class="slds-modal__close"/>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Company</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="min-height: 70%;">
+                
+                
+                
+                
+                <div class="Create Account">
+                    <lightning:card iconName="action:new_account" title="Create Account">
+                        
+                        <lightning:recordEditForm
+                                                  onsubmit="{!c.handleAccountSubmit}"
+                                                  onsuccess="{!c.handleAccountSuccess}"
+                                                  objectApiName="Account"
+                                                  onerror = "{!c.handleAccerror}"
+                                                  aura:id="myAccForm"
+                                                  >
+                            <lightning:messages />
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_1-of-2">
+                                    
+                                    
+                                    <lightning:inputField fieldName="Name" aura:id="accName"/>
+                                    
+                                    <lightning:inputField fieldName="Industry_Types__c" required="true" />
+                                    
+                                    <lightning:inputField fieldName="Phone" />
+                                    
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    
+                                    <lightning:inputField fieldName="Country__c" aura:id="myAtt" value="{!v.CountryValue}" required="true"  />
+                                     
+                                    
+                                    <lightning:inputField fieldName="State__c" required="true" />
+                                    
+                                    <lightning:inputField fieldName="City__c" required="true" />
+                                    
+                                    
+                                </div>
+                            </div>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <div class="slds-p-bottom_small" style="float:right"  >
+                                
+                                <lightning:button  variant="brand" type="submit" name="Save" label="Save" />
+                                <lightning:button variant="neutral"
+                                                  label="Cancel"
+                                                  title="Cancel"
+                                                  onclick="{! c.closeModal }"/>
+                            </div>
+                        </lightning:recordEditForm>
+                    </lightning:card>
+                </div>
+                
+            </div>
+            
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"/>
+    
+</aura:component>

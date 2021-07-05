@@ -1,0 +1,16 @@
+.THIS .spins::after {
+    position: absolute;
+    content: 'Please wait while loading';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}
+.THIS.slds-modal__container{
+  	 max-width: 100rem;
+     width:500% ;
+    height:100%;
+ }
+.THIS .center {
+margin-left: 10px;
+}

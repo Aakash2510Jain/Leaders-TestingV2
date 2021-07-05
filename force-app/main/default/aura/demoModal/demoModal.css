@@ -1,0 +1,9 @@
+.THIS .displayinline {
+   display:inline;
+    float:left;
+}
+.THIS .slds-spinner_container  {
+    background-color: rgba(0, 0, 0, 0.10);
+    margin-top: 50px;
+    margin-bottom: 50px; 
+}

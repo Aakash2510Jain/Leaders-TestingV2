@@ -1,0 +1,61 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" controller="AssignmentListLightning" >
+    <aura:attribute name="selectlist" type="String" default="My Active Assignments"/>
+    <aura:attribute name="teamNameFromEvent" type="String" default="ASD"/>
+    <aura:attribute name="defaultPickVal" type="String" default="My Active Assignments"/>
+    <aura:attribute name="selectedValue" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:registerEvent  name="AssignmentListEvent" type="c:AssignmentListEvent"></aura:registerEvent>
+    <aura:attribute name="MontrealView" type="boolean" default="true" />
+    <aura:attribute name="OttawaView" type="boolean" default="true" />
+    <aura:attribute name="IndigenousView" type="boolean" default="true" />
+    <aura:attribute name="TorontoView" type="boolean" default="true" />
+    <aura:attribute name="isViewVisible" type="boolean" default="false" />
+    <aura:attribute name="openModalView" type="boolean" default="false" />
+    <aura:attribute name="TeamName" type="String" default="" />
+    <aura:attribute name="Num_Of_Ass" type="String" default="" />
+    <aura:attribute name="Avg_Of_Num_OF_Days" type="String" default="" />
+    
+   
+    <lightning:card title="Assignments" >
+        <article class="slds-card">
+            <div class="slds-card__header slds-grid">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-standard-contact" title="contact">
+                            <lightning:icon class="slds-icon_container slds-icon-standard-contact" variant="inverse" iconName="standard:contact" size="large" onclick="{!c.gotoContact}"/>
+                            <span class="slds-assistive-text">Assignments </span> 
+                        </span> 
+                    </div>
+                         <div class="slds-grid slds-gutters"  >
+                             <lightning:select aura:id="myselect" name="view" label="View :" onchange="{!c.onChangeMySelect}" class="Selectstyle" value = "{!v.selectedValue}"  >
+                                 <option value="My Active Assignments" >My Active Assignment</option>
+                                 <option value="My Assignments">My Assignments</option>
+                                 <option value="All Active Assignments">All Active Assignments</option>
+                                 <option value="All Assignments">All Assignments</option>
+                                 <aura:if isTrue="{!v.MontrealView}"> 
+                                     <option value="Montreal Weekly Review">Montreal Weekly Review</option>
+                                 </aura:if>
+                                 <aura:if isTrue="{!v.IndigenousView}"> 
+                                    <option value="Indegenous Weekly Review">Indigenous Weekly Review</option>
+                                </aura:if>
+                                 <aura:if isTrue="{!v.OttawaView}"> 
+                                     <option value="Ottawa Weekly Review">Ottawa Weekly Review</option>
+                                 </aura:if>
+                                 <aura:if isTrue="{!v.TorontoView}"> 
+                                     <option value="Toronto Weekly Review">Toronto  Weekly Review</option>
+                                 </aura:if>
+                             </lightning:select>
+                             <lightning:input name="No of Assignments" label="No of Assignments"  class="inputstyle " value="{!v.Num_Of_Ass}"   disabled="true"/>
+                             <lightning:input name="Average Number of days" label="Average Number of days" class="inputstyle"  value="{!v.Avg_Of_Num_OF_Days}"   disabled="true"/>
+                    </div>
+                </header>
+            </div>
+        </article>
+        <div>
+           <aura:if isTrue="{!v.isViewVisible}"> 
+            <c:AssignmentListTableComp selectedlist="{!v.selectlist}"  TeamName="{!v.TeamName}"  Avg_Of_Num_OF_Days="{!v.Avg_Of_Num_OF_Days}"  Num_Of_Ass="{!v.Num_Of_Ass}" />  
+           </aura:if>
+        </div>   
+        
+    </lightning:card>
+</aura:component>

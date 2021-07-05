@@ -1,0 +1,97 @@
+<apex:page controller="customSearchTool_Companies" docType="html-5.0" lightningStylesheets="true">
+<apex:form id="myForm">
+<apex:PageBlock title="Custom Search Tool : Companies" id="filterBlock">
+        <apex:selectList id="gender" value="{!fCriteria}" size="1" label="Gender">
+          <apex:selectOptions value="{!FilterCriteria}"/>
+        </apex:selectList>
+            <apex:pageMessages id="theMessages"/>
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!resetFilters}" value="Reset Filters" rerender="filterBlock"/>
+                <apex:commandButton action="{!searchCompaniesBegining}" value="Search Companies" rerender="cTable,theMessages"/>
+              <!--   <apex:commandButton action="{!addToRS}" value="Add to Research Strategy" rerender="cTable"/>  -->
+            </apex:pageBlockButtons>
+    <apex:pageBlockSection >
+        <apex:selectList id="fArea" value="{!industryFilter}" multiselect="true" size="5" label="Industry" rendered="{!(!isDesjardins)}">
+          <apex:selectOptions value="{!Industries}"/>
+        </apex:selectList>
+        
+        <apex:selectList id="competFR" value="{!industryFilterFR}" multiselect="true" size="5" label="Industries" rendered="{!isDesjardins}" >
+          <apex:selectOptions value="{!IndustriesFR}"/>
+        </apex:selectList>
+        
+        
+        <!--<apex:selectList id="compet" value="{!countryFilter}" multiselect="true" size="5" label="Country">
+          <apex:selectOptions value="{!Countries}"/>
+        </apex:selectList>
+        <apex:selectList id="indust" value="{!stateFilter}" multiselect="true" size="5" label="Province/State">
+          <apex:selectOptions value="{!States}"/>
+        </apex:selectList>-->
+        
+        <apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+            <apex:outputLabel value="Country" />
+            <apex:inputField id="mCountry" value="{!acc.BillingCountryCode }"
+                             label="Country"/>
+        </apex:pageBlockSectionItem>
+        
+        <apex:selectList id="jobl" value="{!statusFilter}" multiselect="true" size="5" label="Status">
+          <apex:selectOptions value="{!Status}"/>
+        </apex:selectList>
+        
+        <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+            <apex:outputLabel value="States" />
+            <apex:inputField id="mStates" value="{!acc.BillingStateCode }"
+                             label="States"/>
+        </apex:pageBlockSectionItem>
+                
+        
+        
+     <!--  <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Employees >" for="employeesS"/>                     
+             <apex:input id="employeesS" value="{!employeesStartFilter}" />
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Revenue >" for="RevenueS"/>                     
+             <apex:input id="RevenueS" value="{!revenueStartFilter}" />
+        </apex:pageBlockSectionItem>        
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Employees <" for="employeesE"/>                     
+             <apex:input id="employeesE" value="{!employeesEndFilter}" />
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Revenue <" for="RevenueE"/>                     
+             <apex:input id="RevenueE" value="{!revenueEndFilter}" />
+        </apex:pageBlockSectionItem>        -->
+     </apex:pageBlockSection>        
+</apex:PageBlock>  
+<apex:PageBlock id="cTable">
+    <apex:pageBlockSection >
+        <apex:outputText style="font-size :10pt" value="{!total_size}" ><b> Total Number of Results : </b>  </apex:outputText>
+    </apex:pageBlockSection>
+    <apex:PageBlockTable value="{!cWrapperList}" rendered="{!AND(cWrapperList != null,cWrapperList.size>0)}" var="cw">
+           <apex:column >
+                <apex:inputCheckbox value="{!cw.selected}"/>
+           </apex:column>
+           <apex:column headerValue="Name">
+                <apex:outputLink value="/{!cw.theCompany.Id}" target="_blank">{!cw.theCompany.Name}</apex:outputLink>            
+           </apex:column>        
+           <apex:column value="{!cw.theCompany.Industry_Types__c}"/>
+           <apex:column value="{!cw.theCompany.Status__c}"/>
+           <apex:column value="{!cw.theCompany.Phone}"/>
+           <apex:column value="{!cw.theCompany.Website}"/>        
+           <apex:column value="{!cw.theCompany.billingcountry}"/>
+           <apex:column value="{!cw.theCompany.billingstate}"/>
+        </apex:PageBlockTable>
+    
+     <apex:outputPanel id="btnPage">
+             Page # {!pageNumber} sur {!totalPages}
+             <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>
+             
+             <apex:commandButton action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>        
+             
+             <apex:commandButton action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>
+             
+             <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>
+        </apex:outputPanel>  
+</apex:PageBlock>
+</apex:form>
+</apex:page>

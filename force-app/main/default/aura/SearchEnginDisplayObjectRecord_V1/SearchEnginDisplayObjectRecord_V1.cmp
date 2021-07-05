@@ -1,0 +1,160 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" controller="DynamicTableComponentController" >
+   
+    <aura:attribute name="data" 								type="List"									/>
+    <aura:attribute name="fieldAPIs" 							type="List"				default="['Id','Name','Company__r.Name','Company_Name_French__c','Assignment_Status__c','Partner__r.Name','Partner_2__r.Name']"	/>
+    <aura:attribute name="allData" 								type="List"									/>
+    <aura:attribute name="currentPageNumber" 					type="Integer" 			default="1"			/>
+    <aura:attribute name="pageSize" 							type="Integer" 			default="8"		/>
+    <aura:attribute name="totalPages" 							type="Integer" 			default="0"			/>
+    <aura:attribute name="pageList" 							type="List"									/>
+    <aura:attribute name="ShowCompany" 							type="Boolean" 			default="false"		/>
+	<aura:attribute type="String" 								name="whereClause" 		default="" 			/>
+    <aura:attribute name="ShowCandidate" 						type="Boolean" 			default="false"		/>
+    <aura:attribute name="Showform" 							type="Boolean" 			default="true"		/>
+    <aura:attribute name="displayAddCandidateToOtherAssignment" type="boolean" 			default="false" 	/>
+    <aura:attribute name="mergeDuplicateSpinner" 				type="boolean" 			default="false"		/>
+    <aura:attribute name="RecordList" 							type="SObject[]"							/>
+    <aura:attribute name="objName" 								type="string"								/>
+    <aura:attribute name="objectAPI" 							type="string"			default="Mandate__c"/>
+    <aura:attribute name="objFieldList" 						type="Map"									/>
+    <aura:attribute type="String" 								name="replaceHeaders" 	default="" 			/>
+    <aura:attribute name="fieldMap" 							type="List" 								/>
+    <aura:attribute name="sortAsc" 								type="boolean" 			default="true"		/>
+    <aura:attribute name="selectedRecord" 						type="SObject" 							/>
+    <aura:attribute name="selectedRecordId" 					type="List" 								/>
+    <aura:attribute name="selectAll" 							type="Boolean"								/>
+    <aura:attribute name="isOpen" 								type="Boolean" 			default="false"		/>
+    <aura:attribute name="mergeDuplicate" 						type="Boolean" 			default="false"		/>
+    <aura:attribute name="sobjectVariable" 						type="Object"								/>
+    <aura:attribute name="showConfirmDialog" 					type="boolean" 			default="false"		/>
+    <aura:attribute name="eachRecord" 							type="Object"								/>
+    <aura:attribute name="recordOperationValue" 			    type="String"								/>
+    <aura:attribute name="NoRecordFound" 						type="boolean" 			default="false"		/>
+    <aura:attribute name="showSpinner" 							type="boolean" 			default="false"		/>
+    
+    <aura:registerEvent name="deleteAllEvent" 					type="c:deleteAllEvent"						/>
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    
+    <aura:method name="fetchAssignment" action="{!c.fetchAssignment}" description="Sample"> 
+        <aura:attribute name="searchString" type="String" default=""/> 
+	</aura:method>
+    
+     <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner alternativeText="Loading" size="medium" />
+    </aura:if>
+    
+    <aura:if isTrue="{!v.NoRecordFound}">
+        <div class="slds-page-header slds-box slds-theme_shade slds-m-top--large" >
+            
+        </div>
+    </aura:if>
+	<!--This Object Name header start-->
+    <div class="slds-page-header slds-box slds-theme_shade slds-m-top--large" >
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1 >
+                                    <div class="slds-float_right"> 		
+                                    </div>    
+                                    <span class="slds-page-header__title slds-truncate" title="Rohde Corp - 80,000 Widgets">{!v.objName}</span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+    <!--This Object Name header End-->
+    <table class="slds-table slds-table_bordered slds-border_top slds-border_right slds-border_bottom slds-border_left">
+        <thead>
+                      
+            <aura:iteration items="{!v.fieldMap}" var="field" indexVar="key">                          
+                <th scope="col" name="{!field}" onclick="{!c.sortByField}" >
+           			{!field.key}
+                    <!-- xx-small, x-small, small, medium, or large.-->
+                    <span style="margin-left:1%">
+                        <aura:if isTrue="{!field.sortAsc==true}">
+                            <lightning:icon iconName="utility:chevrondown" alternativeText="Event" title="Event" size="xx-small" />
+                            <aura:set attribute="else">
+                                <lightning:icon iconName="utility:chevronup" alternativeText="Event" title="Event" size="xx-small"/>
+                            </aura:set>
+                        </aura:if> 
+                    </span>
+                </th>                       
+            </aura:iteration>
+        </thead>
+        <tbody>          
+            <aura:if isTrue="{!not(v.sobjectVariable.saveToList)}">
+                <aura:if isTrue="{!not(v.sobjectVariable.viewAll)}">
+                    <aura:iteration items="{!v.data}" var="record">
+                        <tr>
+                            
+                            <aura:iteration items="{!v.fieldMap}" var="field" indexVar="key">
+                                
+                                <td data-label="Opportunity Name" scope="row" >
+                                    <div class="slds-truncate slds-cell-wrap"> 
+                                        <aura:if isTrue="{!field.value != 'ParentId'}">
+                                            <c:SearchEnginDisplayRecords_v1 obj="{!record}" fieldName="{!field.value}" selectedRecord="{!v.selectedRecord}"/> 
+                                        </aura:if>
+                                    </div>
+                                </td>
+                            </aura:iteration>
+                            
+                        </tr>     
+                    </aura:iteration>
+                </aura:if> 
+            </aura:if> 
+            
+           
+           
+            
+        </tbody>
+    </table>
+    <aura:if isTrue="{!not(v.sobjectVariable.saveToList)}">
+        <aura:if isTrue="{!not(v.sobjectVariable.viewAll)}">
+            <lightning:layout multipleRows="true" horizontalAlign="center">
+                <lightning:layoutItem padding="around-small" flexibility="auto">
+                    <lightning:button label="First" iconName="utility:left" iconPosition="left"
+                                      onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/>
+                    <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                                      onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/>
+                    <span class="slds-p-horizontal_x-small">
+                        <a onclick="{!c.processMe}" name="1" 
+                           class="{! (v.currentPageNumber == 1) ? 'selected' : ''}">1</a>
+                    </span>
+                    <span class="slds-p-horizontal_xxx-small">
+                        <a>...</a>
+                    </span>
+                    
+                    <aura:iteration items="{!v.pageList}" var="item">
+                        <span class="slds-p-horizontal_x-small">
+                            <a onclick="{!c.processMe}" name="{!item}"
+                               class="{! (v.currentPageNumber == item) ? 'selected' : ''}">{!item}</a>
+                        </span>
+                    </aura:iteration>
+                    
+                    <span class="slds-p-horizontal_xxx-small">
+                        <a>...</a>
+                    </span>
+                    <span class="slds-p-horizontal_x-small">
+                        <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                           class="{! (v.currentPageNumber == v.totalPages) ? 'selected' : ''}">{!v.totalPages}</a>
+                    </span>
+                    <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                                      disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/>
+                    <lightning:button label="Last" iconName="utility:right" iconPosition="right" 
+                                      disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onLast}"/>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </aura:if>
+    </aura:if>
+   
+    
+    
+</aura:component>

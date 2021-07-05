@@ -1,0 +1,21 @@
+.THIS .topmarbody  {
+  margin-top: 50px;
+ }
+.THIS .leftmarbody  {
+    width:90%;
+ }
+.THIS .leftMargin5Per{
+    margin-left:25%;
+}
+.THIS .blueText{
+    color:rgba(0, 112, 210, 1);
+}
+.THIS .width70{
+    width:70%;
+    float:left;
+}
+.THIS .width30{
+    width:30%;
+    margin-top: 5%;
+    margin-left:2%;
+}

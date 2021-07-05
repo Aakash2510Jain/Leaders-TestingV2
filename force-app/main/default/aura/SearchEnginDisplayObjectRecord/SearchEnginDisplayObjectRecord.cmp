@@ -1,0 +1,339 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" controller="SearchEnginApexCtrl" >
+   
+    <aura:attribute name="data" 								type="List"									/>
+    <aura:attribute name="allData" 								type="List"									/>
+    <aura:attribute name="currentPageNumber" 					type="Integer" 			default="1"			/>
+    <aura:attribute name="pageSize" 							type="Integer" 			default="10"		/>
+    <aura:attribute name="totalPages" 							type="Integer" 			default="0"			/>
+    <aura:attribute name="pageList" 							type="List"									/>
+    <aura:attribute name="ShowCompany" 							type="Boolean" 			default="false"		/>
+    <aura:attribute name="FirstName" 							type="String" 								/>
+    <aura:attribute name="LastName" 							type="String" 								/>
+    <aura:attribute name="ShowCandidate" 						type="Boolean" 			default="false"		/>
+    <aura:attribute name="Showform" 							type="Boolean" 			default="true"		/>
+    <aura:attribute name="displayAddCandidateToOtherAssignment" type="boolean" 			default="false" 	/>
+    <aura:attribute name="mergeDuplicateSpinner" 				type="boolean" 			default="false"		/>
+    <aura:attribute name="RecordList" 							type="SObject[]"							/>
+    <aura:attribute name="objName" 								type="string"								/>
+    <aura:attribute name="objFieldList" 						type="Map"									/>
+    <aura:attribute name="fieldMap" 							type="List" 								/>
+    <aura:attribute name="sortAsc" 								type="boolean" 			default="true"		/>
+    <aura:attribute name="selectedRecord" 						type="SObject[]" 							/>
+    <aura:attribute name="selectedRecordId" 					type="List" 								/>
+    <aura:attribute name="selectAll" 							type="Boolean"								/>
+    <aura:attribute name="isOpen" 								type="Boolean" 			default="false"		/>
+    <aura:attribute name="mergeDuplicate" 						type="Boolean" 			default="false"		/>
+    <aura:attribute name="sobjectVariable" 						type="Object"								/>
+    <aura:attribute name="showConfirmDialog" 					type="boolean" 			default="false"		/>
+    <aura:attribute name="ConLength" type="String"  />
+    <aura:attribute name="AccLength" type="String"  />
+    <aura:attribute name="eachRecord" 							type="Object"								/>
+    <aura:attribute name="recordOperationValue" 			    type="String"								/>
+    <aura:attribute name="NoRecordFound" 						type="boolean" 			default="false"		/>
+    <aura:registerEvent name="deleteAllEvent" 					type="c:deleteAllEvent"						/>
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <aura:if isTrue="{!v.NoRecordFound}">
+        <div class="slds-page-header slds-box slds-theme_shade slds-m-top--large" >
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1 >
+                                        <div class="slds-float_right"> 		
+                                        </div>    
+                                        <span class="slds-page-header__title slds-truncate" title="Rohde Corp - 80,000 Widgets">{!v.objName}-{!v.ConLength}</span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <ul class="slds-button-group-list">
+                                <li>
+                                    <aura:if isTrue="{!v.objName == 'Company'}" >
+                                        {!v.ConLength}
+                                        <lightning:button label="Create New Company"  onclick="{!c.ShowCompany}"/>
+                                    </aura:if>   
+                                </li>
+                                <li>
+                                    <aura:if isTrue="{!v.objName == 'People'}" >
+                                        {!v.AccLength}
+                                        <lightning:button label="Create New People"  onclick="{!c.ShowCandidate}"/>
+                                    </aura:if>   
+                                </li>
+                                <li>
+                                    <aura:if isTrue="{!v.objName == 'People'}" >
+                                        
+                                        <lightning:button label="Add To Assignment"  onclick="{!c.addtoAss}" />
+                                        
+                                    </aura:if>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+	<!--This Object Name header start-->
+    <div class="slds-page-header slds-box slds-theme_shade slds-m-top--large" >
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1 >
+                                    <div class="slds-float_right"> 		
+                                    </div>   
+                                    <aura:if isTrue="{!v.objName == 'People'}" >
+                                        <span class="slds-page-header__title slds-truncate" title="Rohde Corp - 80,000 Widgets">{!v.objName} - {!v.ConLength}</span>
+                                        <aura:set attribute="else">
+                                            <span class="slds-page-header__title slds-truncate" title="Rohde Corp - 80,000 Widgets">{!v.objName} - {!v.AccLength}</span>
+                                        </aura:set>
+                                    </aura:if>
+                                    
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls">
+                    <div class="slds-page-header__control">
+                        <ul class="slds-button-group-list">
+                            <li>
+                                <!--  <button class="slds-button slds-button_neutral" onclick="{!c.createNewRecord}">New</button> -->
+                                
+                                <aura:if isTrue="{!v.objName == 'Company'}" >
+                                    
+                                    <lightning:button label="Create New Company"  onclick="{!c.ShowCompany}"/>
+                                    
+                                </aura:if>   
+                            </li>
+                            <li>
+                                <!--  <button class="slds-button slds-button_neutral" onclick="{!c.createNewRecord}">New</button> -->
+                                <aura:if isTrue="{!v.objName == 'People'}" >
+                                    <lightning:button label="Create New People"  onclick="{!c.ShowCandidate}"/>
+                                </aura:if>   
+                            </li>
+                            <li>
+                                <!-- <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+                                    <lightning:button label="Delete All"  onclick="{!c.deleteAll}" />
+                                </div> -->
+                            </li>
+                            <li>
+                                <aura:if isTrue="{!v.mergeDuplicate}">
+                                    <lightning:button label="Merge Duplicate"  onclick="{!c.navigate}"/>
+                                </aura:if>  
+                            </li> 
+                            <!-- <aura:if isTrue="{!v.mergeDuplicateSpinner}">
+                                <div class="exampleHolder">
+                                    <lightning:spinner alternativeText="Loading" size="medium" />
+                                </div>
+                            </aura:if>     --> 
+                            
+                            <li>
+                                <aura:if isTrue="{!v.objName == 'People'}" >
+                                    <lightning:button label="Add To Assignment"  onclick="{!c.addtoAss}" />
+                                </aura:if>
+                            </li>
+                            <li>
+                                <lightning:button label="View All"  onclick="{!c.viewAll}" />
+                                <aura:if isTrue="{!v.sobjectVariable.viewAll}">
+                                    <lightning:button label="Save to List"  onclick="{!c.saveToList}" />
+                                </aura:if>     
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--This Object Name header End-->
+    <table class="slds-table slds-table_bordered slds-border_top slds-border_right slds-border_bottom slds-border_left">
+        <thead>
+            <th><ui:inputCheckbox  label="" aura:id="master"  value="" change="{!c.onCheckAll}"/>        </th>                
+            <aura:iteration items="{!v.fieldMap}" var="field" indexVar="key">                          
+                <th scope="col" name="{!field}" onclick="{!c.sortByField}" >
+                    {!field.key}
+                    <!-- xx-small, x-small, small, medium, or large.-->
+                    <span style="margin-left:1%">
+                        <aura:if isTrue="{!field.sortAsc==true}">
+                            <lightning:icon iconName="utility:chevrondown" alternativeText="Event" title="Event" size="xx-small" />
+                            <aura:set attribute="else">
+                                <lightning:icon iconName="utility:chevronup" alternativeText="Event" title="Event" size="xx-small"/>
+                            </aura:set>
+                        </aura:if> 
+                    </span>
+                </th>                       
+            </aura:iteration>
+        </thead>
+        <tbody>          
+            <aura:if isTrue="{!not(v.sobjectVariable.saveToList)}">
+                <aura:if isTrue="{!not(v.sobjectVariable.viewAll)}">
+                    <aura:iteration items="{!v.data}" var="record">
+                        <tr>
+                            <td>   
+                                <ui:inputCheckbox aura:id="dependent"  value="" text="{!record}" change="{!c.onCheck}"/>        
+                            </td>    
+                            <aura:iteration items="{!v.fieldMap}" var="field" indexVar="key">
+                                
+                                <td data-label="Opportunity Name" scope="row" >
+                                    <div class="slds-truncate slds-cell-wrap"> 
+                                        <aura:if isTrue="{!field.value != 'ParentId'}">
+                                            <c:SearchEnginDisplayRecords obj="{!record}" fieldName="{!field.value}"/> 
+                                        </aura:if>
+                                    </div>
+                                </td>
+                            </aura:iteration>
+                            <td>
+                                <aura:if isTrue="{!not(v.sobjectVariable.isDelete)}">
+                                    <lightning:buttonMenu alternativeText="Action" name="{!record}" onselect="{!c.onSelectDelete}">
+                                        <lightning:menuItem  label="Delete" value="Delete"/>
+                                    </lightning:buttonMenu>
+                                </aura:if>    
+                            </td>
+                        </tr>     
+                    </aura:iteration>
+                </aura:if> 
+            </aura:if> 
+            
+            <aura:if isTrue="{!v.sobjectVariable.viewAll}">
+                <aura:iteration items="{!v.RecordList}" var="record">
+                    <tr>
+                        <td>   
+                            <ui:inputCheckbox aura:id="dependent"  value="" text="{!record}" change="{!c.onCheck}"/>        
+                        </td>    
+                        <aura:iteration items="{!v.fieldMap}" var="field" indexVar="key">
+                            
+                            <td data-label="Opportunity Name" scope="row" >
+                                <div class="slds-truncate slds-cell-wrap">
+                                    <aura:if isTrue="{!field.value != 'ParentId'}">
+                                        <c:SearchEnginDisplayRecords obj="{!record}" fieldName="{!field.value}"/> 
+                                    </aura:if>
+                                </div>
+                            </td>
+                        </aura:iteration>
+                        <td>
+                            <aura:if isTrue="{!not(v.sobjectVariable.isDelete)}">
+                                <lightning:buttonMenu alternativeText="Action" name="{!record}" onselect="{!c.onSelectDelete}">
+                                    <lightning:menuItem  label="Delete" value="Delete"/>
+                                </lightning:buttonMenu>
+                            </aura:if>    
+                        </td>
+                    </tr>       
+                </aura:iteration>
+            </aura:if> 
+            <aura:if isTrue="{!v.sobjectVariable.saveToList}">
+                <aura:iteration items="{!v.selectedRecord}" var="record">
+                    <tr>
+                        <td>   
+                            <ui:inputCheckbox aura:id="dependent"  value="" text="{!record}" change="{!c.onCheck}"/>        
+                        </td>    
+                        <aura:iteration items="{!v.fieldMap}" var="field" indexVar="key">
+                            
+                            <td data-label="Opportunity Name" scope="row" >
+                                <div class="slds-truncate slds-cell-wrap">
+                                    <aura:if isTrue="{!field.value != 'ParentId'}">
+                                        <c:SearchEnginDisplayRecords obj="{!record}" fieldName="{!field.value}"/> 
+                                    </aura:if>
+                                </div>
+                            </td>
+                        </aura:iteration>
+                        <td>
+                            <lightning:buttonMenu alternativeText="Action" name="{!record}" onselect="{!c.onSelectDelete}">
+                                <lightning:menuItem  label="Delete" value="Delete"/>
+                            </lightning:buttonMenu>
+                        </td>
+                    </tr>       
+                </aura:iteration>
+            </aura:if> 
+            
+        </tbody>
+    </table>
+    <aura:if isTrue="{!not(v.sobjectVariable.saveToList)}">
+        <aura:if isTrue="{!not(v.sobjectVariable.viewAll)}">
+            <lightning:layout multipleRows="true" horizontalAlign="center">
+                <lightning:layoutItem padding="around-small" flexibility="auto">
+                    <lightning:button label="First" iconName="utility:left" iconPosition="left"
+                                      onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/>
+                    <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                                      onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/>
+                    <span class="slds-p-horizontal_x-small">
+                        <a onclick="{!c.processMe}" name="1" 
+                           class="{! (v.currentPageNumber == 1) ? 'selected' : ''}">1</a>
+                    </span>
+                    <span class="slds-p-horizontal_xxx-small">
+                        <a>...</a>
+                    </span>
+                    
+                    <aura:iteration items="{!v.pageList}" var="item">
+                        <span class="slds-p-horizontal_x-small">
+                            <a onclick="{!c.processMe}" name="{!item}"
+                               class="{! (v.currentPageNumber == item) ? 'selected' : ''}">{!item}</a>
+                        </span>
+                    </aura:iteration>
+                    
+                    <span class="slds-p-horizontal_xxx-small">
+                        <a>...</a>
+                    </span>
+                    <span class="slds-p-horizontal_x-small">
+                        <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                           class="{! (v.currentPageNumber == v.totalPages) ? 'selected' : ''}">{!v.totalPages}</a>
+                    </span>
+                    <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                                      disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/>
+                    <lightning:button label="Last" iconName="utility:right" iconPosition="right" 
+                                      disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onLast}"/>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </aura:if>
+    </aura:if>
+    <aura:if isTrue="{!v.showConfirmDialog}">
+        <!--Modal Box Start-->
+        <div role="dialog" class="slds-modal slds-fade-in-open ">
+            <div class="slds-modal__container">
+                <!--Modal Box Header Start-->
+                <header class="slds-modal__header">
+                    <h1 class="slds-text-heading--medium">Confirmation</h1>
+                </header>
+                <!--Modal Box Header End-->
+                
+                <!--Modal Box Content Start-->
+                <div class="slds-modal__content slds-p-around--medium">
+                    <center><b>Are you sure you want to delete this record?</b></center>
+                </div>
+                <!--Modal Box Content End-->
+                
+                <!--Modal Box Button Start-->
+                <footer class="slds-modal__footer">
+                    <lightning:button name='No' label='No' onclick='{!c.handleConfirmDialogNo}'/>
+                    <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.handleConfirmDialogYes}'/>
+                </footer>
+                <!--Modal Box Button End-->
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>            
+    </aura:if>
+    
+    <aura:if isTrue="{!v.isOpen}">
+        <c:demoModal isOpen="{!v.isOpen}" selectedRecord="{!v.selectedRecord}" data="{!v.data}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.ShowCompany}" >
+        <c:AddCompany ShowCompany= "{!v.ShowCompany}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.ShowCandidate}">
+        <c:AddCandidateNew FirstName="{!v.FirstName}" LastName="{!v.LastName}" displayNewCandidate= "{!v.ShowCandidate}"  />
+    </aura:if>
+    <aura:if isTrue="{!v.displayAddCandidateToOtherAssignment}">
+        <c:AddCandidatesToOtherAssignment isAssignmentResearch="false" contactRecId="{!v.selectedRecordId}" displayAddCandidateToOtherAssignment="{!v.displayAddCandidateToOtherAssignment}"></c:AddCandidatesToOtherAssignment>
+    </aura:if >
+</aura:component>

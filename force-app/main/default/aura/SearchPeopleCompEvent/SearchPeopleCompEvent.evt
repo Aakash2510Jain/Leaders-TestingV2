@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="Event template" >
+<aura:attribute name="displaySearchPeopleModal" type="boolean"></aura:attribute>
+
+</aura:event>

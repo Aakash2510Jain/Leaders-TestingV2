@@ -1,0 +1,138 @@
+<aura:component extends="c:ModalBoxCmp">
+	<aura:attribute name="company" type="Map" default="{name:'',cieType:'',secteur:'',revenue:'',fonction:'',startYear:''}" access="global" />
+	<aura:attribute name="companyType" type="Map" default="{}" access="global" />
+    <aura:attribute name="isComplete" type="Boolean" default="false"/>
+	<aura:method name="showCompanyAddModal" action="{!c.showModal}">
+		<aura:attribute name="company" type="Map"/>
+	</aura:method>
+
+	<aura:registerEvent name="candidateFormCompaniesSaveEvent" type="c:CandidateFormCompaniesSaveEvt"/>
+
+	<!-- Set modalBoxCmp attributes -->
+    <aura:set attribute="title" value="Ajouter une entreprise"/>
+
+	<!-- footer -->
+	<aura:set attribute="footerButtons">
+
+		<lightning:button variant="neutral" label="Annuler" onclick="{!c.hideModal}"/>
+		<lightning:button variant="brand" label="Ajouter" disabled="{!!v.isComplete}" onclick="{!c.save}"/>
+
+    </aura:set>
+
+	<!-- body -->
+	 <lightning:input type="text" label="Nom de l'entreprise"  required="true"  name="name" class="slds-p-horizontal_small" value="{!v.company.name}" onchange="{!c.validate}"/>
+
+	<lightning:layout horizontalAlign="spread"  multipleRows="true">
+        <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+       
+             <lightning:select name="type" label="Type d'entreprise"  onchange="{!c.validate}" required="true" value="{!v.company.cieType}">
+		        <option value="">- Sélectionner une valeur -</option>
+		        <option value="PME">PME</option>
+		        <option value="Coopérative">Coopérative</option>
+		        <option value="Société ouverte">Société ouverte</option>
+		        <option value="Grande entreprise">Grande entreprise</option>
+		    </lightning:select>
+        </lightning:layoutItem>
+
+        <aura:if isTrue="{!v.companyType=='executif'}">
+	        <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+	       
+	             <lightning:select name="type" label="Stade"  value="{!v.company.stade}">
+			        <option value="">- Sélectionner une valeur -</option>
+			        <option value="Démarrage">Démarrage</option>
+			        <option value="Croissance">Croissance</option>
+			        <option value="Financement - Recherche de capitaux">Financement - Recherche de capitaux</option>
+			        <option value="Préparation de l'appel public à l'épargne">Préparation de l'appel public à l'épargne</option>
+			        <option value="Vente - Acquisition">Vente - Acquisition</option>
+			    </lightning:select>
+	        </lightning:layoutItem>
+	    </aura:if>
+
+        <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+           
+            <lightning:select name="secteur" label="Secteur"  required="true"  value="{!v.company.secteur}"  onchange="{!c.validate}">
+		        <option value="">- Sélectionner une valeur -</option>
+		        <option value="Administration publique">Administration publique</option>
+		        <option value="Aérospatial">Aérospatial</option>
+		        <option value="Agriculture et agroalimentaire">Agriculture et agroalimentaire</option>
+		        <option value="Arts, culture et loisirs">Arts, culture et loisirs</option>
+		        <option value="Associatif (OBNL, Ordres professionnels, fondations)">Associatif (OBNL, Ordres professionnels, fondations)</option>
+		        <option value="Assurances">Assurances</option>
+		        <option value="Biotechnologies">Biotechnologies</option>
+		        <option value="Commerce de détail / Réseaux de distribution">Commerce de détail / Réseaux de distribution</option>
+		        <option value="Construction">Construction</option>
+		        <option value="Distribution">Distribution</option>
+		        <option value="Édition et impression">Édition et impression</option>
+		        <option value="Éducation">Éducation</option>
+		        <option value="Énergie (pétrole, gaz, électricité)">Énergie (pétrole, gaz, électricité)</option>
+		        <option value="Environnement">Environnement</option>
+		        <option value="Foresterie">Foresterie</option>
+		        <option value="Immobilier">Immobilier</option>
+		        <option value="International">International</option>
+		        <option value="Manufacturier et fabrication">Manufacturier et fabrication</option>
+		        <option value="Médias et divertissements">Médias et divertissements</option>
+		        <option value="Mines et métaux">Mines et métaux</option>
+		        <option value="Municipal">Municipal</option>
+		        <option value="Pharmaceutique / Médical">Pharmaceutique / Médical</option>
+		        <option value="Produits et services financiers">Produits et services financiers</option>
+		        <option value="Santé et services sociaux">Santé et services sociaux</option>
+		        <option value="Services publics">Services publics</option>
+		        <option value="Technologie de l'information">Technologie de l'information</option>
+                <option value="Télécommunications">Télécommunications</option>
+                <option value="Tourisme et hôtellerie">Tourisme et hôtellerie</option>
+		        <option value="Transport">Transport</option>
+		        <option value="Autres">Autres, préciser:</option>
+		    </lightning:select>
+		    <aura:if isTrue="{!v.company.secteur=='Autres'}">
+		 	   <lightning:input type="text" label=" " name="endYear" value="{!v.company.secteurOther}"/>
+         	</aura:if>
+         </lightning:layoutItem>
+         <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+           
+            <lightning:select name="revenue" label="Chiffre d'affaires"  required="true"  value="{!v.company.revenue}"  onchange="{!c.validate}">
+		        <option value="">- Sélectionner une valeur -</option>
+		        <option value="Inférieur à 10 M$">Inférieur à 10 M$</option>
+		        <option value="Entre 10 M$ et 25 M$">Entre 10 M$ et 25 M$</option>
+		        <option value="Entre 25 M$ et 50 M$">Entre 25 M$ et 50 M$</option>
+		        <option value="Entre 50 M$ et 100 M$">Entre 50 M$ et 100 M$</option>
+		        <option value="Entre 100 M$ et 250 M$">Entre 100 M$ et 250 M$</option>
+		        <option value="Supérieur à 250 M$">Supérieur à 250 M$</option>
+		    </lightning:select>
+        </lightning:layoutItem>
+
+       
+        <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+      		
+      		 <aura:if isTrue="{!v.companyType=='primary'}">
+	             <lightning:select name="fonction" label="Fonction"  required="true"  value="{!v.company.fonction}"  onchange="{!c.validate}">
+			        <option value="">- Sélectionner une valeur -</option>
+			        <option value="Administrateur">Administrateur</option>
+			        <option value="Administrateur et membre de comité">Administrateur et membre de comité</option>
+			        <option value="Président de CA">Président de CA</option>
+			        <option value="Président du comité d'audit">Président du comité d'audit</option>
+			        <option value="Président du comité de gouvernance">Président du comité de gouvernance</option>
+			        <option value="Président du comité RH">Président du comité RH</option>
+			        <option value="Président d'un comité d'investissement">Président d'un comité d'investissement</option>
+			        <option value="Membre du comité consultatif">Membre du comité consultatif</option>
+			    </lightning:select>
+		     	<aura:set attribute="else">
+        	 		<lightning:input type="text" label="Fonction" name="fonction" value="{!v.company.fonction}"/>
+        	 	</aura:set>
+
+    		</aura:if>
+        </lightning:layoutItem>
+
+
+
+         <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+            <lightning:input type="number" label="Année début"  required="true" name="startYear" value="{!v.company.startYear}"  onchange="{!c.validate}"/>
+            
+        </lightning:layoutItem>
+         <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+            <lightning:input type="number" label="Année fin (le cas échéant)" name="endYear" value="{!v.company.endYear}"/>
+            
+        </lightning:layoutItem>
+    </lightning:layout>
+
+
+</aura:component>

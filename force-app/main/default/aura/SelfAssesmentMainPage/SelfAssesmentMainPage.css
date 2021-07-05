@@ -1,0 +1,38 @@
+.THIS .leftbox { 
+     margin-left: 600px; 
+}
+.THIS .vl {
+  	border-top: 6px solid grey;
+    width: 50%;
+    position: absolute;
+    margin-left:25%;
+}
+.THIS .box {
+    margin-left: 200px;
+    margin-top: 300px;
+	width: 600px; 
+    height: 600px; 
+    Background-color: #2874A6;/* Your Color */ 
+
+}
+.THIS .introClass{
+    font-size:16px;margin-top:2%;
+    margin-right: 1%;
+}
+.THIS .buttonClass{
+    width: 140%;
+    height: 60px;
+}
+.THIS .labelClass{
+    font-size: 40px;
+}
+@media screen and (min-width: 700px) {
+  .THIS .marginlogo {
+    margin-left: 33%;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .THIS .marginlogo {
+    margin-left: 40%;
+  }
+}

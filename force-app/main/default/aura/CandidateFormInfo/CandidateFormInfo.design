@@ -1,0 +1,7 @@
+<design:component >
+	<design:attribute name="title" label="Title" description="Title of the section" />    
+    <design:attribute name="lastNameLabel" label="Last Name label"/>
+    <design:attribute name="firstNameLabel" label="First Name label" />
+    <design:attribute name="emailLabel" label="Email label"/>
+    <design:attribute name="phoneLabel" label="Phone label"/>
+</design:component>

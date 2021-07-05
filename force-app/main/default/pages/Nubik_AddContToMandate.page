@@ -1,0 +1,44 @@
+<!--  -->
+<apex:page standardController="Mandate__c" tabStyle="Mandate__c"
+    extensions="Nubik_MandateAddContToMandate">
+
+    <apex:form >
+        <apex:pageBlock id="theblock" title="Add Candidates to Assignment">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!CreateApps}" rerender="theblock" onclick="this.onclick=function(){return false;}" />
+                <apex:commandButton value="Back" action="{!back}" immediate="true"/>
+            </apex:pageBlockButtons>
+            <apex:pageMessages />
+            <apex:pageBlockSection >
+                <apex:inputField value="{!AppToSelectMandate.Mandate__c}" />
+            </apex:pageBlockSection>
+            <apex:commandButton value="Select All" action="{!SelectAll}"
+                rerender="theblock" />
+            <apex:commandButton value="Deselect All" action="{!DeselectAll}"
+                rerender="theblock" />
+
+            <apex:pageBlockTable value="{!Contacts}" var="c" id="table">
+
+                <apex:column >
+
+                    <!-- This is our selected Boolean property in our wrapper class -->
+                    <apex:inputCheckbox value="{!c.selected}" />
+                </apex:column>
+                <!-- This is how we access the contact values within our cContact container/wrapper -->
+                <apex:column headerValue="Name">
+                    <apex:outputLink value="/{!c.con.Id}" target="_blank">{!c.con.Name}</apex:outputLink>            
+               </apex:column>        
+               <apex:column value="{!c.con.Title}"/>
+               <apex:column value="{!c.con.Account.Name}"/>
+               <apex:column value="{!c.con.Phone}"/>
+               <apex:column value="{!c.con.Email}"/>  
+            </apex:pageBlockTable>
+
+
+
+        </apex:pageBlock>
+    </apex:form>
+
+
+
+</apex:page>

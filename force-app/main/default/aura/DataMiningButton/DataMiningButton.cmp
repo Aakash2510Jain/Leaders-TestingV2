@@ -1,0 +1,16 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    
+    <br/>
+    <lightning:button class="slds-button myBtn"   variant="brand" label="Search People"  title="New People" onclick="{!c.gotoSearchPeople}"></lightning:button>  
+    <br/>
+    <br/>
+    <lightning:button class="slds-button myBtn" variant="brand" label="Search Company" title="New Company" onclick="{!c.gotoSearchCompany}" ></lightning:button>  
+    <br/>
+    <br/>
+    <lightning:button class="slds-button myBtn" variant="brand" label="Search Assignment" title="New Assigment" onclick="{!c.gotoSearchAssignment}"></lightning:button>  
+    <br/>
+    <br/>
+    
+    
+    
+</aura:component>

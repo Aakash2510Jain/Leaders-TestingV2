@@ -1,0 +1,47 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="addFileComponentController" >
+<!-- 'parentId' Aura Attribute for store the Id for Parent Record where we are attach our file -->  
+   <aura:attribute name="parentId" type="String" />
+    
+    <aura:attribute name="recordId" type="String" />
+ <!-- 'showLoadingSpinner' attribute for show/hide the uploading image and msg in aura:if-->
+   <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+ <!-- 'fileName' attribute for display the selected file name -->  
+   <aura:attribute name="fileName" type="String" default="No File Selected.." />
+ <!-- Lightning Input with file type and on file change call the 'handleFilesChange' controller --> 
+  
+    
+     <aura:attribute name="selectedType" type="String" />
+     <aura:attribute name="selectedLanguage" type="String"/>
+     <aura:attribute name="FirstName" type="String"></aura:attribute>
+     <aura:attribute name="LastName" type="String"></aura:attribute>
+     <aura:attribute name="setLanguage" type="String"></aura:attribute>
+    
+    
+    <lightning:select aura:id="selectType" name="select1" label="Select File Type" onchange="{!c.handleSelectValue}" required="true" value="CV">
+        <option value="CV">CV</option>
+        <option value="Psy Test">Psy Test</option>
+        <option value="Other Files">Other Files</option>
+    </lightning:select> 
+        
+    <lightning:select aura:id="selectLanguage" name="select2" label="Language" onchange="{!c.handleSelectLanguage}" Value="English" >
+        
+        <option value="English">English</option>
+        <option value="French">French</option>
+        <option value="Other Language">Other Language</option>
+    </lightning:select>   
+    
+    
+   <lightning:input aura:id="fileId" onchange="{!c.handleFilesChange}" type="file" name="file" label="Upload Attachment" multiple="false"/>
+   <div class="slds-text-body_small slds-text-color_error">{!v.fileName} </div>
+ 
+ <!--use aura:if for show-hide the loading spinner image--> 
+   <aura:if isTrue="{!v.showLoadingSpinner}">
+      <div class="slds-text-body_small slds-text-color_error">Uploading... 
+         <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>'
+      </div>
+   </aura:if>
+   
+ <br/>
+ 
+   <button class="slds-button slds-button_brand" onclick="{!c.doSave}">Upload Attachment</button>	
+</aura:component>

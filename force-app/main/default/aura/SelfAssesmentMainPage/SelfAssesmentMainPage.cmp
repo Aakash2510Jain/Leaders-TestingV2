@@ -1,0 +1,46 @@
+<aura:component implements="force:appHostable" controller="updateSelfAssessmentCtrl">
+    
+    <aura:attribute name="self_Ass_Content" type= "string" />
+    <aura:attribute name="Language" type= "string" />
+    <aura:attribute name="showMainPage" 							type="Boolean" default = "true"/>
+    <aura:attribute name="recordId" 							type="String"  />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    
+    <span style="">
+        <div class=""> 
+            <header> 
+                <div class = "marginlogo">
+                    <img src="{!$Resource.LeadersIcon}" style = "margin-top:2%"/>
+                </div>
+            </header> 
+        </div> 
+        <br/>
+        <div class="vl">
+        </div>
+        
+    </span>
+    
+    <span>
+        <p class="introClass" style = "margin-left:16%;margin-right:16%;text-align: justify">
+            <aura:unescapedHtml value="{!v.self_Ass_Content}" />
+        </p>
+        <br/>
+        <br/>
+        
+    </span>
+    <br/>
+    <div class="slds-size_1-of-2" style = "margin-left:15%">
+        
+        <aura:if isTrue="{!v.Language == 'English'}">
+            <lightning:button variant="brand" onclick = "{!c.showSelfAss }" class="buttonClass">
+             <label class="labelClass" >Start Your Self-Assessment</label>
+            </lightning:button>
+            <aura:set attribute ="else">
+                <lightning:button variant="brand"   onclick = "{!c.showSelfAss }" class="buttonClass">
+                <label class="labelClass" >Démarrer votre auto-évaluation</label>
+                </lightning:button>
+            </aura:set>
+        </aura:if>
+    </div>
+</aura:component>

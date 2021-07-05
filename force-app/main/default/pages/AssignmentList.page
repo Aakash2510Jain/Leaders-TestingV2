@@ -1,0 +1,202 @@
+<apex:page controller="AssignmentListCtrl" tabstyle="Mandate__c">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+
+    <script type="text/javascript">  
+    
+        $vfjq = jQuery.noConflict();    
+        
+        function getNewAssignmentList(){
+            reloadList($vfjq('.viewType').val());
+        }
+        
+    </script>
+    
+    <style>
+    
+        .cHeader{
+            text-align:center;
+        }
+    
+    </style>
+
+    <apex:form >
+    
+        <br/>
+        <strong><apex:outputLabel value="View: " /></strong>
+        <apex:selectList label="View:" value="{!selectedView}" multiselect="false" size="1" styleClass="viewType" onchange="getNewAssignmentList()">
+               <apex:selectOptions value="{!listViewType}" />
+        </apex:selectList>
+        <br/><br/>
+        
+        
+        <apex:actionFunction name="reloadList" action="{!ViewData}" immediate="true" reRender="assignmentTable">
+            <apex:param name="param" assignTo="{!selectedView}" value="{!selectedView}"/>
+        </apex:actionFunction>
+        
+        <apex:pageBlock title="Assignments" id="assignmentTable">
+        
+            <apex:outputText value="No records to display" rendered="{!(assigmentList.size == 0)}"></apex:outputText>
+            <apex:pageblocktable value="{!assigmentList}" var="a"  rendered="{!(assigmentList.size != 0)}">
+            
+                                
+                <apex:column >
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Company {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Company__r.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                    <apex:outputLink value="/{!a.Company__c}">{!a.Company__r.Name}</apex:outputLink>
+                </apex:column>
+            
+                <apex:column >
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Assignment Title {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                    <apex:outputLink value="/apex/AssignmentCandidates?id={!a.Id}">{!a.Name}</apex:outputLink>
+                </apex:column>
+            
+                <!--  C109851
+                
+                <apex:column >
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Company Name French {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Company_Name_French__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <apex:outputText value="{!a.Company_Name_French__c}" />     
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Job Level {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Level__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <apex:outputText value="{!a.Level__c}" />     
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Job Function {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Job_Function__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <apex:outputText value="{!a.Job_Function__c}" />     
+                </apex:column>
+                
+                -->
+                
+                <apex:column >
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Status {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Assignment_Status__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <apex:outputText value="{!a.Assignment_Status__c}" />     
+                </apex:column>
+                
+                <apex:column headerClass="cHeader">
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Days {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="number_of_days__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <div style="text-align:center;">
+                        <apex:outputText value="{!a.number_of_days__c}" />   
+                     </div>  
+                </apex:column>
+                
+                <apex:column headerClass="cHeader">
+                    <apex:facet name="header">
+                       <apex:outputtext value="Job Description" />                   
+                     </apex:facet>
+                     <div style="text-align:center;">
+                        <apex:image value="/img/msg_icons/confirm16.png" rendered="{!a.Has_Job_Description__c}"/>  
+                        <apex:image value="{!URLFOR($Resource.error,'')}" rendered="{!NOT(a.Has_Job_Description__c)}"/>
+                     </div>
+                </apex:column>
+                
+                <apex:column headerClass="cHeader">
+                    <apex:facet name="header">
+                       <apex:outputtext value="Research Strategy" />                   
+                     </apex:facet>
+                     <div style="text-align:center;">
+                        <apex:image value="/img/msg_icons/confirm16.png" rendered="{!a.Has_Research_Strategy__c}"/>  
+                        <apex:image value="{!URLFOR($Resource.error,'')}" rendered="{!NOT(a.Has_Research_Strategy__c)}"/>
+                     </div>
+                </apex:column>
+                
+                <apex:column headerClass="cHeader">
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Candidates {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Number_of_candidates__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <div style="text-align:center;">
+                        <apex:outputText value="{!a.Number_of_candidates__c}" />   
+                     </div>  
+                </apex:column>
+                
+                <apex:column headerClass="cHeader">
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Potentials {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Number_of_potential_candidates__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <div style="text-align:center;">
+                        <apex:outputText value="{!a.Number_of_potential_candidates__c}" />  
+                     </div>
+                </apex:column>
+                
+                <apex:column headerClass="cHeader">
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Internal Interviews {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Leaders_interviews__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <div style="text-align:center;">
+                        <apex:outputText value="{!a.Leaders_interviews__c}" />  
+                     </div>
+                </apex:column>
+                
+                <apex:column headerClass="cHeader">
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Client Interviews  {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Client_interviews__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <div style="text-align:center;">
+                        <apex:outputText value="{!a.Client_interviews__c}" />  
+                     </div>
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Partner 1 {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Partner__r.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <apex:outputText value="{!a.Partner__r.Name}" />     
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Research 1 {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Consultant__r.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <apex:outputText value="{!a.Consultant__r.Name}" />     
+                </apex:column>                                  
+                
+            </apex:pageblocktable>
+            
+        </apex:pageBlock>
+        
+        
+    </apex:form>
+    
+
+</apex:page>

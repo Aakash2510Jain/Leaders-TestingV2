@@ -1,0 +1,287 @@
+<apex:page standardController="Contact" extensions="NewPeopleController" lightningStylesheets="true">
+    
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.js"/>
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js"/>
+    <apex:stylesheet value="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/jquery-ui.css"/>
+    
+    
+    <script>
+        
+    $j = jQuery.noConflict();
+        $j(document).ready(function() {
+            $j("#configAccountModal").dialog({ autoOpen: false, modal: true, position: 'center',
+                                        height: 550,
+                                        width: 850 });
+            
+          
+           
+         });
+        function validateNewAccount() {
+           
+            if ($j("[id$='j_id0:modalContactForm:block:j_id49:name']").val()=='' || $j("[id$='j_id0:modalContactForm:block:j_id49:j_id56']").val()==''){
+                 alert('Please fill in all mandatory fields');
+                
+              
+            } else {
+                closeAccountModal();
+            }
+           
+        }
+    </script>
+    
+    <style>
+        .customLookup .lookupIcon {
+        display:none !important;
+        }
+        
+        .lookupIconCustom {
+            background-image: url(/img/func_icons/util/lookup20.gif);
+            background-position: 0 0;
+            width: 20px;
+            height: 20px;
+            background-position: top left;
+            margin-right: .25em;
+            background-repeat: no-repeat;
+        }
+        
+        .lookupIconCustom:hover {
+            cursor: pointer;
+        }
+        
+        .btnCustom {
+            text-decoration: none;
+            font-size:1em !important;
+            padding: 4px 3px !important;
+        }
+        
+        .btnCustom:hover{
+            text-decoration: none;
+      
+        }
+        
+        .modal {
+            min-width: 800px;
+        }
+        
+        .errorMessage {
+                padding: 12px;
+                background: rgba(255, 245, 87, 0.39);
+                border: 1px solid;
+                border-radius: 4px;
+                margin-bottom: 8px;
+        } 
+     
+    </style>
+    
+    <apex:sectionHeader title="Contact Edit" subtitle="New People"/>
+    
+    <p>
+        People not associated with companies are private and cannot be viewed by other users or included in reports.
+    </p> 
+    
+    <apex:outputPanel styleClass="errorMessage" layout="block" rendered="{!contactAlreadyExist}">
+        <apex:form >
+         <!--   This contact already exist. Would you like to save it anyway? <apex:commandButton action="{!saveDuplicateContact}" value="Yes" onclick="return validateNewContact()" /> <apex:commandButton action="{!cancelDuplicateContact}" value="No" /> -->
+            This contact already exist. Would you like to save it anyway? <apex:commandButton action="{!saveDuplicateContact}" value="Yes" onclick="this.onclick=function(){return false;}" /> <apex:commandButton action="{!cancelDuplicateContact}" value="No" />
+        </apex:form>        
+    </apex:outputPanel>
+     
+    <apex:form >
+        <apex:pageBlock id="block" title="People Edit">
+            <apex:pageBlockButtons location="bottom" rendered="{!not(contactAlreadyExist)}"> 
+                <!--   <apex:commandButton action="{!saveContact}" value="Save" onclick="return validateNewContact()" /> -->
+                <apex:commandButton action="{!saveContact}" value="Save" onclick="this.onclick=function(){return false;}" />
+                <apex:commandButton action="{!cancelContact}" immediate="true" value="Cancel" oncomplete="closeModal()" reRender="modalForm" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="2">
+                <apex:inputField id="firstName" value="{!contact.FirstName}" required="true"/>
+                <apex:inputField id="lastName" value="{!contact.LastName}" required="true"/>
+                
+                <apex:inputField value="{!contact.Title}"/>
+                <apex:inputField value="{!contact.Title_FR__c}"/>
+                
+                <th class="labelCol vfLabelColTextWrap " scope="row"><label >Company Name</label></th>
+                <apex:outputPanel id="cieName" layout="block">
+                    
+                    <table>
+                         
+                        <tr>
+                            
+                        <!--    <td class=" customLookup">
+                                 <apex:inputField id="accountId" value="{!contact.AccountId}" required="true"/>
+               
+                                
+                            </td> -->
+                            <td>
+                            <apex:inputField id="accountId" value="{!contact.AccountId}" required="true"/>
+                            </td>
+                          <!--  <td class="">
+                                
+                                <div onclick="openAccountModal()" class="lookupIconCustom"/>
+                                
+                            </td>-->
+                            
+                        </tr>
+                        
+                    </table>
+                    
+                    
+                </apex:outputPanel>
+                
+                <apex:inputField id="functionalArea" value="{!contact.Functional_Area_1__c }" required="true"/>
+                
+                
+                 <apex:inputField value="{!contact.MailingStreet}"/>
+                                <apex:inputField value="{!contact.MailingCity}"/> 
+                                
+                                <apex:inputField value="{!contact.MailingCountryCode}"/>
+                                <apex:inputField value="{!contact.MailingStateCode}"/>
+                                
+                                <apex:inputField value="{!contact.MailingPostalCode}"/>
+                                <apex:inputField value="{!contact.Job_Level__c}"/>
+                                <apex:outputPanel ></apex:outputPanel>
+                                <apex:inputField value="{!contact.Phone}"/>
+                                <apex:inputField value="{!contact.Email}"/>
+                                <apex:inputField value="{!contact.MobilePhone}"/>
+                                <apex:inputField value="{!contact.LinkedIn_URL__c}"/>
+                             <!--   <apex:inputField value="{!Contact.Origin__c}" />   -->                
+
+                
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+        
+         <apex:actionFunction action="{!setSearchQueryAccount}" name="initSearchQueryAccount" rerender="modalContactForm" immediate="true" oncomplete="showContactResult()">
+            <apex:param name="accountName" assignTo="{!searchQueryAccount}" value="" />
+        </apex:actionFunction>
+        
+    </apex:form>
+    
+    
+      <div class="modal" id="configAccountModal" title="Lookup">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                
+                <div class="modal-body">
+                    
+                    
+                    <apex:form id="modalContactForm">
+                        <apex:inputText value="{!searchQueryAccount}"/> <apex:commandButton action="{!searchAccount}" reRender="modalContactForm" value="Go" oncomplete="showAccountResult()"/> <apex:commandButton action="{!newAccount}"  immediate="true" reRender="modalContactForm" value="New"/>
+                          
+                        <div id="searchAccountResult">
+                            <apex:outputPanel rendered="{!state=='searchAccount'}">
+                                <apex:outputPanel layout="block" rendered="{!accountResults.size=0}"><b>No entry found in database.</b></apex:outputPanel>
+                                <apex:pageBlock id="blockTable" rendered="{!accountResults.size>0}" title="Company">
+                                    <apex:pageblockTable value="{!accountResults}" var="acc">
+                                        <apex:column headerValue="Name">
+                                            <apex:commandLink value="{!acc.Name}" action="{!selectAccount}" reRender="cieName,form" oncomplete="closeAccountModal()">
+                                                <apex:param name="contIdParam" value="{!acc.Id}" assignTo="{!accountSelected}"/>
+                                            </apex:commandLink> 
+                                        </apex:column>
+                                        <apex:column headerValue="Company Name" value="{!acc.Name}"/>
+                                    </apex:pageblockTable>
+                                </apex:pageBlock>
+                                
+                            </apex:outputPanel>  
+                        </div>
+                        
+                        <apex:pageBlock id="block" title="New Company" rendered="{!state=='newAccount'}">
+                            <apex:pageBlockButtons location="bottom"> 
+                                <apex:commandLink styleClass="btn btnCustom" action="{!saveAccount}" value="Save" oncomplete="validateNewAccount()" reRender="cieName,form" />
+                                <apex:commandButton action="{!cancelaccount}" immediate="true" value="Cancel" oncomplete="closeAccountModal()" reRender="cieName" />
+                            </apex:pageBlockButtons>
+                            <apex:pageBlockSection columns="2">
+                                <apex:inputField id="name" value="{!account.Name}" required="true"/>
+                                <apex:inputField value="{!account.Phone}"/>
+                                
+                                <apex:inputField value="{!account.BillingStreet}"/>
+                                <apex:inputField value="{!account.BillingCity}"/> 
+                                
+                                <apex:inputField value="{!account.BillingCountryCode}"/>
+                                <apex:inputField value="{!account.BillingStateCode}"/>
+                                
+                                <apex:inputField value="{!account.BillingPostalCode}"/>
+                                <apex:inputField value="{!account.Industry_Types__c}" required="true"/>
+
+                                <apex:outputPanel ></apex:outputPanel>
+                                
+                                
+                                
+                                
+                            </apex:pageBlockSection>
+                        
+                        </apex:pageBlock>
+                     </apex:form> 
+                    
+                </div>
+                
+            </div>
+            
+         </div>
+            
+        </div>
+    <apex:outputPanel >
+        <apex:pageBlock >
+        <apex:pageBlockTable value="{!contactResults}" var="c"  rendered="{!(contactResults.size != 0)}" styleClass="table">
+            
+            <apex:column headerValue="Name" >
+            <!--    <apex:facet name=" Header">
+                      
+                       <apex:outputText value="Name"></apex:outputText> 
+                </apex:facet>  -->  
+                      <apex:outputLink value="/{!c.Id}">{!c.Name}</apex:outputLink>
+                             
+            </apex:column>
+            
+            <apex:column headerValue="Title" >
+                <apex:facet name=" Header">
+                       <apex:outputLabel value="Title"></apex:outputLabel> 
+                </apex:facet>  
+                
+                      
+                      <apex:outputText >{!c.Title}</apex:outputText>
+                             
+            </apex:column>
+            
+            
+            
+            <apex:column headerValue="Company Name" >
+                <apex:facet name=" Header">
+                       <apex:outputLabel value="Company Name"></apex:outputLabel> 
+                </apex:facet>  
+                
+                      
+                      <apex:outputLink value="/{!c.AccountId}">{!c.Account.Name}</apex:outputLink>
+                             
+            </apex:column>
+        
+        </apex:pageBlockTable>
+    
+    
+    </apex:pageBlock>
+    
+    </apex:outputPanel>
+
+    
+    
+    
+    
+    
+    <script>
+
+    
+          function openAccountModal() {
+             
+             $j("#configAccountModal").dialog("open");
+              var value = document.getElementsByName('j_id0:j_id12:block:j_id16:accountId')[0].value;
+            
+            initSearchQueryAccount(value);
+            $j('#searchAccountResult').hide();
+        }
+    
+        function closeAccountModal() {
+             $j("#configAccountModal").dialog("close");
+        }
+
+    </script>   
+</apex:page>

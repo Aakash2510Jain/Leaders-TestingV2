@@ -1,0 +1,4 @@
+<aura:component >
+    <aura:attribute name="displayTemplates" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="recordId" type="string" ></aura:attribute>
+</aura:component>

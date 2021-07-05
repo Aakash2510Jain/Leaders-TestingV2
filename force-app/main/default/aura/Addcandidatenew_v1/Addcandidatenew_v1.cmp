@@ -1,0 +1,24 @@
+<aura:component controller="addcan_v1" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    
+    <aura:attribute name="FirstName" type="String" />
+    <aura:attribute name="LastName" type="String" />
+    <aura:attribute name="ContactList" type="Contact[]" />
+    
+    <header class="slds-modal__header">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Candidate</h2>
+    </header>
+    
+    FirstName :
+    <lightning:input type="text" id="Fname" placeholder="First Name" required="" class="slds-input" value="{!v.FirstName}" />
+    
+    LastName :
+    <lightning:input type="text" id="Lname" placeholder="LAST NAME" required="" class="slds-input" value="{!v.LastName}"/>
+    
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <lightning:button variant="brand" label="Save" title="SAVE" onclick="{!c.GetValues}" />
+    
+    
+</aura:component>

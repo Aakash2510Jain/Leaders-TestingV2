@@ -1,0 +1,48 @@
+<aura:component extensible="true">
+	
+	<aura:attribute name="cssStyle" type="String"/>
+	<aura:attribute name="title" type="String"/>
+	<aura:attribute name="modaldialog" type="String"/>
+	<aura:attribute name="backdrop" type="String"/>
+	<aura:attribute name="footerButtons" type="Aura.Component[]"/>
+
+    <style>
+        {!v.cssStyle}
+    </style>
+    
+    <section role="dialog" class="{!'slds-modal slds-fade-in-hide '+v.modaldialog}">
+    <div class="slds-modal__container ">
+      <header class="slds-modal__header">
+          
+        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="{!c.hideModal}">
+          <lightning:icon class="slds-m-right_x-small" iconName="utility:close" size="small"  variant="bare"/>          
+        </button>
+        
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.title}</h2>
+        
+      </header>
+      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+
+      	{!v.body}
+      	
+      </div>
+      <footer class="slds-modal__footer slds-grid">
+      	<aura:iteration items="{!v.footerButtons}" var="button" indexVar="index">
+	        
+          <aura:if isTrue="{!index==0}">
+            <div class="slds-col_bump-left ">{!button}</div>
+
+            <aura:set attribute="else">
+               <div class="slds-m-left_small">{!button}</div>
+            </aura:set>
+
+          </aura:if>
+
+	    </aura:iteration>
+      </footer>
+    </div>
+  </section>
+  <div class="{!'slds-backdrop slds-backdrop--hide '+v.backdrop}"/>
+
+
+</aura:component>

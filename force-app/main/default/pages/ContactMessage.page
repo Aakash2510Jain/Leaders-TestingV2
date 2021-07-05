@@ -1,0 +1,16 @@
+<apex:page standardController="Contact" extensions="ContactMessageCtrl" action="{!init}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+        
+    <script>
+        $vfjq = jQuery.noConflict();
+        $vfjq(document).ready(function(){                      
+            $vfjq("[id$='messageId']").children().css( "background-color", "#FFF0F0" );
+            $vfjq("[id$='messageIdd']").children().css( "background-color", "#FFF0F0" );
+        }); 
+    </script>
+    <!--   <apex:pageMessage id="messageId" rendered="{!showMessage}" summary="Contact Off-Limit" severity="error" strength="2" /> -->
+    
+     <apex:pageMessage id="messageIdd" rendered="{!showMessageContact}" summary="Contact Off-Limit" severity="error" strength="2" /> 
+     <!--      <apex:pageMessage id="messageIdcontact" rendered="{!showMessageContact}" summary="Contact Off-Limit" severity="error" strength="2" /> -->
+</apex:page>

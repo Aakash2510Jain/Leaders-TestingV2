@@ -1,0 +1,101 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" Controller="peoplePageButtonsController">
+    <!-- Attributes -->
+    <aura:attribute name="recordId" type="string" />
+    <aura:attribute name="modalHeader" type="string" default="Self Assessment" />
+    
+    <aura:attribute name="attachmentId" type="string" />
+    <aura:attribute name="displayCV" type="Boolean" default="false" />
+    
+    <aura:attribute name="canWrapList" type="peoplePageButtonsController.CanidateDetailsWrapper[]" />
+    <aura:attribute name="displayCandidateSelfAssessment" type="boolean" default="false" />
+    <!-- Methods -->
+    <aura:handler name="init" value="{!this}" action="{!c.fetchCanWrap}"/>
+    
+    
+    <!-- Component Content -->
+    
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Candidate List - Assignment Wise</h2>
+                </header>
+            </header>
+            <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="Candidate Assigned">Candidate Assigned</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="Candidate Assigned">Candidate Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="Assignment">Assignment Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="Client Company">Client Company</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="View Assesment">View Assessment</div>
+                        </th>     
+                         <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="Self Assesment Date">Date</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.canWrapList}" var="canWrap" >
+                        
+                        <tr class="slds-hint-parent">
+                            <td>
+                                <div class="slds-truncate slds-cell-wrap" title="{!canWrap.candidateRec.Name}">{!canWrap.candidateRec.Name}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate slds-cell-wrap" title="{!canWrap.contactName}">{!canWrap.contactName}</div>
+                            </td>
+                            
+                            
+                            <td>
+                                <div class="slds-truncate slds-cell-wrap" title="{!canWrap.mandateName}">{!canWrap.mandateName}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate slds-cell-wrap" title="{!canWrap.companyName}">{!canWrap.companyName}</div>
+                            </td>
+                            
+                            <td>
+                                <aura:if isTrue="{!canWrap.attId !=''}">
+                                    <lightning:button variant="brand" label="View Assessment" title="New" onclick="{!c.openViewAssessment}" value="{!canWrap.attId}"></lightning:button> 
+                                    <aura:set attribute="else">
+                                        No Assessment
+                                    </aura:set>
+                                </aura:if>
+                            </td>
+                            
+                              <td>
+                                <div class="slds-truncate slds-cell-wrap" title="{!canWrap.companyName}">{!canWrap.selfAssDAte}</div>
+                            </td>
+                           
+                            
+                        </tr>
+                    </aura:iteration>   
+                </tbody>
+            </table>
+            <footer class="slds-modal__footer">
+                <lightning:button variant="neutral" 
+                                  label="Cancel"
+                                  title="Cancel"
+                                  onclick="{! c.closeModel }"/>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    <aura:if isTrue="{!v.displayCV}">
+        <c:ViewCV displayCV="{!v.displayCV}" attId="{!v.attachmentId}" modalHeader="{!v.modalHeader}"/>
+    </aura:if>
+</aura:component>

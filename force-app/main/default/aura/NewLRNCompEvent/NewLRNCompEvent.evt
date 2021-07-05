@@ -1,0 +1,8 @@
+<aura:event type="APPLICATION" description="Event template" >
+    
+    <aura:attribute name="candidateId" type="String" ></aura:attribute>
+    
+    
+    <!-- Attribute used by Ankita in Other component newLRNContactCandidates and ContactCandidatesComp -->
+    <aura:attribute name="contactCandidateId" type="String"></aura:attribute> 
+</aura:event>

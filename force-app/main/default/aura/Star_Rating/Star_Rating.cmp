@@ -1,0 +1,41 @@
+<aura:component description="StarRating">
+    <aura:attribute name='value' type='Integer' default='0' />
+    <aura:attribute name='label' type='String' default='' />
+    <aura:attribute name='toExclude' type='boolean' default='' />
+    <aura:attribute name='readonly' type='boolean' default='false' />
+    
+    <ltng:require styles="{!$Resource.fivestar + '/rating.css'}"
+                  scripts="{!$Resource.fivestar + '/rating.js'}"
+                  afterScriptsLoaded="{!c.afterScriptsLoaded}" />
+    
+    <aura:handler name='change' value="{!v.value}" action="{!c.onValueChange}" />
+    
+    <div class="slds-grid slds-gutters">
+        <div class="slds-col slds-size_2-of-6">
+            <span><b> {!v.label}</b></span>
+        </div>
+        <div class="slds-col slds-size_2-of-6">
+            <!--span >
+                Exclude from Radar
+                <ui:inputCheckbox  aura:id="Star" class="myCheckbox border"  change="{!c.selectCoverPage}" value="{!v.toExclude}"></ui:inputCheckbox>
+            </span-->
+        </div>
+        <div class="slds-col slds-size_2-of-6">
+            <span >
+                <ul aura:id='ratingArea' class="{!v.readonly ? 'readonly c-rating' : 'c-rating' }" />
+            </span>
+        </div>
+    </div>
+  
+    <!--div style="width :100%">
+        <div style="width :70%;display:inline;">
+            <b> {!v.label}</b>
+        </div>
+        <div style="width :18%;float:right">
+            <ul aura:id='ratingArea' class="{!v.readonly ? 'readonly c-rating' : 'c-rating' }" />
+        </div>
+    </div-->
+    <br/>
+    <br/>
+    
+</aura:component>

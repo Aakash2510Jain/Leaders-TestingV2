@@ -1,0 +1,28 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+	<aura:attribute name="title" type="String" default="Title" access="global" />
+  <aura:attribute name="item" type="Map" default="{summary:''}" access="global" />
+
+    <div class="form slds-p-bottom_small">
+        <lightning:card >
+            <aura:set attribute="title">
+               {!v.title}
+            </aura:set>
+            
+            <div class="c-container slds-p-horizontal_small">
+               <div class="slds-text-body_regular slds-p-bottom_small">
+                   Pour notre bottin d'administrateurs qualifiés, veuillez écrire, dans l'espace ci-après, un bref sommaire de votre carrière.
+                   <br/>
+                   Informations pertinentes: Niveaux de poste occupé (ex: président, v-p.)
+                   <span style="margin-left:148px"><br/>Types d'organisations (ex: PME, GE)</span>
+                   <br/>
+                   <span style="margin-left:148px">Secteurs d'activités (ex: manufacturier, construction, etc.)</span>
+                </div>
+                
+                <lightning:textarea name="myTextArea" value="{!v.item.summary}" onchange="{!c.updateInput}" label=" " />
+            </div>
+            
+             
+         
+        </lightning:card>
+    </div>
+</aura:component>

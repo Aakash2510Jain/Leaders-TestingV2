@@ -1,0 +1,45 @@
+<apex:page controller="DataDisplayController" renderAs="pdf">
+    
+    <apex:image value="/resource/EnglishAssessmentHeaderPDF" width="100%" rendered="{!isEnglish}"/>
+    <apex:image value="/resource/FrenchAssessmentHeaderPDF" width="100%" rendered="{!!isEnglish}"/>
+    
+    <br/>
+    <apex:form >
+        <apex:pageBlock >
+            <div style="text-align:center;color:#074494;font-size:20px">
+                <b>
+                    {!selfAss}
+                </b>
+            </div>
+            <br/>
+            <div style="margin-left:1%">
+                
+                
+                <table  cellspacing="0" width="100%"> 
+                    <tr> 
+                        <td width="50%"><b> <apex:outputText value="{!candidateName}" escape="false" />  </b>  </td>
+                        <td width="50%"><b>Position: </b> <apex:outputText value="{!assignmentTitle}" escape="false" />    </td>
+                    </tr>
+                    <tr style="margin-left:2%"> 
+                        
+                        <td width="50%"><b>Date: </b> <apex:outputText value="{!selfAssessmentDate}" escape="false" />    </td>
+                        <td width="50%"><b>Company: </b> <apex:outputText value="{!companyName}" escape="false" />    </td>
+                    </tr>
+                    
+                </table><br/>
+            </div>
+            <apex:repeat value="{!keyset}" var="k">
+                <div style="background-color:#074494;padding:5px;">
+                    <b>
+                        <apex:outputText value="{!k}" escape="false" style="color:white;padding-left:1px;padding-top:5px;padding-bottom:5px;"/>
+                    </b> 
+                </div>
+                <div style="margin-left:1%">
+                    <apex:outputText value="{!responseByQuestion[k]}" escape="false"/>
+                </div>
+                <br/>
+            </apex:repeat>
+        </apex:pageBlock>
+        
+    </apex:form>
+</apex:page>

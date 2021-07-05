@@ -1,0 +1,30 @@
+<aura:component >
+    <aura:attribute type="String" name="message" default=""/>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container" style="border-color: red !important">
+            
+            <header class="slds-modal__header" style="border-top: 5px solid red;border-left: 5px solid red;border-right: 5px solid red;">
+                <h1 class="slds-text-heading--medium"><b>Confirmation</b></h1>
+            </header>
+            <!--Modal Box Header End-->
+            
+            <!--Modal Box Content Start-->
+            <div class="slds-modal__content slds-p-around--medium" style="border-left: 5px solid red;border-right: 5px solid red;">
+                <center><b>{!v.message}</b></center>
+            </div>
+            <!--Modal Box Content End-->
+            
+            <!--Modal Box Button Start-->
+            <footer class="slds-modal__footer" style="border-bottom: 5px solid red;border-left: 5px solid red;border-right: 5px solid red;">
+                <lightning:button variant="brand" name='Ok' label='Ok' onclick='{!c.handleConfirmDialogNo}'/>
+                <!--lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.openEditNewLRN}' value /-->
+            </footer>
+            <!--Modal Box Button End-->
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    
+
+    
+    
+</aura:component>

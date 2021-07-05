@@ -1,0 +1,4 @@
+<apex:page >
+<apex:variable var="abc" value="0034P00003EJThzQAH"/>
+    <apex:outputLink value="{!URLFOR($Action.Attachment.Download,'00P4P00001catLD')}" target="_blank">Download</apex:outputLink>
+</apex:page>

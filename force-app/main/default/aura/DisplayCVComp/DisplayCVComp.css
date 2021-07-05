@@ -1,0 +1,33 @@
+.THIS.c-container {
+    border: 1px solid #d8dde6;
+    margin: 10px 0 20px 0;
+}
+.THIS .large {
+    height: 200px;
+}
+
+.THIS .x-large {
+    height: 300px;
+}
+.THIS .custom-box {
+    text-align: center;
+    background-color: #f4f6f9;
+    padding: 1rem;
+    border: 1px solid #d8dde6;
+}
+.THIS .border{
+    border-style: inset;
+}
+.THIS .leftMargin{
+    margin-left: 20px;
+}
+.THIS .resize{
+    max-width:50% !important;
+}
+.THIS.exampleHolder{
+    width: 80px;
+    height: 80px;
+}
+.THIS.width{
+    width: 80px;
+}

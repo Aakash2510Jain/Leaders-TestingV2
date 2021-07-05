@@ -1,0 +1,103 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+	<aura:attribute name="title" type="String" default="Title" access="global" />
+
+    <aura:attribute name="companiesType" type="String" default="primary" access="global" />
+    
+    <aura:attribute name="companies" type="Map[]" default="[]" />
+
+    <aura:handler name="candidateFormCompaniesSaveEvent" 
+                  event="c:CandidateFormCompaniesSaveEvt" 
+                  action="{!c.saveCompany}" 
+                  phase="capture"/> 
+
+    <div class="form slds-p-bottom_small">
+        <lightning:card >
+            <aura:set attribute="title">
+               {!v.title}
+            </aura:set>
+            
+            <aura:set attribute="footer">
+                <div class="slds-align_absolute-center">
+                    <lightning:button label="Ajouter une entreprise" onclick="{!c.addCompany}"/>
+                </div>
+            </aura:set>
+            
+             <div class="c-container slds-p-horizontal_small">
+                <lightning:layout horizontalAlign="spread"  multipleRows="true">
+
+                    <aura:iteration items="{!v.companies}" var="company" indexVar="position">
+                        <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" mediumDeviceSize="6" smallDeviceSize="12">
+
+                            <article class="slds-tile slds-media">
+                                <div class="slds-media__figure">
+                                    <lightning:icon iconName="standard:account" />
+                                    
+                                </div>
+                                <div class="slds-media__body">
+
+                                    <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                        <h3 class="slds-tile__title slds-truncate" title="{!company.name}">{!company.name}</h3>
+
+                                        <div class="slds-shrink-none">
+                                            <lightning:buttonMenu iconName="utility:down" alternativeText="Options" onselect="{! c.handleMenuCompanySelect }" iconSize="x-small" menuAlignment="right">
+                                                <lightning:menuItem label="Modifier" value="{!'edit-'+position}" />
+                                                <lightning:menuItem label="Supprimer" value="{!'delete-'+position}"/>
+                                               
+                                            </lightning:buttonMenu>
+                                          </div>
+                                      </div>
+                                    <div class="slds-tile__detail">
+                                        <dl class="slds-dl_horizontal">
+                                            <dt class="slds-dl_horizontal__label">
+                                                <p class="slds-truncate">Type:</p>
+                                            </dt>
+                                            <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                <p class="slds-truncate" >{!company.cieType}</p>
+                                            </dd>
+                                            <dt class="slds-dl_horizontal__label">
+                                                <p class="slds-truncate" >Secteur:</p>
+                                            </dt>
+                                            <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                <p class="slds-truncate">{!company.secteur}</p>
+                                            </dd>
+                                             <dt class="slds-dl_horizontal__label">
+                                                <p class="slds-truncate">Chiffre d'affaires:</p>
+                                            </dt>
+                                            <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                <p class="slds-truncate" >{!company.revenue}</p>
+                                            </dd>
+                                            <dt class="slds-dl_horizontal__label">
+                                                <p class="slds-truncate" >Fonction:</p>
+                                            </dt>
+                                            <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                <p class="slds-truncate">{!company.fonction}</p>
+                                            </dd>
+                                            <dt class="slds-dl_horizontal__label">
+                                                <p class="slds-truncate" >Période:</p>
+                                            </dt>
+                                            <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                <aura:if isTrue="{!and(company.startYear,company.endYear)}">
+                                                    <p class="slds-truncate">{!company.startYear} -{!company.endYear}</p>
+                                                </aura:if>
+                                                <aura:if isTrue="{!and(company.startYear,!company.endYear)}">
+                                                    <p class="slds-truncate">{!company.startYear} - Aujourd'hui</p>
+                                                </aura:if>
+
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </article>
+                            					
+                        </lightning:layoutItem>
+                    </aura:iteration>
+                    
+                </lightning:layout>
+            </div>
+             
+         
+        </lightning:card>
+    </div>
+
+    <c:CandidateFormCompaniesAdd aura:id="companyModal" companyType="{!v.companiesType}"/>
+</aura:component>

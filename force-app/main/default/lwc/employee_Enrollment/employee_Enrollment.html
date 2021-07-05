@@ -1,0 +1,521 @@
+<template>
+
+    <template if:true={showSecondPage}>
+        <b style="margin-left:36%;font-size: xx-large;">EMPLOYEE REGISTRATION PAGE</b>
+        <br/><br/><br/><br/>
+
+        <div style="margin-left: 12%">
+           <div class="row">
+
+               <div class="column" onclick={regExisting}>
+                   <div style="margin-top: 30%">
+                       <h1 style="font-size: 32px;margin-top: 3%;margin-left: 4%;"><b> EXISTING EMPLOYEE</b></h1>
+                   </div>
+               </div>
+   
+               <div class="column" onclick={regNew}>
+                   <div style="margin-top: 30%;margin-left: 12%;">
+                       <h1 style="font-size: 32px;"><b>NEW EMPLOYEE</b></h1>
+                   </div>
+               </div>
+
+           </div>
+       </div>
+            
+    </template>
+
+    <template if:true={areDetailsVisible}>
+        <br/><br/>
+            <b style="margin-left:40%;font-size: xx-large;">EMPLOYEE REGISTRATION</b>
+            <template if:true={showProgress}>
+                <lightning-progress-indicator current-step="1" type="base" has-error="true" variant="base">
+                    <lightning-progress-step  value="1"></lightning-progress-step>
+                    <lightning-progress-step  value="2"></lightning-progress-step>
+                    <lightning-progress-step  value="3"></lightning-progress-step>
+                    <lightning-progress-step  value="4"></lightning-progress-step>
+                    <lightning-progress-step  value="5"></lightning-progress-step>
+                    <lightning-progress-step  value="6"></lightning-progress-step>
+                    <lightning-progress-step  value="7"></lightning-progress-step>
+                </lightning-progress-indicator>
+            </template>
+            <br/><br/>
+            <div class="slds-m-vertical_medium" style=" margin: 16%;margin-top: 3%;">
+                <lightning-record-form record-id={conId} object-api-name={objectApiName}
+                fields={fields} columns="2" mode="edit" onsubmit={handleSubmit} onsuccess={handleSuccessCon}>
+                </lightning-record-form>
+            </div>
+          <br/><br/>
+    </template>
+
+    <template if:true={existUserData}>
+        <br/><br/>
+        <div class="slds-var-m-vertical_medium">
+            <br/>
+                    <h1 style="margin-left: 5%;margin-top: 1%;font-size: 34px;" onclick={showData} ><b>Registration Id</b></h1>
+
+                    <lightning-input style="width: 35%; margin-left: 5%;" type="text"  onchange={updateRegId} value={regid}></lightning-input>
+                    <div class="row">
+                        <div class="column3" >
+                            <h1 style="margin-left: 38%;margin-top: 1%;font-size: 34px;" onclick={showData} ><b>PROCEED</b></h1>
+                        </div>
+                    </div>
+                    <br/> 
+        </div>
+    </template>
+
+    <template if:true={appView}>
+
+        <b style="margin-left:30%;font-size: xx-large;">YOUR LIST OF APPLICATIONS </b>
+        <lightning-button style="margin-left: 84%;" variant="brand" label="Create New Application" title="Submit" onclick={createApp} class="slds-m-left_x-small"></lightning-button>
+         <br/><br/>
+        <div style="margin: 11%;margin-top: 0%;">
+            <lightning-datatable data={appList} columns={columnForApp} sorted-by={sortBy} sorted-direction={sortDirection} onsort={handleSortdata} key-field="Id" onrowaction={openDocsModal}> 
+            </lightning-datatable>
+        </div>
+                
+    </template>
+    <template if:true={showSpinner}>
+        <div class="exampleHolder">
+            <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+        </div>
+    </template> 
+   <template if:true={areAppsAvailable}>
+        <b style="margin-left:42%;font-size: xx-large;">EMPLOYEE REGISTRATION</b>
+        <template if:true={showProgress}>
+        <lightning-progress-indicator current-step="2" type="base" has-error="true" variant="base">
+            <lightning-progress-step  value="1"></lightning-progress-step>
+            <lightning-progress-step  value="2"></lightning-progress-step>
+            <lightning-progress-step  value="3"></lightning-progress-step>
+            <lightning-progress-step  value="4"></lightning-progress-step>
+            <lightning-progress-step  value="5"></lightning-progress-step>
+            <lightning-progress-step  value="6"></lightning-progress-step>
+            <lightning-progress-step  value="7"></lightning-progress-step>
+        </lightning-progress-indicator>
+        </template>
+        <br/><br/>
+            <div class="row">
+                <div style="float: left;width: 49%;height: 80px;" >
+                <b style="margin-left:50%;font-size: xx-large;">EMPLOYEE APPLICATIONS</b>
+                </div>
+                <div style="float: left;width: 35%;height: 80px;">
+                    <button style="background: rgb(5, 199, 208);margin-left: 61%;overflow: auto;" onclick={openAppModel} class="slds-m-top_small">
+                        <b>CREATE AN APPLICATION</b>
+                    </button>  
+                </div>
+            </div>
+
+            <br/><br/><br/><br/>
+            
+             <template if:true={showWarning}>
+                <b style="margin-left: 45%;font-size: xx-large;margin-top: 12%;">No Applications to show !!!</b>
+             </template>
+    
+             <template if:true={showTable}>
+                <div style="margin: 11%;margin-top: 2%;">
+                    <lightning-datatable data={appList} columns={columnForApp} sorted-by={sortBy} sorted-direction={sortDirection} onsort={handleSortdata} key-field="Id" onrowaction={openDocsModal}> 
+                    </lightning-datatable>
+                </div>
+            </template> 
+    </template>
+
+    
+    <template if:true={isModalDocsViewOpen}>
+        <br/>
+        <div style="margin-left: 6%">                  
+            <div class="col">
+                <div class="slds-card">
+                    <div style="margin:2% ;">
+                    <b> JOB - DESCRIPTION</b>
+                             <div class="slds-m-around_medium">
+                                        <lightning-input type="file" 
+                                        accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+                                        label="Attachment" onchange={openfileUploadApp}></lightning-input>
+                            </div>
+                            <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" onclick={handleClick} class="slds-m-top_small" >
+                                <b>UPLOAD</b>
+                                </button>
+                                <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" title="JOB" onclick={viewAtt} class="slds-m-top_small" >
+                                    <b>VIEW</b>
+                                </button>
+                            <br/><br/>
+                        </div>   
+                </div>
+
+            <div class="slds-card">
+                <div style="margin:2% ;">
+                    <b> RESEARCH-STRATEGY </b>
+                            <div class="slds-m-around_medium">
+                                <lightning-input type="file" 
+                                accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+                                label="Attachment" onchange={openfileUploadApp}></lightning-input>
+                            </div>
+                            <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" onclick={handleClick} class="slds-m-top_small" >
+                                <b>UPLOAD</b>
+                            </button>
+                            <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" title="RESEARCH" onclick={viewAtt} class="slds-m-top_small" >
+                                <b>VIEW</b>
+                            </button>
+                                <br/><br/>
+                </div>
+            </div>
+            </div>
+
+            <div class="col1">     
+                <div class="slds-card">
+                    <div style="margin:2% ;"> 
+                <b> EXECUTIVE - SUMMARY</b>
+                        <div class="slds-m-around_medium">
+                                   <lightning-input type="file" 
+                                   accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+                                   label="Attachment" onchange={openfileUploadApp}></lightning-input>
+                       </div>
+                       <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" onclick={handleClick} class="slds-m-top_small"  >
+                            <b>UPLOAD</b>
+                        </button>
+                        <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" title="Executive" onclick={viewAtt} class="slds-m-top_small" >
+                            <b>VIEW</b>
+                        </button>
+                       <br/><br/>
+                    </div>
+            </div>
+            <div class="slds-card">
+                    <div style="margin:2% ;">
+                <b> EMPLOYEE - PROFILE </b>
+                       <div class="slds-m-around_medium">
+                           <lightning-input type="file" 
+                           accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+                           label="Attachment" onchange={openfileUploadApp}></lightning-input>
+                       </div>
+                        <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" onclick={handleClick} class="slds-m-top_small" >
+                            <b>UPLOAD</b>
+                        </button>
+                        <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" title="Profile" onclick={viewAtt} class="slds-m-top_small" >
+                            <b>VIEW</b>
+                        </button>
+                        <br/><br/>
+                </div>
+            </div>  
+            </div>  
+
+            <button style="background: #05c7d0;width: 36%;margin-top: 21%;margin-left: 32.5%;overflow: auto;"  class="slds-m-top_small" onclick = {openSelfAssModel} >
+                <b>PROCEED</b>
+            </button>
+        </div>
+
+    </template>
+
+
+    <template if:true={isCreatingApp}>
+
+        <b style="margin-left: 45%; font-size: xx-large;">EMPLOYEE REGISTRATION</b>
+        <template if:true={showProgress}>
+        <lightning-progress-indicator current-step="3" type="base" has-error="true" variant="base">
+            
+            <lightning-progress-step  value="1"></lightning-progress-step>
+            <lightning-progress-step  value="2"></lightning-progress-step>
+            <lightning-progress-step  value="3"></lightning-progress-step>
+            <lightning-progress-step  value="4"></lightning-progress-step>
+            <lightning-progress-step  value="5"></lightning-progress-step>
+            <lightning-progress-step  value="6"></lightning-progress-step>
+            <lightning-progress-step  value="7"></lightning-progress-step>
+        </lightning-progress-indicator>
+        </template>
+        <br/><br/>
+        <b style="margin-left:19%;font-size: xx-large;">NEW APPLICATION</b>
+                    <lightning-record-edit-form  object-api-name="Application__c" onsubmit={handleSubmit} onsuccess={handleSuccessApp}>
+                               
+                        <div class="col">
+                            
+                            <lightning-input-field field-name="Contact__c" value={conId}>
+                            </lightning-input-field>
+                            <lightning-input-field field-name="Mandate__c" value={assId}>
+                            </lightning-input-field>
+                           
+                        </div>
+                        <div class="col1">
+                            <lightning-input-field field-name="Origin__c">
+                            </lightning-input-field>
+                            <lightning-input-field field-name="Description__c">
+                            </lightning-input-field>
+                        
+                            <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="update" label="PROCEED" ></lightning-button>
+                        </div>
+            </lightning-record-edit-form>
+    </template>
+
+    <template if:true={isSelfAssOpen}>
+        <b style="margin-left: 40%; font-size: xx-large;">EMPLOYEER REGISTRATION</b>
+        <template if:true={showProgress}>
+        <lightning-progress-indicator current-step="5" type="base" has-error="true" variant="base">
+            <lightning-progress-step  value="1"></lightning-progress-step>
+            <lightning-progress-step  value="2"></lightning-progress-step>
+            <lightning-progress-step  value="3"></lightning-progress-step>
+            <lightning-progress-step  value="4"></lightning-progress-step>
+            <lightning-progress-step  value="5"></lightning-progress-step>
+            <lightning-progress-step  value="6"></lightning-progress-step>
+            <lightning-progress-step  value="7"></lightning-progress-step>
+        </lightning-progress-indicator>
+    </template>      
+    <br/><br/>       
+        <b style="margin-left:15%;font-size: xx-large;">NEW APPLICATION - SELF ASSESSMENT RESPONSE</b>
+        <div style="margin: 4%;">   
+            <template for:each={selfasslist} for:item="selfass" for:index="index" >  
+                <div class="slds-p-left_small" key={selfass.Question_name__c}  >  
+                {selfass.Question_name__c}  
+                <br/>
+                <lightning-textarea  onchange={updateResponseSelf} name = {index} value={selfass.Response__c} ></lightning-textarea>
+                </div>  
+            </template>
+        </div>
+    </br>
+        <button style="background: #05c7d0;width: 36%;margin-left: 32.5%;overflow: auto;"  class="slds-m-top_small" onclick = {submitSar} >
+                <b>PROCEED</b>
+        </button>
+    </template>
+
+    <template if:true={isCreatingOP}>
+        <b style="margin-left: 40%; font-size: xx-large;">EMPLOYEE REGISTRATION</b>
+    <template if:true={showProgress}>
+        <lightning-progress-indicator current-step="6" type="base" has-error="true" variant="base">
+            <lightning-progress-step  value="1"></lightning-progress-step>
+            <lightning-progress-step  value="2"></lightning-progress-step>
+            <lightning-progress-step  value="3"></lightning-progress-step>
+            <lightning-progress-step  value="4"></lightning-progress-step>
+            <lightning-progress-step  value="5"></lightning-progress-step>
+            <lightning-progress-step  value="6"></lightning-progress-step>
+            <lightning-progress-step  value="7"></lightning-progress-step>
+        </lightning-progress-indicator>
+    </template>
+    <br/><br/>
+        <b style="margin-left:15%;font-size: xx-large;">NEW APPLICATION - ONE PAGER RESPONSE</b>
+        <div style="margin: 4%;">   
+            <template for:each={onePagerlist} for:item="onePager" for:index="index" >  
+                <div class="slds-p-left_small" key={onePager.Question_Eng__c}  >  
+                {onePager.Question_Eng__c}  
+                <br/>
+                <lightning-textarea  onchange={updateResponseOne} name = {index} value={onePager.Response__c} ></lightning-textarea>
+                </div>  
+            </template>
+        </div>
+        </br>
+        <button style="background: #05c7d0;width: 36%;margin-left: 32.5%;overflow: auto;"  class="slds-m-top_small" onclick = {submitOP} >
+                <b>PROCEED</b>
+        </button> 
+    </template>
+
+    <template if:true={isModalDocsOpen}>
+        <b style="margin-left:42%;font-size: xx-large;">EMPLOYEE REGISTRATION</b>
+        <template if:true={showProgress}>
+        <lightning-progress-indicator current-step="4" type="base" has-error="true" variant="base">
+            <lightning-progress-step  value="1"></lightning-progress-step>
+            <lightning-progress-step  value="2"></lightning-progress-step>
+            <lightning-progress-step  value="3"></lightning-progress-step>
+            <lightning-progress-step  value="4"></lightning-progress-step>
+            <lightning-progress-step  value="5"></lightning-progress-step>
+            <lightning-progress-step  value="6"></lightning-progress-step>
+            <lightning-progress-step  value="7"></lightning-progress-step>
+        </lightning-progress-indicator>
+        </template>
+        <br/><br/>
+        <div class="row">
+            <b style="margin-left:19%;font-size: xx-large;">NEW APPLICATIONS - DOCUMENTS</b>
+        </div>
+    <div style="margin-left: 6%">                  
+        <div class="col">
+            <div class="slds-card">
+                <div style="margin:2% ;">
+                <b> CV </b>
+                         <div class="slds-m-around_medium">
+                                    <lightning-input type="file" 
+                                    accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+                                    label="Attachment" onchange={openfileUploadapp}></lightning-input>
+                        </div>
+                        <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" onclick={handleClick} class="slds-m-top_small" >
+                            <b>UPLOAD</b>
+                            </button>
+                        <br/><br/>
+                    </div>   
+            </div>
+        <div class="slds-card">
+            <div style="margin:2% ;">
+                <b> PSY-TEST </b>
+                        <div class="slds-m-around_medium">
+                            <lightning-input type="file" 
+                            accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+                            label="Attachment" onchange={openfileUploadapp}></lightning-input>
+                        </div>
+                        <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" onclick={handleClick} class="slds-m-top_small" >
+                            <b>UPLOAD</b>
+                            </button>
+                            <br/><br/>
+            </div>
+        </div>
+        </div>
+        <div class="col1">     
+            <div class="slds-card">
+                <div style="margin:2% ;"> 
+            <b> EXECUTIVE - SUMMARY</b>
+                    <div class="slds-m-around_medium">
+                               <lightning-input type="file" 
+                               accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+                               label="Attachment" onchange={openfileUploadapp}></lightning-input>
+                   </div>
+                   <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" onclick={handleClick} class="slds-m-top_small"  >
+                    <b>UPLOAD</b>
+                    </button>
+                   <br/><br/>
+                </div>
+        </div>
+        <div class="slds-card">
+                <div style="margin:2% ;">
+            <b> EMPLOYEE - PROFILE </b>
+                   <div class="slds-m-around_medium">
+                       <lightning-input type="file" 
+                       accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+                       label="Attachment" onchange={openfileUploadapp}></lightning-input>
+                   </div>
+                   <button style="background: #05c7d0;width: 42%;margin-left: 4%;overflow: auto;" onclick={handleClick} class="slds-m-top_small" >
+                    <b>UPLOAD</b>
+                    </button>
+                    <br/><br/>
+            </div>
+        </div>  
+        </div>  
+
+        <button style="background: #05c7d0;width: 36%;margin-top: 21%;margin-left: 32.5%;overflow: auto;"  class="slds-m-top_small" onclick = {openSelfAssModel} >
+            <b>PROCEED</b>
+        </button>
+    </div>
+
+    </template>
+
+    <template if:true={assView}>
+        <b style="margin-left: 45%; font-size: xx-large;">EMPLOYEE REGISTRATION</b>
+        <template if:true={showProgress}>
+            <lightning-progress-indicator current-step="2" type="base" has-error="true" variant="base">
+                
+                <lightning-progress-step  value="1"></lightning-progress-step>
+                <lightning-progress-step  value="2"></lightning-progress-step>
+                <lightning-progress-step  value="3"></lightning-progress-step>
+                <lightning-progress-step  value="4"></lightning-progress-step>
+                <lightning-progress-step  value="5"></lightning-progress-step>
+                <lightning-progress-step  value="6"></lightning-progress-step>
+                <lightning-progress-step  value="7"></lightning-progress-step>
+            </lightning-progress-indicator>
+            </template>
+        <b style="margin-left:47%;font-size: xx-large;"> Assignment Selection</b>
+        <div style="margin:4%">
+            <lightning-datatable data={accList} columns={columns} sorted-by={sortBy} sorted-direction={sortDirection} onsort={handleSortdata} key-field="Id" onrowaction={callRowAction}> 
+            </lightning-datatable>
+        </div>
+    </template>
+
+    
+  
+    <template if:true={modalWithAssDocs}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading_1" class="slds-text-heading_medium slds-hyphenate"> <b style=" font-size: 22px"> Documents </b> </h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_small" id="modal-content-id-2">
+                    <div class="slds-m-around_medium">
+                            <div class="slds-m-vertical_medium">
+                        
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-medium-size_2-of-4" style="margin-top: 5%;"> <b style=" font-size: 22px"> JOB - DESCRIPTION</b></div>
+                                    
+                                    <button style="background: #05c7d0;width: 36%;margin-top: 5%;margin-left: 2.5%;overflow: auto;" name="Job" title="Job" class="slds-m-top_small" onclick = {viewAtt} >
+                                        <b style=" font-size: 20px">PREVIEW</b>
+                                    </button>
+                                </div>
+
+                                <br/>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-medium-size_2-of-4" style="margin-top: 5%;"> <b style=" font-size: 22px"> RESEARCH - STRATEGY </b></div>
+                                    
+                                    
+                                    
+                                    <button style="background: #05c7d0;width: 36%;margin-top: 5%;margin-left: 2.5%;overflow: auto;" title="RESEARCH" class="slds-m-top_small" onclick = {viewAtt} >
+                                        <b style=" font-size: 20px">PREVIEW</b>
+                                    </button>
+
+   
+                                </div>
+                                <br/>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-medium-size_2-of-4" style="margin-top: 5%;"> <b style=" font-size: 22px"> EMPLOYEE - PROFILE </b></div>
+                                    
+                                    <button style="background: #05c7d0;width: 36%;margin-top: 5%;margin-left: 2.5%;overflow: auto;" title="PROFILE" class="slds-m-top_small" onclick = {viewAtt} >
+                                        <b style=" font-size: 20px">PREVIEW</b>
+                                    </button>
+   
+                                </div>
+                                <br/>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-medium-size_2-of-4" style="margin-top: 5%;"> <b style=" font-size: 22px"> EXECUTIVE - SUMMARY </b></div>
+                                    
+                                    <button style="background: #05c7d0;width: 36%;margin-top: 5%;margin-left: 2.5%;overflow: auto;" title="EXECUTIVE" class="slds-m-top_small" onclick = {viewAtt} >
+                                        <b style=" font-size: 20px">PREVIEW</b>
+                                    </button>
+   
+                                </div>
+
+                            </div>
+                        </div>
+                 </div>
+            </div>
+        </section>
+
+        <template if:true={showSelfAssTemp}>
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container" style="margin-right: 41%;" >
+                    <!-- Modal/Popup Box LWC header here -->
+                    <header class="slds-modal__header"  style="width: 150%;">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeiframe}>
+                            <lightning-icon icon-name="utility:close"
+                                alternative-text="close"
+                                variant="inverse"
+                                size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="modal-heading_4" class="slds-text-heading_medium slds-hyphenate">{heading}</h2>
+                    </header>
+                  
+                    <div class="slds-modal__content slds-p-around_large" id="modal-content-id-4"  style="width: 150%;">
+                        <template if:true={noAttFound}>
+                            Sorry No Attachements were Find Kindly Update and Attachemnt!!
+                        </template>
+                        <template if:true={attFound}>  
+                            <div class="slds-m-around_medium">
+                                        <iframe src={frameURLSelf} width="100%" height="1000px;"> </iframe>
+                            </div>
+                        </template>
+    
+                    </div>
+                    <footer class="slds-modal__footer"  style="width: 150%;">
+                        <button class="slds-button slds-button_neutral" onclick={closeiframe} title="Cancel">Cancel</button>
+                    </footer>
+    
+                </div>
+            </section>
+        </template>
+
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+
+</template>

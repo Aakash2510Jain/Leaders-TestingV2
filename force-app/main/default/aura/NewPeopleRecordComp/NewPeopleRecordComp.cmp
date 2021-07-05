@@ -1,0 +1,107 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="newPeopleLightningController" >
+    
+    <aura:attribute name="openSearchModal" type="boolean" />
+    <aura:attribute name="displayNewPeople" type="boolean" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="newRecId" type="String" />
+    
+    <aura:attribute name="newContactRecord" type="Object" description=" A simplified view record object to be displayed" />
+    <aura:attribute name="searchPeople" type="String"></aura:attribute>
+    <aura:attribute name="recordSaveError" type="String" description="An Error message bound to force:recordData" />
+    
+    <aura:attribute name="sObjectName" type="String" default="Contact" />
+    
+    <aura:attribute name="fname" type="String" />
+    <aura:attribute name="lname" type="String" />
+    
+    
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    
+    <aura:if isTrue="{!v.displayNewPeople}">
+        <lightning:recordEditForm
+                                  aura:id="createContactForm"                      
+                                  onload="{!c.handleLoad}"
+                                  onsubmit="{!c.handleSubmit}"
+                                  onsuccess="{!c.handleSuccess}"
+                                  objectApiName="Contact" >    
+            
+            
+            <section aura:id="Modalbox" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add People</h2>
+                        
+                        <!-- Test Adding new Record -->     
+                        
+                        
+                        
+                        <!-- Test Code finish -->              
+                        
+                        
+                    </header>
+                    
+                    
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <div class="slds-grid slds-gutters slds-text-title_bold">
+                            <div class="slds-col ">
+                                <span>
+                                    <lightning:inputField aura:id="FirstName" class="customRequired none"   fieldName="FirstName" value="{!v.fname}"  />
+                                    <lightning:inputField  fieldName="Title" />
+                                    <lightning:inputField aura:id="AccountId" class="customRequired none" fieldName="AccountId" />
+                                    <lightning:inputField  fieldName="MailingStreet" />
+                                    <lightning:inputField  fieldName="MailingCountry" />
+                                    <lightning:inputField  fieldName="MailingPostalCode " />
+                                    <lightning:inputField fieldName="Phone" />
+                                    <lightning:inputField fieldName="MobilePhone" />
+                                </span>
+                                
+                            </div>
+                            
+                            <div class="slds-col">
+                                <span>
+                                    
+                                    <lightning:inputField aura:id="LastName" fieldName="LastName" value="{!v.lname}" />
+                                    <lightning:inputField  fieldName="Title_FR__c" />
+                                    <lightning:inputField aura:id="FunctionalArea1" class="customRequired none" fieldName="Functional_Area_1__c"  />
+                                    <lightning:inputField  fieldName="MailingCity" />
+                                    <lightning:inputField  fieldName="MailingState" />
+                                    <lightning:inputField fieldName="Level__c" />
+                                    <lightning:inputField fieldName="Email" />   
+                                </span>
+                                
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{!c.closeModel }"/>
+                        
+                        <lightning:button variant="brand" name="save" label="Save" type="submit"/>
+                    </footer>
+                </div>
+                
+                
+            </section>
+        </lightning:recordEditForm>  
+    </aura:if>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    <!--###### MODAL BOX Part END Here ######-->
+    
+    
+    
+    
+    
+</aura:component>

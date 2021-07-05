@@ -1,0 +1,89 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:appHostable" controller="updateSelfAssessmentCtrl" access="Global">
+    
+    <aura:attribute name="recordId" 							type="String" />
+    <aura:attribute name="Self_Ass_Response_length" 			type="Integer" />
+    <aura:attribute name="self_assesment_resp" 				    type="Self_Assesment_Response__c[]" 		/>
+    <aura:attribute name="isOpen" 								type="boolean"		/>
+     <aura:attribute name="isSave" 								type="boolean"		/>
+    <aura:attribute name="language" 							type="String" 		/>
+    <aura:attribute name="sendData" 							type="object"		/>
+    <aura:attribute name="AssgnName" 							type="String" 		/>
+    <aura:attribute name="Assgntitle" 							type="String" 		/>
+    <aura:attribute name="checkSpinner" 						type="Boolean" default="false" />
+    <aura:attribute name="showMainPage" 						type="Boolean" default = "true"/>
+    <aura:attribute name="showLoadingSpinner" 					type="boolean" default="false" />
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    
+    <aura:handler 	name="init"				 					value="{!this}" action="{!c.doInit}" />
+     
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}" />
+   
+    <aura:if isTrue="{!v.checkSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showMainPage}">
+        <c:SelfAssesmentMainPage recordId ="{!v.recordId}" showMainPage= "{!v.showMainPage}" />
+        <aura:set attribute ="else">
+            <aura:if isTrue="{!v.language == 'French'}">
+            <div class="slds-page-header" style="background: currentColor;">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <span class="marLeftNinePer">
+                                <h1>Auto-évaluation des candidats - {!v.Assgntitle}</h1>
+                            </span>                                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <aura:set attribute ="else">
+            <div class="slds-page-header" style="background: currentColor;">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <span class="marLeftNinePer">
+                                <h1>Candidate Self-Assessment - {!v.Assgntitle}</h1>
+                            </span>                                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+                </aura:set>
+            </aura:if>
+            <br/>
+            <br/>
+            <div style="margin-left:10%">
+                <aura:iteration items="{!v.self_assesment_resp}" var="al" indexVar="i" >
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_10-of-12">
+                            <h2 class="header">
+                                <span class="fontSize16"><b>{!al.Question_name__c}</b></span><span style="color: transparent;float:right">{!al.Self_Assesment__c }</span>
+                            </h2>
+                            <!--lightning:textarea value="{!al.Response__c}" placeholder="Type Here" maxlength="2000" messageWhenTooLong="Please keep character length not mre than 2000"/-->
+    						<div aura:id="output" class="slds-box editor slds-rich-text-area__content">
+                            <lightning:inputRichText value="{!al.Response__c}" placeholder="Type something interesting"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <br/>
+                    
+                </aura:iteration>                
+                <br/>
+            </div>
+            <div class="slds-align_absolute-center">
+                
+                    <lightning:button variant="brand"  label="Download PDF Copy" title="Save PDF Copy." onclick="{!c.downloadDocument }" />
+                    <lightning:button variant="brand"  label="Save" title="Save" onclick="{!c.updateSelfAssessment }" />
+                    <lightning:button variant="brand"  label="Submit Self-Assessment" title="Submit Self Assessment" onclick="{! c.updateSelfAssessment }" />
+            </div>
+            <br/>
+        </aura:set>
+    </aura:if>
+    <c:Spinner show="{!v.showSpinner}"/>
+</aura:component>

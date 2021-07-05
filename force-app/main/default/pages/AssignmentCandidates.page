@@ -1,0 +1,711 @@
+<apex:page standardController="Mandate__c" extensions="AssignmentCandidatesCtrl" LightningStylesheets="True"> 
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" />
+    <apex:includeScript value="{!$Resource.StickyHeader}"/>
+
+    <style>
+              
+       body.fixed-header,
+        body.scrollable-block {
+            padding: 70px 20px;
+        }
+        
+        body.scrollable-block {
+            min-width: 1000px;
+        }
+        
+        body.fixed-header .header,
+        body.scrollable-block .header {
+            position: fixed;
+            top: 0;
+            color: #FFC234;
+            width: 100%;
+            z-index: 1000;
+            margin: 0 -20px;
+            padding: 0 20px;
+            border-bottom: 10px solid red;
+        }
+        
+        body.fixed-header .header {
+            background: #080808;
+        }
+        
+        body.scrollable-block .header {
+            background: #606;
+        }
+        
+        body.scrollable-block table {
+            width: 90%;
+        }
+        
+        .scrollable-area {            
+            width:  95%;
+            height: 60em;
+            padding: 0 20px 10px 20px;
+            overflow: auto;
+        
+        }
+        
+        .redRound {
+            width:10px;
+            height:10px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            background-color: #dc143c;
+        }
+       
+        .greenRound {
+            width:10px;
+            height:10px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            background-color: #95aec5;
+         }
+         
+         .greyRound {
+            width:10px;
+            height:10px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            background-color: #32af5c;
+         }
+        
+       div#pop-up {
+          display: none;
+          position: absolute;
+          width: 80%;
+          padding-top:0px;
+          padding-left: 30px;
+          color: #000000;
+        }            
+  
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            width: 600px;
+            margin-left: -250px;
+            top:100px;
+        }
+        
+        .popupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        
+        
+    </style>
+    <script>
+
+
+        $(function() {               
+         
+          fixTable();
+            
+         
+          
+        });
+    
+        function fixTable() {
+            
+            $(".table").stickyTableHeaders({ scrollableArea: $(".scrollable-area")[0], "fixedOffset": 2 });
+         
+          $("a[id$='trigger']").hover(function() {
+          
+                    $('table').stickyTableHeaders('destroy');
+                                
+                    $("div[id$='pop-up']").show();
+                    
+                    $("div[id$='pop-up']").hover(function() {
+                        $("div[id$='pop-up']").css("display","block");
+                    }, function(){
+                        $("div[id$='pop-up']").hide();
+                        $(".table").stickyTableHeaders({ scrollableArea: $(".scrollable-area")[0], "fixedOffset": 2 });
+                    });
+               }, function() {
+            $("div[id$='pop-up']").hide();            
+          });
+        }
+         
+        
+        function checkAll(op){          
+            var arrayElements = new Array();
+            var elements = document.getElementsByClassName("checkCandidate");
+            
+             for(var i = 0;i < elements.length;i++)
+                {
+                    elements[i].checked=op;
+                    
+                }   
+        }
+        
+        function deleteConfirm(){
+            if(confirm("You are about to delete candidates. Are you sure?")==true){
+                deleteCandidates();
+            }
+        }
+
+    </script>
+    <apex:PageMessages id="msgId"/>
+    <apex:form id="form"> 
+         <apex:outputLabel >View : </apex:outputLabel>
+         <apex:actionRegion id="SSL1">
+        <apex:inputField label="Status Summary Line" value="{!thisapp.Status_Summary_Line__c}" id="ssl" >
+            <apex:actionSupport action="{!selectedSSL}" event="onchange" />
+            </apex:inputField> 
+         </apex:actionRegion> 
+        
+        
+        <apex:actionRegion id="ORG" >
+        <apex:inputField label="Origin"  value="{!thisapp1.Origin__c}" id="origin"  >
+           <apex:actionSupport action="{!selectedORG}" event="onchange" />
+        </apex:inputField>           
+         </apex:actionRegion>    
+           
+   <!--    <apex:actionRegion id="SSL1">
+        <apex:inputField label="Status Summary Line" value="{!thisapp.Status_Summary_Line__c}" id="ssl" >
+            <apex:actionSupport action="{!selectedSSL}" event="onchange" />
+            </apex:inputField> 
+         </apex:actionRegion>  -->
+       
+        <apex:outputLink value="/apex/AssignmentCandidates?id={!mandate.Id}&pageType=view&SSL={!thisapp.Status_Summary_Line__c}&ORG={!thisapp1.Origin__c}" styleClass="btn" style="text-decoration:none;padding:4px;background:red;color:white;">
+                    Go!
+        </apex:outputLink>
+        
+        <apex:outputLink value="/apex/AssignmentCandidates?id={!mandate.Id}" styleClass="btn" style="text-decoration:none;padding:4px;background:red;color:white;">
+                    Back
+        </apex:outputLink>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        <br/>
+        <div>
+            <div style="text-align:center">
+                <apex:outputLink value="/apex/AssignmentAttachment?mandateId={!mandate.Id}" target="_blank" id="trigger">
+                <apex:outputText value="Notes & Attachment" escape="false"/></apex:outputLink>
+            </div>
+            <div id="pop-up">
+              <c:AttachmentComponent parentId="{!mId}"/>
+            </div>                      
+        </div><br/>    
+        
+        <apex:pageBlock mode="inlineEdit" >       
+            
+            <!--              
+            <apex:pageBlockButtons rendered="{!(resultWrapperList.size != 0)}" location="top" >
+            
+                <apex:commandLink value="New Candidate" action="{!newCandidate}" styleClass="btn" style="text-decoration:none;padding:4px;" target="_blank"/>
+                <apex:commandButton value="Delete Candidate(s)" onclick="deleteConfirm(); return false;"/>
+                <apex:commandLink value="Select all potential candidates" action="{!selectPotencialCandidates}" styleClass="btn" style="text-decoration:none;padding:4px;" />
+                <apex:commandLink value="Leaders Report" action="{!leadersReportPage}" styleClass="btn" style="text-decoration:none;padding:4px;" target="_blank"/>                
+                <apex:commandButton value="Assignment Details" action="{!goBack}"/>               
+                <apex:commandLink value="Add Candidates to another Assignment" action="{!addCandidateToMandate}" styleClass="btn" style="text-decoration:none;padding:4px;" target="_blank"/>       
+                <apex:commandLink value="New Contact" action="{!addNewContact}" styleClass="btn" style="text-decoration:none;padding:4px;" target="_blank"/>              
+                
+            </apex:pageBlockButtons> 
+            -->
+        
+            <br/>
+            <div style="text-align:center">
+                <apex:commandLink value="New Candidate" rendered="{!and(pageType!='SourceList',pageType!='ClientList',pageType!='RawList')}" action="{!newCandidate}" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/>   
+                <apex:commandLink value="Delete Candidate(s)" rendered="{!and(pageType!='SourceList',pageType!='ClientList',pageType!='RawList')}" onclick="deleteConfirm(); return false;" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/>
+                <apex:commandLink value="Add Candidates to another Assignment" rendered="{!and(pageType!='SourceList',pageType!='ClientList',pageType!='RawList')}" action="{!addCandidateToMandate}" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/> 
+                
+                <apex:commandLink value="New Source" rendered="{!pageType=='SourceList'}" action="{!newCandidate}" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/>   
+                <apex:commandLink value="Delete Source(s)" rendered="{!pageType=='SourceList'}" onclick="deleteConfirm(); return false;" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/>
+                <apex:commandLink value="Add Sources to another Assignment" rendered="{!pageType=='SourceList'}" action="{!addCandidateToMandate}" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/> 
+                
+                <apex:commandLink value="New Client" rendered="{!pageType=='ClientList'}" action="{!newCandidate}" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/>   
+                <apex:commandLink value="Delete Client(s)" rendered="{!pageType=='ClientList'}" onclick="deleteConfirm(); return false;" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/>
+                <apex:commandLink value="Add Clients to another Assignment" rendered="{!pageType=='ClientList'}" action="{!addCandidateToMandate}" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/> 
+                
+                
+                <apex:commandLink value="New Contact" rendered="{!pageType=='RawList'}" action="{!newCandidate}" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/>   
+                <apex:commandLink value="Delete Contact(s)" rendered="{!pageType=='RawList'}" onclick="deleteConfirm(); return false;" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/>
+                <apex:commandLink value="Add Contact(s) to another Assignment" rendered="{!pageType=='RawList'}" action="{!addCandidateToMandate}" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"/> 
+                <apex:commandLink value="Change SSL & Origin" action="{!updateSSL}" styleClass="btn" style="text-decoration:none;padding:4px;background:green;color:white;"  />
+                
+                
+                
+                
+                
+                <apex:commandLink value="Select all potential candidates" rendered="{!and(pageType!='SourceList',pageType!='ClientList',pageType!='RawList')}" action="{!selectPotencialCandidates}" styleClass="btn" style="text-decoration:none;padding:4px;background:red;color:white;" />
+                <apex:commandLink value="Leaders Report" rendered="{!and(pageType!='SourceList',pageType!='ClientList',pageType!='RawList')}" action="{!leadersReportPage}" styleClass="btn" style="text-decoration:none;padding:4px;background:red;color:white;"/>  
+                <apex:commandLink value="Assignment Details" action="{!goBack}" styleClass="btn" style="text-decoration:none;padding:4px;background:red;color:white;"/> 
+                
+                <apex:outputLink value="/apex/AssignmentCandidates?id={!mandate.Id}" rendered="{!or(pageType=='SourceList',pageType=='ClientList' ,pageType=='RawList' , pageType == 'View')}" styleClass="btn" style="text-decoration:none;padding:4px;background:red;color:white;">
+                    Human Capital Study List
+                </apex:outputLink>
+                <apex:outputLink value="/apex/AssignmentCandidates?id={!mandate.Id}&pageType=SourceList" rendered="{!pageType!='SourceList'}" styleClass="btn" style="text-decoration:none;padding:4px;background:red;color:white;">
+                    Sources List
+                </apex:outputLink>
+                <apex:outputLink value="/apex/AssignmentCandidates?id={!mandate.Id}&pageType=ClientList" rendered="{!pageType!='ClientList'}" styleClass="btn" style="text-decoration:none;padding:4px;background:red;color:white;">
+                    Clients List
+                </apex:outputLink>
+                
+    <!-- Ankita --> 
+                <apex:outputLink value="/apex/AssignmentCandidates?id={!mandate.Id}&pageType=RawList" rendered="{!pageType!='RawList'}" styleClass="btn" style="text-decoration:none;padding:4px;background:red;color:white;">
+                    Raw List
+                </apex:outputLink>
+                
+                
+                
+                
+                <!--<apex:commandLink value="New Contact" action="{!addNewContact}" styleClass="btn" style="text-decoration:none;padding:4px;" target="_blank"/>  -->
+                <!--  <apex:commandLink value="Send Job Description" action="{!sendJobDescription}" styleClass="btn" style="text-decoration:none;padding:4px;" /> -->
+                <apex:commandLink value="Send Email to Candidate(s)" rendered="{!and(pageType!='SourceList',pageType!='ClientList',pageType!='RawList')}" action="{!showJobDescriptionList}" styleClass="btn" style="text-decoration:none;padding:4px;background:blue;color:white;" />
+                <apex:commandLink value="Send Email to Source(s)" rendered="{!pageType=='SourceList'}" action="{!showJobDescriptionList}" styleClass="btn" style="text-decoration:none;padding:4px;background:blue;color:white;"/>
+                <apex:commandLink value="Send Email to Client(s)" rendered="{!pageType=='ClientList'}" action="{!showJobDescriptionList}" styleClass="btn" style="text-decoration:none;padding:4px;background:blue;color:white;"/>
+                <apex:commandLink value="Send Email to Contact(s)" rendered="{!pageType=='RawList'}" action="{!showJobDescriptionList}" styleClass="btn" style="text-decoration:none;padding:4px;background:blue;color:white;"/>
+                <!--<apex:commandButton onclick="window.open('/00OU0000002RBI8?pv0={!mandate.Assignment_ID__c}');" styleClass="btn" style="text-decoration:none;padding:4px;background:blue;color:white;" value="Candidates by status"/>-->
+                
+            </div>
+            <br/>
+            <hr/>
+            <br/><br/>
+                        
+            <apex:actionFunction name="deleteCandidates" action="{!deleteCandidates}" />
+            
+<!-- Ankita Start -->            
+     <!--       <apex:outputPanel >
+             <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayJobDescriptionList}"/>
+                <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayJobDescriptionList}">
+                    <apex:sectionHeader title="Contact" subtitle="Attach Hogan Report"/>
+                        <c:UploadFile fileName="{!reportName}" parentId="{!parentId}" isCV="false" />
+                </apex:outputPanel>
+            </apex:outputPanel> -->
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+<!-- Ankita End -->            
+            
+            <apex:outputPanel id="tstpopup">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayJobDescriptionList}"/>
+                <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayJobDescriptionList}">
+                    <!--<apex:pageMessage rendered="{!missingDoc}" summary="No document selected. Please selecting at least one document to send." severity="error" strength="2" />-->
+                    
+                    <br/>
+                    <strong><apex:outputLabel value="Email Language: " /></strong>
+                    <apex:selectList label="Email Language:" value="{!selectedTLanguage}" multiselect="false" size="1">
+                           <apex:selectOptions value="{!templateLanguage}" />
+                           <apex:actionSupport action="{!showJobDescriptionList}" event="onchange"/>
+                    </apex:selectList>
+                    <br/><br/>
+                    
+                    <apex:pageBlock title="Email">
+                        <b>Subject</b> <apex:inputText id="emailSubject"  value="{!emailSubject}" style="width:100%" /><br/><br/>
+                        <apex:inputTextArea id="emailContent"  value="{!emailContent}" richText="true"/>
+                        
+                    </apex:pageBlock>
+                    <br/>
+                                        
+                    <apex:pageBlock title="Select the documents">
+        
+                        <apex:pageblockButtons location="bottom">
+                           <apex:commandButton value="Send Email" action="{!sendJobDescription}" rerender="tstpopup, msgId"/>
+                        <!--    <apex:commandButton value="Send Email" action="{!sendJobDescriptionBatch}" rerender=" msgId"/> -->
+                            <apex:commandButton value="Cancel" action="{!closeJobDescriptionList}" rerender="tstpopup"/>                                
+                        </apex:pageblockButtons>                                                 
+                        
+                        <apex:pageblocktable value="{!jobDescriptionList}" var="j"  rendered="{!(jobDescriptionList.size != 0)}" >
+                        
+                            <apex:column width="25px">
+                                <apex:inputCheckbox value="{!j.selected}" />
+                            </apex:column>
+                                    
+                            <apex:column headerValue="Title">
+                                <apex:outputLink value="/{!j.file.Id}">{!j.file.Name}</apex:outputLink>
+                            </apex:column>                              
+                         
+                        </apex:pageblocktable>
+                     </apex:pageBlock>
+                     <br/><br/><br/>                         
+                    
+                </apex:outputPanel>
+            </apex:outputPanel>
+             
+               <p>
+            <center><strong><apex:outputText value="Human Capital Study List" rendered="{!and(pageType !='SourceList',pageType!='ClientList',pageType!='RawList')}" style="padding-left: 20px;"></apex:outputText></strong></center>
+
+            <center><strong><apex:outputText value="Sources list" rendered="{!pageType=='SourceList'}" style="padding-left: 20px;"></apex:outputText></strong></center>
+            <center><strong><apex:outputText value="Clients list" rendered="{!pageType=='ClientList'}" style="padding-left: 20px;"></apex:outputText></strong></center>
+            <center><strong><apex:outputText value="Raw List" rendered="{!pageType=='RawList'}" style="padding-left: 20px;"></apex:outputText></strong></center>
+                
+            </p>
+                        
+            <strong><apex:outputText value="Assignment Name: " style="padding-left: 20px;"></apex:outputText></strong>
+            <apex:outputText value="{!mandate.Name}"></apex:outputText><br/>
+            <strong><apex:outputText value="Company Name: " style="padding-left: 20px;"></apex:outputText></strong>
+            <apex:outputText value="{!mandate.Company__r.Name}"></apex:outputText><br/>
+            
+            <!--<apex:outputText value="No candidates to display" rendered="{!(applicationList.size == 0)}"></apex:outputText><br/>-->
+            
+            
+            
+            <div >
+                <br/>
+             <apex:outputPanel id="btnPageTop">
+                 Page # {!pageNumber} sur {!totalPages}
+                <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="accListBlock,btnPage,btnPageTop" status="myStatus" oncomplete="fixTable()"/>
+        
+                <apex:commandButton action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="accListBlock,btnPage,btnPageTop" status="myStatus" oncomplete="fixTable()"/>        
+        
+                <apex:commandButton action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="accListBlock,btnPage,btnPageTop" status="myStatus" oncomplete="fixTable()"/>
+        
+                <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="accListBlock,btnPage,btnPageTop" status="myStatus" oncomplete="fixTable()"/>
+                 </apex:outputPanel>   
+                
+            <apex:outputPanel id="accListBlock" layout="block">
+                <apex:pageblocktable value="{!resultWrapperList}" var="a"  rendered="{!(resultWrapperList.size != 0)}" styleClass="table">
+                
+                    <apex:column width="25px">
+                        <apex:facet name="header">
+                            <apex:inputCheckbox value="{!checkAll}"  onchange="checkAll(this.checked);" id="theCheck" onmouseover="/apex/ContactCandidates/{!a.candidate.Contact__c}"/>
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!a.selected}" styleClass="checkCandidate"/>
+                    </apex:column>
+                    
+                    <!-- Ankita Start -->                   
+                   
+                    <apex:column width="50px">
+                        <apex:outputLink styleClass="greyRound" rendered="{!a.Off_Limit_Auto}" target="_blank"  value="/{!a.candidate.Contact__c}">
+                        <apex:outputPanel layout="block" styleClass="redRound" ></apex:outputPanel>
+                       </apex:outputLink>
+                    
+                     <apex:outputPanel layout="block" styleClass="greenRound" rendered="{!NOT(a.Off_Limit_Auto)}"></apex:outputPanel>
+                       
+                     <apex:facet name="header">
+                         <apex:commandLink action="{!ViewData}" value="Company"><br/>
+                             <apex:commandLink action="{!ViewData}" value="Off-Limit {!IF(sortDirection='ASC','▼','▲')}"/>
+                         <apex:param value="Contact__r.Off_Limit_Auto__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet>
+                   </apex:column>
+                    
+                    
+                    <!-- ANkita Start Contact - Off-Limit display -->
+                    
+                     <apex:column width="50px">
+                        <apex:outputLink styleClass="greyRound" rendered="{!a.Contact_Off_Limit}" target="_blank"  value="/{!a.candidate.Contact__c}">
+                        <apex:outputPanel layout="block" styleClass="redRound" ></apex:outputPanel>
+                       </apex:outputLink>
+                    
+                     <apex:outputPanel layout="block" styleClass="greenRound" rendered="{!NOT(a.Contact_Off_Limit)}"></apex:outputPanel>
+                       
+                     <apex:facet name="header">
+                             <apex:commandLink action="{!ViewData}" value="Contact "><br/>
+                        
+                             <apex:commandLink action="{!ViewData}" value="Off-Limit {!IF(sortDirection='ASC','▼','▲')}"/>
+                         <apex:param value="Contact__r.Contact_Off_Limit__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet>
+                   </apex:column>
+                    
+                 
+                    
+<!-- Ankita Ends -->   
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <apex:column >
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="First Name {!IF(sortDirection='ASC','▼','▲')}"  > 
+                         <apex:param value="Contact__r.FirstName" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>                   
+                     </apex:facet>
+                     <apex:outputLink value="/{!a.candidate.Contact__c}">{!a.candidate.Contact__r.FirstName}</apex:outputLink>
+                   </apex:column>
+                   
+                   <apex:column >
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Last Name {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.LastName" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet>
+                     <apex:outputLink value="/{!a.candidate.Contact__c}">{!a.candidate.Contact__r.LastName}</apex:outputLink>
+                   </apex:column>
+                   <!-- 
+                   <apex:column >
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Name {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet>
+                     <apex:outputLink value="/{!a.Contact__c}" target="_blank">{!a.Contact__r.Name}</apex:outputLink>
+                   </apex:column>
+                   -->
+                   <apex:column >
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Current Company {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Current_Company_EN__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet>
+                     <apex:outputLink value="/{!a.candidate.CompanyId__c}">{!a.candidate.Current_Company_EN__c}</apex:outputLink>
+                   </apex:column>
+                   
+                   <apex:column value="{!a.candidate.Current_Title__c}" >
+                     <apex:facet name="header">
+                       <apex:outputText value="Current Title"/>
+                       <apex:commandLink action="{!ViewData}" value="Current Title {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Current_Title__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink> 
+                     </apex:facet>
+                   </apex:column>
+                   
+                    <apex:column >
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!ViewData}" value="Status Summary Line {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Status_Summary_Line__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet>
+                     <apex:outputText rendered="{!a.candidate.InternalTopStatus__c}" value="{!a.candidate.Status_Summary_Line__c}" style="color:red"/>
+                     <apex:outputText rendered="{!NOT(a.candidate.InternalTopStatus__c)}" value="{!a.candidate.Status_Summary_Line__c}" />         
+                        
+                   <!--     <apex:outputLink rendered="{!a.candidate.InternalTopStatus__c}" style="color:red" target="one_Pager" value="/{!a.candidate.Contact__c}"  >{!a.candidate.Status_Summary_Line__c}</apex:outputLink>
+                        <apex:outputLink rendered="{!NOT(a.candidate.InternalTopStatus__c)}"  value="/{!a.candidate.Contact__c}">{!a.candidate.Status_Summary_Line__c} </apex:outputLink> -->
+                </apex:column>
+                    
+                    <!--      <apex:column width="100px" value="{!a.candidate.Contact__r.Origin__c}" >
+                        <apex:facet name="header">
+                       <apex:outputText value="Origin"/>
+                     <!-- <apex:commandLink action="{!ViewData}" value="Mobile {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.MobilePhone" name="column" assignTo="{!sortExpression}" ></apex:param>
+                           </apex:commandLink> -->
+                   <!--  </apex:facet> 
+                    </apex:column> -->
+                    
+                   <apex:column width="100px" value="{!a.candidate.Origin__c}" >
+                        <apex:facet name="header">
+                       <apex:outputText value="Origin"/>
+                     <!-- <apex:commandLink action="{!ViewData}" value="Mobile {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.MobilePhone" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink> -->
+                     </apex:facet> 
+                    </apex:column> 
+                    
+                     <apex:column width="100px" value="{!a.candidate.Location__c}">
+                     <apex:facet name="header">
+                       <apex:outputText value="Location"/>
+                        <apex:commandLink action="{!ViewData}" value="Location {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Location__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink> 
+                     </apex:facet>
+                   </apex:column> 
+                    
+                    
+                    
+                  
+                   <apex:column width="100px" value="{!a.candidate.Contact__r.Account.Phone}" rendered="{!NOT(isColemanProfile)}">
+                     <apex:facet name="header">
+                       <apex:outputText value="Company Phone"/>
+                       <!-- <apex:commandLink action="{!ViewData}" value="Phone {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.Phone" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink> -->
+                     </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column width="120px" value="{!a.candidate.Contact__r.Phone}" rendered="{!NOT(isColemanProfile)}">
+                     <apex:facet name="header">
+                       <apex:outputText value="Contact Phone"/>
+                       <!-- <apex:commandLink action="{!ViewData}" value="Phone {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.Phone" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink> -->
+                     </apex:facet>
+                   </apex:column>
+                    
+
+                   
+                    <apex:column width="120px" value="{!a.candidate.Contact__r.MobilePhone}" rendered="{!NOT(isColemanProfile)}">
+                     <apex:facet name="header">
+                       <apex:outputText value="Mobile"/>
+                       <!-- <apex:commandLink action="{!ViewData}" value="Mobile {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.MobilePhone" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink> -->
+                     </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column width="80px" value="{!a.candidate.Contact__r.Email}">
+                     <apex:facet name="header">
+                       <apex:outputText value="Email"/>
+                       <!-- <apex:commandLink action="{!ViewData}" value="Email {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.Email" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink> -->
+                     </apex:facet>
+                   </apex:column>
+                    
+                
+                                        
+                    
+                    
+                    
+                   
+                   <apex:column width="30px">
+                       <apex:outputLink styleClass="greyRound" rendered="{!a.hasCV}" value="/servlet/servlet.FileDownload?file={!a.cvId}" target="_blank" >
+                   <!--    <apex:commandLink action="{!SplitVF}" styleClass="greyRound" rendered="{!a.hasCV}" target="_blank" >  
+                          <apex:param name="cvid" value="{!a.cvId}"/>
+                           <apex:param name="contactid" value="{!a.candidate.Contact__c}" />
+                            <apex:param value="{!a.candidate.Id}" name="candidateId" assignTo="{!candidateId}" ></apex:param> -->
+                           
+                           
+                           
+                           
+                  
+                        <apex:outputPanel layout="block" styleClass="greyRound" ></apex:outputPanel>
+                                    </apex:outputLink> <!-- </apex:commandLink> -->
+                    
+                     <apex:outputPanel layout="block" styleClass="greenRound" rendered="{!NOT(a.hasCV)}"></apex:outputPanel>
+                       
+                     <apex:facet name="header">
+                      <apex:commandLink action="{!ViewData}" value="CV {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.hasCV__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet>
+                   </apex:column>
+                    
+                    <apex:column width="40px">
+                          <div style="align:center;">
+                      <apex:commandLink action="{!SplitVF}" styleClass="greyRound" rendered="{!a.hasCV}" target="_blank" > 
+                         
+                          <apex:param name="cvid" value="{!a.cvId}"/>
+                           <apex:param name="contactid" value="{!a.candidate.Contact__c}" />
+                            <apex:param value="{!a.candidate.Id}" name="candidateId" assignTo="{!candidateId}" ></apex:param>
+                        <!--    <apex:param value="{!mandate.Id}" name="mandateId" ></apex:param> -->
+                           
+                        <apex:outputPanel layout="block" styleClass="greyRound" ></apex:outputPanel>
+                               <!--     </apex:outputLink> --> </apex:commandLink>
+                    </div> 
+                     <apex:outputPanel layout="block" styleClass="greenRound" rendered="{!NOT(a.hasCV)}"></apex:outputPanel>
+                        
+                     <apex:facet name="header">   
+                      <apex:commandLink action="{!ViewData}" value="Split {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.hasCV__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet> 
+                          
+                    </apex:column>
+      
+                    
+                   
+                     <apex:column width="120px" value="{!a.noteTitle}" rendered="{!isColemanProfile}"> 
+                     <apex:facet name="header">
+                       <apex:outputText value="Note"/>
+                      
+                     </apex:facet>
+                   </apex:column>
+                    
+                    <apex:column width="100px" >
+                       <div style="text-align:center;"> 
+                       <apex:outputText value="{0,date,MM'/'dd'/'yyyy}" rendered="{!isColemanProfile}">
+                        <apex:param value="{!a.lastModifiedDate}" /> 
+                       </apex:outputText>
+                        
+                       <apex:outputText value="{0,date,MM'/'dd'/'yyyy}" rendered="{!not(isColemanProfile)}">
+                        <apex:param value="{!a.lastModifiedDate}" /> 
+                       </apex:outputText>
+                        </div>
+                     <apex:facet name="header">
+                      
+                      <apex:commandLink action="{!ViewData}" value="Last Modified {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="LastModifiedDate" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet>
+                   </apex:column>
+                   
+                   <!--  
+                   <apex:column >
+                     <apex:facet name="header">   
+                       <apex:commandLink action="{!ViewData}" value="Candidate Assigned {!IF(sortDirection='ASC','▼','▲')}" id="cmdSort">
+                         <apex:param value="name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet>
+                     <apex:outputLink value="/{!a.Id}" target="_blank">{!a.Name}</apex:outputLink>
+                   </apex:column>
+                 -->
+                <apex:column width="100px">
+                  <apex:facet name="header">  
+                        <apex:outputText value="Leaders Report Notes"/>
+                  </apex:facet>
+                  <div style="text-align:center;">
+                      <apex:commandLink action="{!createReportNote}" value="New" styleClass="btn" style="text-decoration:none;padding:4px; color:green; border-bottom-color:green;">
+                        <apex:param value="{!a.candidate.Id}" name="candidateId" assignTo="{!candidateId}" ></apex:param>
+                      </apex:commandLink>
+                      <apex:commandLink action="{!editReportNote}" value="Edit" styleClass="btn" style="text-decoration:none;padding:4px;">
+                        <apex:param value="{!a.candidate.Id}" name="candidateId" assignTo="{!candidateId}" ></apex:param>
+                      </apex:commandLink>
+                  </div>
+                </apex:column>
+                  
+<!-- Ankita Start -->                   
+          <!--          
+                    <apex:column width="50px">
+                        <apex:outputLink styleClass="greyRound" rendered="{!a.Off_Limit_Auto}" target="_blank"  value="/{!a.candidate.Contact__c}">
+                        <apex:outputPanel layout="block" styleClass="redRound" ></apex:outputPanel>
+                       </apex:outputLink>
+                    
+                     <apex:outputPanel layout="block" styleClass="greenRound" rendered="{!NOT(a.Off_Limit_Auto)}"></apex:outputPanel>
+                       
+                     <apex:facet name="header">
+                      <apex:commandLink action="{!ViewData}" value="Off Limit {!IF(sortDirection='ASC','▼','▲')}">
+                         <apex:param value="Contact__r.Off_Limit_Auto__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                       </apex:commandLink>
+                     </apex:facet>
+                   </apex:column>
+                    
+             -->       
+                    
+<!-- Ankita Ends -->                   
+                    
+                    
+                
+                </apex:pageblocktable>
+           </apex:outputPanel>
+            </div>
+            <apex:outputPanel id="btnPage">
+                 Page # {!pageNumber} sur {!totalPages}
+                <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="accListBlock,btnPage,btnPageTop" status="myStatus" oncomplete="fixTable()"/>
+        
+                <apex:commandButton action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="accListBlock,btnPage,btnPageTop" status="myStatus" oncomplete="fixTable()"/>        
+        
+                <apex:commandButton action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="accListBlock,btnPage,btnPageTop" status="myStatus" oncomplete="fixTable()"/>
+        
+                <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="accListBlock,btnPage,btnPageTop" status="myStatus" oncomplete="fixTable()"/>
+                 </apex:outputPanel>   
+        </apex:pageBlock>
+        </apex:form> 
+
+</apex:page>

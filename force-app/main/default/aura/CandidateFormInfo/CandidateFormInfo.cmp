@@ -1,0 +1,42 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+	<aura:attribute name="title" type="String" default="Title" access="global" />
+    <aura:attribute name="firstNameLabel" type="String" default="First Name" access="global" />
+    <aura:attribute name="lastNameLabel" type="String" default="Last Name" access="global" />
+    <aura:attribute name="emailLabel" type="String" default="Email" access="global" />
+    <aura:attribute name="phoneLabel" type="String" default="Phone Number" access="global" />
+    
+    <aura:attribute name="item" type="Map" default="{}" access="global" />
+	
+    <aura:registerEvent name="CandidateInputUpdateEvt" type="c:CandidateInputUpdateEvt" />
+    
+    
+    <div class="form  slds-p-bottom_small">
+        <lightning:card >
+            <aura:set attribute="title">
+               {!v.title}
+            </aura:set>
+             <div class="slds-p-horizontal_small">
+                <lightning:layout horizontalAlign="spread"  multipleRows="true">
+                    <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+                        <lightning:input type="text" label="{!v.lastNameLabel}" name="lastName" value="{!v.item.lastName}" onchange="{!c.updateInput}"/>
+                       
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+                   
+                        <lightning:input type="text" label="{!v.firstNameLabel}" name="firstName" value="{!v.item.firstName}" onchange="{!c.updateInput}"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+                        <lightning:input type="email" label="{!v.emailLabel}" name="email" value="{!v.item.email}" onchange="{!c.updateInput}"/>
+                    </lightning:layoutItem>
+                     <lightning:layoutItem flexibility="grow" padding="around-small" size="12" largeDeviceSize="6" smallDeviceSize="12">
+                        
+                        <lightning:input type="phone" label="{!v.phoneLabel}" name="phoneNumber"  value="{!v.item.phoneNumber}" onchange="{!c.updateInput}"/>
+                    </lightning:layoutItem>
+                </lightning:layout>
+                
+             </div>
+             
+         
+        </lightning:card>
+    </div>
+</aura:component>

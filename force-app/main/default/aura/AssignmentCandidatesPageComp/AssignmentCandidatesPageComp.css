@@ -1,0 +1,49 @@
+.THIS.c-container {
+    border: 1px solid #d8dde6;
+    margin: 10px 0 20px 0;
+}
+.THIS .page-section {
+    border: solid 1px #ccc;
+    padding: 1rem;
+}
+.THIS .page-header,
+.THIS .page-footer {
+    height: 50px;
+}
+.THIS .page-main {
+    background: #f8f8f8;
+}
+.THIS .page-left,
+.THIS .page-right {
+    background: #f0efef;
+}
+.THIS .blueBox{
+    color:rgb(40, 115, 168)
+}
+.THIS .centerText{
+    text-align: center;
+}
+.THIS .forestGreen{
+    background-color: forestgreen !important;
+}
+.THIS .leftMargin{
+    margin-left: 70px;
+}
+.THIS .toggle{
+    display: none;
+}
+
+.THIS .tooltipdiv{
+    width:auto;
+    height:auto;
+    padding:20px;
+    position:absolute;
+    left:45px;
+    box-shadow:3px 3px #888888;
+    background-color:red;
+}
+.THIS .popoverWidth{
+    background-color: var(--sds-c-tooltip-color-background, var(--lwc-colorBackgroundAltInverse,rgb(22, 50, 92)));
+    border: 0;
+    width: 30%;
+}

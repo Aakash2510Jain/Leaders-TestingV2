@@ -1,0 +1,21 @@
+.THIS .myCheckbox{
+  display: inline-block;
+  float: left;
+  margin-right: 10px;
+  font-weight: bold;
+}
+.THIS .modal__container{
+    position: absolute;
+    margin: auto; 
+    top: 10%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+   }
+
+.THIS .vl {
+  	border-top: 6px solid rgba(0, 112, 210, 1);
+    width: 100%;
+}

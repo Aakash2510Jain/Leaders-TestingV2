@@ -1,0 +1,293 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" Controller="AssignmentListLightning">
+    <aura:attribute name="selectedlist" type="String" /> 
+    <aura:attribute name="mydata" type="Object" />
+    <aura:attribute name="myNotes" type="Object" />
+    <aura:attribute name="TeamName" type="String" default="" />
+    <aura:attribute name="mycolumns" type="List" />
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:attribute name="url" type="String"/>
+    <aura:attribute name="Num_Of_Ass" type="String" default="" />
+    <aura:attribute name="Avg_Of_Num_OF_Days" type="String" default="" />
+    
+    <aura:attribute type="Boolean" name="sortAsc" default="true" />
+    <aura:attribute type="Boolean" name="sortAsc_1" default="true" />
+    <aura:attribute type="Boolean" name="sortAsc_2" default="true" />
+    <aura:attribute type="String" name="sortField" />
+    
+    <aura:attribute name="openModal" type="boolean" default="false" />
+    
+    <aura:handler event="c:AssignmentListEvent" action="{!c.displayAssignmentLists}"  />
+    <lightning:navigation aura:id="navService" />
+    <lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/>
+    
+    <div  style="height:700px;">
+        <div class="slds-scrollable " style="height:100%;">
+            <table class="slds-table tableFixHead  slds-table_bordered FixedHead">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        
+                        <th scope="col">
+                            <div data-sortAttType="Company__r.Name" onclick="{!c.sortByName}" class="slds-truncate" title="Company__r.Name">
+                                Company
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                        <aura:set attribute="else">
+                                            <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </div>
+                            
+                        </th>
+                        
+                        <th scope="col">
+                            
+                            <div data-sortAttType="Name" onclick="{!c.sortByName}" class="slds-truncate" title="Name">
+                                Assignment Name
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                        <aura:set attribute="else">
+                                            <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </div>
+                            
+                        </th>
+                        
+                        <th scope="col">
+                            
+                            <div data-sortAttType="Assignment_Status__c" onclick="{!c.sortByName}" class="slds-truncate" title="Assignment_Status__c">
+                                Status
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                        <aura:set attribute="else">
+                                            <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </div>
+                            
+                        </th>
+                        <th scope="col">
+                            <div data-sortAttType="Module__c" onclick="{!c.sortByName}" class="slds-truncate"  title="Module">Module
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                        <aura:set attribute="else">
+                                            <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </div>
+                        </th>
+                        
+                        <th scope="col">
+                            <div data-sortAttType="number_of_days__c" onclick="{!c.sortByName}" class="slds-truncate" title="Module__c ">
+                                Days
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                        <aura:set attribute="else">
+                                            <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </div>
+                            
+                        </th>     
+                        <th scope="col">
+                            <div  title="Candidates">Candidates</div>
+                        </th> 
+                        <th scope="col">
+                            <div  title="Potentials">Potentials</div>
+                        </th> 
+                        <th scope="col">
+                            <div  title="Internal Interviews">Internal <br></br> Interviews</div>
+                        </th> 
+                        <th scope="col">
+                            <div  title="Client Interviews">Client <br></br> Interviews</div>
+                        </th>
+                        <th scope="col">
+                            <div  title="Researcher 1">Process/Tasks</div>
+                        </th>
+                        
+                        <th scope="col">
+                            <div  title="Job description">Job <br></br> description</div>
+                        </th>       
+                        <th scope="col">
+                            <div  title="Research Strategy">Research <br></br> Strategy</div>
+                        </th> 
+                        <th scope="col">
+                            <div  title="Partner">Partner </div>
+                        </th>
+                        <th scope="col">
+                            <div  title="Researcher">Researcher </div>
+                        </th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.mydata.lstAssignments}" var="al" >
+                        
+                        <tr class="slds-hint-parent">
+                            <td  scope="row">
+                                
+                                
+                                <div  title="{!al.Company__r.Name}">
+                                    <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Account/'+al.Company__r.Id+'/view'}">{!al.Company__r.Name}</a></div>
+                                
+                                
+                            </td>
+                            <td>
+                                <div   title="{!al.Name}">
+                                    <a href="" onclick="{!c.handleClick}" data-record="{!al.Id}" >{!al.Name}</a>
+                                </div>
+                            </td>
+                            <td>
+                                <div  title="{!al.Assignment_Status__c}">{!al.Assignment_Status__c}</div>
+                            </td>
+                            <td>
+                                <div  title="{!al.Module__c}">{!al.Module__c}</div>
+                            </td>
+                            
+                            <td>
+                                <div style="margin-left: 10px;" title="{!al.number_of_days__c}">{!al.number_of_days__c}</div>
+                            </td>
+                            <td>
+                                <div  style="margin-left: 25px;" title="{!al.Number_of_candidates__c}">{!al.Number_of_candidates__c}</div>
+                            </td>   
+                            <td>
+                                <div style="margin-left: 30px;" title="{!al.Number_of_potential_candidates__c}">{!al.Number_of_potential_candidates__c}</div>
+                            </td> 
+                            <td>
+                                <div  style="margin-left: 30px;" title="{!al.Leaders_interviews__c}">{!al.Leaders_interviews__c}</div>
+                            </td>
+                            <td>
+                                <div style="margin-left: 25px;" title="{!al.Number_of_potential_candidates__c}">{!al.Client_interviews__c}</div>
+                            </td>
+                            <td style="color: blue;">
+                                <button  class = "button" type="button"  onclick="{! c.viewNotes }" id="{!al.Id}" >Review </button>
+                            </td>
+                            
+                            <aura:if isTrue="{!al.Has_Job_Description__c}"  >
+                                <td>  
+                                    <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                </td>
+                                
+                                <aura:set attribute="else">
+                                    <td>  
+                                        <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                    </td> 
+                                </aura:set>   
+                                
+                            </aura:if>
+                            
+                            
+                            
+                            <aura:if isTrue="{!al.Has_Research_Strategy__c}"  >
+                                
+                                <td>  
+                                    <lightning:icon class="slds-icon_container slds-icon-action-approval " variant="inverse" iconName="action:approval" size="xx-small" />
+                                </td>
+                                <aura:set attribute="else">
+                                    <td>  
+                                        <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                    </td> 
+                                </aura:set>   
+                                
+                            </aura:if> 
+                            <td>
+                                <div  title="{!al.Partner__r.Name}">
+                                    <aura:if isTrue="{!not(empty(al.Partner__r.Name))}">
+                                        {!al.Partner__r.Name}<br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(al.Partner_2__r.Name))}">
+                                        {!al.Partner_2__r.Name}<br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(al.Partner_3__r.Name))}">
+                                        {!al.Partner_3__r.Name}
+                                    </aura:if>
+                                    
+                                </div>
+                            </td>
+                            <td>
+                                <div  title="{!al.Consultant__r.Name}">
+                                    <aura:if isTrue="{!not(empty(al.Consultant__r.Name))}">
+                                        {!al.Consultant__r.Name}<br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(al.Researcher__r.Name))}">
+                                        {!al.Researcher__r.Name}<br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(al.Researcher_3__r.Name))}">
+                                        {!al.Researcher_3__r.Name}<br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(al.Researcher_4__r.Name))}">
+                                        {!al.Researcher_4__r.Name}<br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(al.Researcher_5__r.Name))}">
+                                        {!al.Researcher_5__r.Name}
+                                    </aura:if>
+                                    
+                                    
+                                </div>
+                            </td>
+                            
+                            
+                        </tr>
+                    </aura:iteration>   
+                </tbody>
+            </table>
+        </div> 
+    </div>
+    <aura:if isTrue="{!v.openModal}">
+        <div role="dialog" class="slds-modal slds-fade-in-open ">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.handleCloseModal}">
+                        X
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h1 class="slds-text-heading--medium">List Of Notes</h1>
+                </div>
+                
+                <!--Modal Box Header-->
+                <div class="slds-modal__content slds-p-around--medium">
+                    
+                    <aura:if isTrue="{!not(empty(v.myNotes))}"> 
+                        
+                        <aura:iteration items="{!v.myNotes}" var="nt" >
+                            <tr class="slds-text-title_caps">
+                                <td>
+                                    <div  title="{Name}">* {!nt.Name}</div>
+                                    <br/>
+                                </td>
+                            </tr>
+                            
+                        </aura:iteration>
+                        
+                        <aura:set attribute="else">
+                            No notes Available
+                        </aura:set>
+                        
+                    </aura:if>
+                    
+                </div>
+                <!--Modal Box Button-->
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button--brand" onclick="{!c.handleCloseModal}">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>            
+    </aura:if>
+    
+    <footer class="slds-card__footer">
+        <a class="slds-card__footer-action" href="javascript:void(0);">View All
+            <span class="slds-assistive-text">Contacts</span>
+        </a>
+    </footer>
+    
+</aura:component>

@@ -1,0 +1,269 @@
+<aura:component >
+    
+    <aura:attribute name="role" type="string" />
+    <aura:attribute name="profileName" type="string" />
+    <aura:attribute name="recordTypeIds" type="string" />
+    <aura:attribute name="experienceList" type="List" default="[{'record':{
+                                                               'sobjectType': 'Work_Experience__c',
+                                                               'Company__c': '',
+                                                               'Title__c': '',
+                                                               'Title_FR__c': '',
+                                                               'Start_Year__c': '',
+                                                               'End_Year__c': '',
+                                                               'Current_del__c': '',
+                                                               },'lookupObj':{}]"/> 
+    <aura:attribute name="educationList" type="List" default="[{'record':{
+                                                              'sobjectType': 'Work_Experience__c',
+                                                              'Company__c': '',
+                                                              'Title__c': '',
+                                                              'Title_FR__c': '',
+                                                              'Start_Year__c': '',
+                                                              'End_Year__c': '',
+                                                              'Current_del__c': ''
+                                                              },'lookupObj':{}]"/> 
+    <aura:attribute name="professionalList" type="List" default="[{'record':{
+                                                                 'sobjectType': 'Work_Experience__c',
+                                                                 'Company__c': '',
+                                                                 'Title__c': '',
+                                                                 'Title_FR__c': '',
+                                                                 'Start_Year__c': '',
+                                                                 'End_Year__c': '',
+                                                                 'Current_del__c': ''
+                                                                 },'lookupObj':{}]"/> 
+    <aura:attribute name="boardList" type="List" default="[{'record':{
+                                                          'sobjectType': 'Work_Experience__c',
+                                                          'Company__c': '',
+                                                          'Title__c': '',
+                                                          'Title_FR__c': '',
+                                                          'Start_Year__c': '',
+                                                          'End_Year__c': '',
+                                                          'Current_del__c': ''
+                                                          },'lookupObj':{}]"/>
+    
+    <aura:attribute name="AddCmntList" type="List" default="[{'record':{
+                                                            'sobjectType': 'Work_Experience__c',
+                                                            'Biography_Comments__c':''}]"/> 
+    
+    <aura:registerEvent name="deleteEvent" type="c:DeleteEvt"/>
+    <!--Added for validation by DeaGle~-->
+    <aura:method name="validateMe" action="{!c.validateThis}" 
+                 description="no params"> 
+    </aura:method>
+    
+    <div class="slds-m-around--xx-large" >
+        
+        <div class="container-fluid">        
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer"> 
+                    <thead >
+                        <tr class="slds-text-title_caps" >
+                            <th scope="col">
+                                <div class="slds-truncate" >#</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate">Company</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" >Title</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" >Title 2nd language</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" >Start Year</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate">End Year</div>
+                            </th>
+                            <aura:if isTrue="{!and(v.role!='educationList',or(v.profileName=='Force.com Leaders Coleman',v.profileName=='Force.com Leaders Coleman + BusDev'))}">
+                                <th scope="col">
+                                    <div class="slds-truncate" >Add Company description</div>
+                                </th>
+                            </aura:if>
+                            <th scope="col">
+                                <aura:if isTrue="{!v.role!='educationList'}">
+                                    <div class="slds-truncate" >Current</div>
+                                    <aura:set attribute="else">
+                                        <div class="slds-truncate" >Verified</div>
+                                    </aura:set>
+                                </aura:if>
+                            </th>
+                            
+                            <th scope="col">
+                                <div class="slds-truncate" >Delete</div>
+                            </th>
+                        </tr>
+                    </thead>   
+                    <tbody>   
+                        <aura:if isTrue="{!v.role == 'experienceList'}">
+                            <aura:iteration items="{!v.experienceList}" var="exp" indexVar="index">
+                                <tr>
+                                    <td> 
+                                        {!index + 1}
+                                    </td>
+                                    <td>
+                                        <c:customLookup objectAPIName="account" IconName="standard:account" parentId="{!index}" SearchKeyWord="{!exp.record.Company_Name__c}" mainList="{!v.experienceList}" label="Select Company"/>
+                                        <lightning:input name="Reporting Structure" type="text"  maxlength="100" label="Reporting Structure" value="{!exp.record.Reporting_Structure__c}" />
+                                    </td>
+                                    <td>
+                                        <lightning:input aura:id="req-title" name="Title" type="text"  maxlength="500" label="Title" value="{!exp.record.Title__c}" />
+                                        <lightning:input name="Comments" type="text"  maxlength="100" label="Comments" value="{!exp.record.Comments__c}" />
+                                        
+                                    </td>
+                                    <td>
+                                        <lightning:input name="Title french" type="text"  maxlength="100" label="Title 2nd language" value="{!exp.record.Title_FR__c}" />
+                                        <lightning:input name="Reason for Leaving" type="text"  maxlength="100" label="Reason for Leaving" value="{!exp.record.Reason_for_Leaving__c}" />
+                                        
+                                    </td>
+                                    <td>
+                                        <lightning:input name="Start Year" type="phone" maxlength="100" label="Start Year" value="{!exp.record.Start_Year__c}" />
+                                        <ui:inputCheckbox name="Hide Reason In Template"   label="Hide Reason In Template" value="{!exp.record.Hide_Reason_In_Template__c}" />
+                                    </td>
+                                    
+                                    <td>
+                                        <lightning:input name="End Year" type="text"  maxlength="100" label="End Year" value="{!exp.record.End_Year__c}" /><br/><br/><br/>
+                                    </td>
+                                    <aura:if isTrue="{!and(v.role!='educationList',or(v.profileName=='Force.com Leaders Coleman',v.profileName=='Force.com Leaders Coleman + BusDev'))}">
+                                        <td>
+                                            <lightning:input name="Add Company description" type="text"  maxlength="100" label="Company Description" value="{!exp.record.Add_company_description__c}" /><br/><br/><br/>
+                                        </td>
+                                    </aura:if>
+                                    <td>
+                                        
+                                        <ui:inputCheckbox name="current"   label="Current" value="{!exp.record.Current_del__c}" /><br/><br/><br/>
+                                    </td>
+                                    
+                                    <td>
+                                        <a onclick="{!c.removeRow}" data-record="{!index}" data-index="{!exp.record.Id}">
+                                            <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete" />
+                                            <span class="slds-assistive-text">Delete</span>
+                                        </a>
+                                    </td> 
+                                </tr>
+                            </aura:iteration>
+                        </aura:if>
+                        <aura:if isTrue="{!v.role == 'educationList'}">
+                            <aura:iteration items="{!v.educationList}" var="edu" indexVar="index">
+                                <tr>
+                                    <td> 
+                                        {!index + 1}
+                                    </td>
+                                    <td> 
+                                        <c:customLookup objectAPIName="account" IconName="standard:account" SearchKeyWord="{!edu.record.Company_Name__c}" parentId="{!index}" mainList="{!v.educationList}" label="Select Company"/>
+                                    </td>
+                                    <td>
+                                        <lightning:input aura:id="req-title" name="Title" type="text" maxlength="500" label="Title" value="{!edu.record.Title__c}" />
+                                    </td>
+                                    <td>
+                                        <lightning:input name="Title french" type="text"  maxlength="100" label="Title 2nd language" value="{!edu.record.Title_FR__c}" />
+                                    </td>
+                                    <td>
+                                        <lightning:input name="Start Year" type="phone" maxlength="100" label="Start Year" value="{!edu.record.Start_Year__c}" />
+                                    </td>
+                                    <td>
+                                        <lightning:input name="End Year" type="text"  maxlength="100" label="End Year" value="{!edu.record.End_Year__c}" />
+                                    </td>
+                                    <td>
+                                        <ui:inputCheckbox name="verified"   label="verified" value="{!edu.record.Verified__c}" />
+                                        
+                                    </td>
+                                    
+                                    <td>
+                                        <a onclick="{!c.removeRow}" data-record="{!index}" data-index="{!edu.record.Id}">
+                                            <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete"/>
+                                            <span class="slds-assistive-text">Delete</span>
+                                        </a>
+                                    </td> 
+                                </tr>
+                            </aura:iteration>
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.role == 'professionalList'}">
+                            <aura:iteration items="{!v.professionalList}" var="exp" indexVar="index">
+                                <tr>
+                                    <td> 
+                                        {!index + 1}
+                                    </td>
+                                    <td> 
+                                        <c:customLookup objectAPIName="account" IconName="standard:account" SearchKeyWord="{!exp.record.Company_Name__c}" parentId="{!index}" mainList="{!v.professionalList}" label="Select Company"/>
+                                    </td>
+                                    <td>
+                                        <lightning:input aura:id="req-title" name="Title" type="text" maxlength="500" label="Title"  value="{!exp.record.Title__c}" />
+                                    </td>
+                                    <td>
+                                        <lightning:input name="Title french" type="text"  maxlength="100" label="Title 2nd language" value="{!exp.record.Title_FR__c}" />
+                                    </td>
+                                    <td>
+                                        <lightning:input name="Start Year" type="phone" maxlength="100" label="Start Year" value="{!exp.record.Start_Year__c}" />
+                                    </td>
+                                    <td>
+                                        <lightning:input name="End Year" type="text"  maxlength="100" label="End Year" value="{!exp.record.End_Year__c}" />
+                                    </td>
+                                    <aura:if isTrue="{!and(v.role!='educationList',or(v.profileName=='Force.com Leaders Coleman',v.profileName=='Force.com Leaders Coleman + BusDev'))}">
+                                        <td>
+                                            <lightning:input name="Add Company description" type="text"  maxlength="100" label="Company Description" value="{!exp.record.Add_company_description__c}" />
+                                        </td>
+                                    </aura:if>
+                                    <td>
+                                        <ui:inputCheckbox name="current"   label="current" value="{!exp.record.Current_del__c}" />
+                                        
+                                    </td>
+                                    
+                                    <td>
+                                        <a onclick="{!c.removeRow}" data-record="{!index}" data-index="{!exp.record.Id}">
+                                            <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete"/>
+                                            <span class="slds-assistive-text">Delete</span>
+                                        </a>
+                                    </td> 
+                                </tr>
+                            </aura:iteration>
+                        </aura:if>
+                        <aura:if isTrue="{!v.role == 'boardList'}">
+                            <aura:iteration items="{!v.boardList}" var="board" indexVar="index">
+                                <tr>
+                                    <td> 
+                                        {!index + 1}
+                                    </td>
+                                    <td> 
+                                        <c:customLookup objectAPIName="account" IconName="standard:account" SearchKeyWord="{!board.record.Company_Name__c}" parentId="{!index}" mainList="{!v.boardList}" label="Select Company"/>
+                                    </td>
+                                    <td>
+                                        <lightning:input aura:id="req-title" name="Title" type="text"  maxlength="500" label="Title" value="{!board.record.Title__c}" />
+                                    </td>
+                                    <td>
+                                        <lightning:input name="Title french" type="text"  maxlength="100" label="Title 2nd language" value="{!board.record.Title_FR__c}" />
+                                    </td>
+                                    <td>
+                                        <lightning:input name="Start Year" type="phone" maxlength="100" label="Start Year" value="{!board.record.Start_Year__c}" />
+                                    </td>
+                                    <td>
+                                        <lightning:input name="End Year" type="text"  maxlength="100" label="End Year" value="{!board.record.End_Year__c}" />
+                                    </td>
+                                    <aura:if isTrue="{!and(v.role!='educationList',or(v.profileName=='Force.com Leaders Coleman',v.profileName=='Force.com Leaders Coleman + BusDev'))}">
+                                        <td>
+                                            <lightning:input name="Add Company description" type="text"  maxlength="100" label="Company Description" value="{!board.record.Add_company_description__c}" />
+                                        </td>
+                                    </aura:if>
+                                    <td>
+                                        <ui:inputCheckbox name="current"   label="current" value="{!board.record.Current_del__c}" />
+                                        
+                                    </td>
+                                    
+                                    <td>
+                                        <a onclick="{!c.removeRow}" data-record="{!index}" data-index="{!board.record.Id}">
+                                            <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete" />
+                                            <span class="slds-assistive-text">Delete</span>
+                                        </a>
+                                    </td> 
+                                </tr>
+                            </aura:iteration>
+                        </aura:if>
+                        
+                        
+                    </tbody>
+                </table>
+            
+            <lightning:button label="Add Row" title="Add Row" onclick="{! c.addRow }" class="marginTop"/>
+        </div>
+    </div>
+    
+</aura:component>

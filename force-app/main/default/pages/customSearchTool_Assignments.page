@@ -1,0 +1,204 @@
+<apex:page controller="customSearchTool_Assignments" docType="html-5.0" LightningStylesheets="True">
+
+    <style type="text/css">
+        .custPopup{border-style:none; position:relative;font-size: 125%;}
+        @keyframes blinkingText{
+        0%{color:#000;}
+        30%{color:transparent;}
+        50%{color:#000;}
+        70%{color:transparent;}
+        100%{color:#000;}
+        
+    </style>
+    
+
+    
+     <apex:outputLabel styleClass="custPopup" >
+            Please use CTRL (In Windows) and COMMAND (In Mac) button for multiple selection.
+          </apex:outputLabel>
+<apex:form id="myForm">
+<apex:PageBlock title="Custom Search Tool : Assignments" id="filterBlock">
+     
+        <apex:selectList id="gender" value="{!fCriteria}" size="1" label="Gender">
+          <apex:selectOptions value="{!FilterCriteria}"/>
+        </apex:selectList>
+            <apex:pageMessages id="theMessages"/>
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!resetFilters}" value="Reset Filters" rerender="filterBlock,cTable"/>
+                <apex:commandButton action="{!searchAssBegining}" value="Search Assignments" rerender="cTable,theMessages"/>                
+            </apex:pageBlockButtons>
+  
+    
+    
+    <apex:pageBlockSection >
+     <!--   <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Assignment Title" for="Ttile"/>                     
+             <apex:inputText id="Ttile" value="{!TitleFilter}" />
+        </apex:pageBlockSectionItem>-->
+        <apex:selectList id="fArea" value="{!statusFilter}" multiselect="true" size="5" label="Status">
+          <apex:selectOptions value="{!Status}"/>
+        </apex:selectList>
+        
+        <apex:inputField value="{!mandat.Mandate_Start_Date__c }" label="Start Date From"/>
+        <apex:inputCheckbox value="{!openSearch}" label="Open Search"/>
+      <!--  <apex:outputPanel ></apex:outputPanel> -->
+        <apex:inputField value="{!mandat.Mandate_End_Date__c }" label="Start Date To"/>
+        
+        <apex:inputField value="{!mandat.Name }" label="Assignment Tile"/>
+        
+         
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Company Name" for="cName"/>                     
+             <apex:inputText id="cName" value="{!companyFilter}" />
+        </apex:pageBlockSectionItem>        
+        
+        <apex:selectList id="compet" value="{!industryFilter}" multiselect="true" size="5" label="Industry" rendered="{!(!isDesjardins)}" >
+          <apex:selectOptions value="{!Industries}"/>
+        </apex:selectList>
+        
+        <apex:selectList id="competFR" value="{!industryFilterFR}" multiselect="true" size="5" label="Industries" rendered="{!isDesjardins}" >
+          <apex:selectOptions value="{!IndustriesFR}"/>
+        </apex:selectList>
+        
+        
+        <apex:selectList id="indust" value="{!jobFunctionFilter}" multiselect="true" size="5" label="Job Function">
+          <apex:selectOptions value="{!JobFunctions}"/>
+        </apex:selectList>    
+        <apex:selectList id="jobl" value="{!jobLevelFilter}" multiselect="true" size="5" label="Job Level">
+          <apex:selectOptions value="{!JobLevels}"/>
+        </apex:selectList>
+        <apex:selectList id="part1" value="{!Partner1Filter}" multiselect="true" size="5" label="Partner 1">
+          <apex:selectOptions value="{!Users}"/>
+        </apex:selectList>        
+        <apex:selectList id="part2" value="{!Partner2Filter}" multiselect="true" size="5" label="Partner 2">
+          <apex:selectOptions value="{!Users}"/>
+        </apex:selectList>        
+        <apex:selectList id="res1" value="{!Research1Filter}" multiselect="true" size="5" label="Researcher 1">
+          <apex:selectOptions value="{!Users}"/>
+        </apex:selectList>   
+        <apex:selectList id="res2" value="{!Research2Filter}" multiselect="true" size="5" label="Researcher 2">
+          <apex:selectOptions value="{!Users}"/>
+        </apex:selectList>     
+     </apex:pageBlockSection>          
+</apex:PageBlock>
+<apex:PageBlock id="cTable">
+    <apex:pageBlockSection >
+        <apex:outputText style="font-size :10pt" value="{!total_size}" ><b> Total Number of Results : </b>  </apex:outputText>
+    </apex:pageBlockSection>
+<apex:PageBlockTable value="{!aWrapperList}" rendered="{!AND(aWrapperList != null,aWrapperList.size>0)}" var="cw">
+          
+           <apex:column > 
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Assignment Title {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+               <apex:outputLink value="/{!cw.theAssignment.Id}" target="_blank">{!cw.theAssignment.Name}</apex:outputLink>            
+           </apex:column>
+    
+           <apex:column >
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Company Name {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="Company__r.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+               {!cw.theAssignment.Company__r.Name}
+           </apex:column>
+           <apex:column >
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Industry {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="Company__r.Industry_Types__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+               {!cw.theAssignment.Company__r.Industry_Types__c}
+           </apex:column>
+          
+           <apex:column >
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Job Function {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="Job_Function__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+               {!cw.theAssignment.Job_Function__c}
+           </apex:column>
+           <apex:column >
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Job Level {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="Level__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+               {!cw.theAssignment.Level__c}
+           </apex:column>
+    <apex:column >
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Partner 1 {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="Assignment_Status__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+               {!cw.theAssignment.Partner__r.name}
+           </apex:column>
+    <apex:column >
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Partner 2 {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="Assignment_Status__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+               {!cw.theAssignment.Partner_2__r.name}
+           </apex:column>
+     <apex:column >
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Status {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="Assignment_Status__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+               {!cw.theAssignment.Assignment_Status__c}
+           </apex:column>
+    		
+           <apex:column styleClass="tableClass">
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Start Date {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="Mandate_Start_Date__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+               <apex:outputText value="{0,date,MM/dd/yyyy}" >  
+                   <apex:param value="{!cw.theAssignment.Mandate_Start_Date__c}"/>  
+               </apex:outputText>    
+
+              
+           </apex:column>
+    		<apex:column >
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Days {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="number_of_days__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+                <div style="text-align:center">
+                {!cw.theAssignment.number_of_days__c}    
+                </div>
+               
+           </apex:column>
+    		<apex:column >
+               <apex:facet name="header">
+                   <apex:commandLink action="{!searchAss}" value="Candidates {!IF(sortDirection='ASC','▼','▲')}"  > 
+                       <apex:param value="Number_of_candidates__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                   </apex:commandLink>                   
+               </apex:facet>
+                 <div style="text-align:center">
+               {!cw.theAssignment.Number_of_candidates__c}
+                </div>
+           </apex:column>
+        </apex:PageBlockTable>
+    
+         <apex:outputPanel id="btnPage">
+             Page # {!pageNumber} sur {!totalPages}
+             <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>
+             
+             <apex:commandButton action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>        
+             
+             <apex:commandButton action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>
+             
+             <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>
+        </apex:outputPanel>   
+</apex:PageBlock>
+</apex:form>
+</apex:page>

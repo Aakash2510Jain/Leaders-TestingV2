@@ -1,0 +1,151 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="newRelatedAssignmentLightningCont" >
+	
+    <aura:attribute name="candidate" type="Application__c" ></aura:attribute>
+    <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="origin" type="string" ></aura:attribute>
+    <aura:attribute name="SSLValues" type="String" />
+    <aura:attribute name="searchKeyWord" type="String" />
+    <aura:attribute name="openSearchPopup" type="boolean" default="false"/>
+    <aura:attribute name="inputName" type="String" />
+    <aura:attribute name="inputAssignName" type="String" />
+    <aura:attribute name="AssignName" type="Sobject" />
+    <aura:attribute name="peopleId" type="Id" />
+     <aura:attribute name="mandateRecId" type="Id"/>
+    <aura:attribute name="mandateName" type="String" />
+    
+    <aura:attribute name="OriginValue" type="String" />
+    <aura:attribute name="SSLValue" type="String" />
+    <aura:attribute name="Description" type="String" />
+    <aura:attribute name="displayNewRelAssign" type="boolean"></aura:attribute>
+                    
+    
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:handler event="c:newCandidateEvent" action="{!c.handleNewCanEvent}" />
+    
+    <lightning:notificationsLibrary aura:id="notifLib" />
+    <lightning:card class="slds-align_absolute-center" >
+    <lightning:layout>
+        
+        <lightning:accordion activeSectionName="Information">
+         <br></br>
+         <br></br>   
+         <div class=" slds-card slds-grid slds-gutters "> 
+         <div class="slds-col slds-size_1-of-3">   
+         <span>   
+        <!--    <c:customLookup objectAPIName="contact" IconName="standard:account" label="Name" selectedRecord="{!v.selectedLookUpRecord}"/>   
+            
+            <label class="slds-form-element__label" for="lookup-348">Name</label>
+            <div class="slds-form-element__control">
+           
+            <div class="slds-input-has-icon slds-input-has-icon_right" >
+               <div onclick="{!c.openSearchPopup}" > 
+              <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search" onclick="{!c.openSearchPopup}"/> 
+               </div>    
+               
+               <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                     <lightning:pill class="pillSize" label="{!v.selectedRecord.Name}" name="{!v.selectedRecord.Name}" onremove="{! c.clear }">
+                          <aura:set attribute="media">
+                             <lightning:icon iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                          </aura:set>
+                      </lightning:pill>
+                </div> 
+               <div aura:id="lookupField" class="slds-show">
+                    <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                        <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                        <span class="slds-assistive-text"></span>
+                    </span>
+                    <ui:inputText class="slds-lookup__search-input slds-input leftPaddingClass" value="{!v.searchKeyWord}"/>
+                        
+                </div>   
+                
+            </div>
+        </div> -->
+            
+            <div class="slds-grid slds-m-around_xx-small">
+                <div class="slds-grid_align-center">
+                <label> Name </label>
+                </div>    
+               <div class="slds-col slds-grow-none slds-grid_align-center slds-m-around_xx-small">
+                   <span>
+                     <!-- <Lightning:input label="" name="Name" value="{v.inputName}" /> -->
+                      <ui:inputText label="" value="{!v.inputName}" /> 
+                   </span>
+               </div>
+                
+               <div class="slds-col slds-grow-none slds-grid_align-center slds-m-around_xx-small slds-align_absolute-center">
+                  <span>
+                      <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search" onclick="{!c.openSearchPopup}"/>
+                   </span>
+            </div> 
+            </div>  
+            </span>
+            
+           </div> 
+            
+          
+          <!--  <Lightning:input label="Name" name="Name" />    
+            <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search" onclick="{!c.openSearchPopup}"/> -->
+                  
+          <!--  <Lightning:input label="Assignment" name="Assignment" /> -->
+           <div class="slds-col slds-size_2-of-3">
+            <span>
+            <div class="slds-grid slds-m-around_xx-small">
+                <label> Assignment Name </label>
+               <div class="slds-col slds-grow-none slds-grid_align-center slds-m-around_xx-small">
+                   <span>
+                     <!-- <Lightning:input label="" name="Name" value="{v.inputName}" /> -->
+                      <ui:inputText label="" value="{!v.mandateRecId}" /> 
+                   </span>
+               </div>
+                
+               <div class="slds-col slds-grow-none slds-grid_align-center slds-m-around_xx-small slds-align_absolute-center">
+                  <span>
+                      <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search" onclick="{!c.openSearchPopup}"/>
+                   </span>
+            </div> 
+            </div>
+            </span>    
+            <br></br>
+            <span>
+            <Lightning:select aura:id="Origin" label="Origin" value="{!v.OriginValue}">
+             <option value="">--None--</option>
+             <aura:iteration items="{!v.origin}" var="orgn" >
+             <option value="{!orgn}">
+                {!orgn}
+             </option> 
+             </aura:iteration>
+            </Lightning:select>
+                
+            <br></br>
+            <Lightning:select aura:id="SSL" label="Status Summary Line" value="{!v.SSLValue}" >
+             <option value="">--None--</option>
+                
+             <aura:iteration items="{!v.SSLValues}" var="SSL">
+             <option value="{!SSL}">
+               {!SSL}  
+      
+             </option>   
+             </aura:iteration>   
+            </Lightning:select>
+            <br></br>
+           <lightning:inputRichText aura:id="profile" label="Profile" value="{!v.Description}" />
+              </span>  
+           </div>   
+         
+            </div>    
+            
+            <lightning:button label="Save" variant="brand" name="Save" onclick="{!c.handleSave}" />
+            <lightning:button label="Save and New" variant ="brand" name="SaveandNew" onclick="{!c.handleSaveandNew}" />
+            <lightning:button label="Cancel" variant="brand" name="Cancel" onclick="{!c.handleCancel}"/>
+        </lightning:accordion>
+        
+      
+    </lightning:layout>
+       
+    </lightning:card>
+    <Aura:if isTrue="{!v.openSearchPopup}"> 
+       <c:SearchCandidateComp openSearchPopup="{!v.openSearchPopup}" inputName="{!v.inputName}" ></c:SearchCandidateComp>
+        </Aura:if>   
+ 
+</aura:component>

@@ -1,0 +1,212 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="searchPeopleCompController" >
+	
+     <!-- Attributes and Veriables -->    
+     <aura:attribute name="openSearchBDModal" type="boolean" />
+     <aura:attribute name="searchBD" type="string"></aura:attribute>
+     <aura:attribute name="searchBDData" type="Object" ></aura:attribute>
+     <aura:attribute name="searchAssignmentData" type="Object"></aura:attribute>
+     <aura:attribute name="Message" type="boolean" default="false" description="Use for to display No of records and found message"></aura:attribute>
+     <aura:attribute name="TotalNumberOfRecord" type="integer" default="0" description="use for display Number of records" ></aura:attribute>
+     <aura:attribute name="displayAssignmentTable" type="boolean" default="false" />
+     <aura:attribute name="displayBDTable" type="boolean" default="false" />
+    
+     <aura:attribute name="displayBD" type="boolean" />
+     <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+ <!-- Spinner -->   
+    
+    <lightning:spinner variant="brand" size="large" aura:id="Id_Spinner" class="slds-hide"></lightning:spinner>
+    
+    
+    
+    <section aura:id="Modalbox" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add people Record</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <!-- <p><b>The goal of this blog is to provide tips and tricks/workarounds for salesforce developer and admins.
+                            Many of us face the same issues and have the same questions when using and implementing Salesforce.
+                            As a community of users and developers, it is important for us to share our experiences.
+                            I try to reach out to other users and help the Salesforce community in general.
+                            Much of this blog will focus on Lightning(code &amp; config.) but I will also
+                            cover some of the more basic topics in salesforce.
+                            </b>
+                        </p> -->
+                     
+                        
+     <div aura:id="searchbody" class="slds-card__body">
+         <!-- Total number of records Display --> 
+         <div>
+         <lightning:button label="Create New Business Development" 
+                                          variant="brand" 
+                                          name="NewBD" 
+                                          onclick="{!c.addBD}"></lightning:button>
+                        
+                        <lightning:button variant="neutral" 
+                                          label="Close"
+                                          title="Close"
+                                          onclick="{!c.closeModel }"/>
+         
+         </div>
+      <!--  <div class="slds-m-around_x-small">
+            <lightning:badge label="{!v.TotalNumberOfRecord}" />
+        </div> -->
+         
+        <div>
+           
+         </div> 
+         
+        <!-- Display Of message of No records found -->
+         
+     <!--    <aura:if isTrue="{!v.Message}">
+         	<div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_error" role="alert">
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small">No Records Found...</h2>
+                    </div>
+                </div>
+            </div>
+         </aura:if> -->
+         
+    <lightning:card title=" Assignments " > 
+    <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+      <thead>
+        <tr class="slds-text-title_caps">
+          <th scope="col">
+            <div class="slds-truncate slds-cell-wrap" title="Assignment Name">Name</div>
+          </th>
+            <th scope="col">
+            <div class="slds-truncate slds-cell-wrap" title="Company">Company</div>
+          </th>
+          <th scope="col">
+            <div class="slds-truncate slds-cell-wrap" title="Status">Status</div>
+          </th>
+          <th scope="col">
+            <div class="slds-truncate slds-cell-wrap" title="Days">Owner</div>
+          </th>    
+          
+            
+        </tr>
+      </thead>
+      <tbody>
+         <aura:iteration items="{!v.searchAssignmentData}" var="sad" >
+          
+        <tr class="slds-hint-parent">
+          <th scope="row">
+            <div class="slds-truncate slds-cell-wrap " title="{!sad.Name}">
+                <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Contact/'+sad.Id+'/view'}">{!sad.Name}</a>
+            </div>
+          </th>
+          <td>
+            <div class="slds-truncate slds-cell-wrap" title="{!sad.Company__r.Name}">
+                <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Account/'+sad.Company__c+'/view'}">{!sad.Company__r.Name}</a>
+              </div>
+          </td>
+          <td>
+            <div class="slds-truncate slds-cell-wrap" title="{!sad.Title}">{!sad.Assignment_Status__c}</div>
+          </td>
+     
+                 
+         
+        </tr>
+          </aura:iteration>   
+      </tbody>
+    </table>
+    </lightning:card>     
+       
+         
+     <lightning:card title="Business developments">    
+       <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+      <thead>
+        <tr class="slds-text-title_caps">
+          <th scope="col">
+            <div class="slds-truncate slds-cell-wrap" title="Name">Name</div>
+          </th>
+            <th scope="col">
+            <div class="slds-truncate slds-cell-wrap" title="Company">Company</div>
+          </th>
+          <th scope="col">
+            <div class="slds-truncate slds-cell-wrap" title="Status">Stage</div>
+          </th>
+          <th scope="col">
+            <div class="slds-truncate slds-cell-wrap" title="Days">Owner</div>
+          </th>    
+          
+            
+        </tr>
+      </thead>
+      <tbody>
+         <aura:iteration items="{!v.searchBDData}" var="sbd" >
+          
+        <tr class="slds-hint-parent">
+          <th scope="row">
+            <div class="slds-truncate slds-cell-wrap " title="{!sbd.Name}">
+                <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Contact/'+sbd.Id+'/view'}">{!sbd.Name}</a>
+            </div>
+          </th>
+          <td>
+            <div class="slds-truncate slds-cell-wrap" title="{!sbd.Company__r.Name}">
+                <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Account/'+sbd.Account_Name__c+'/view'}">{!sbd.Account_Name__r.Name}</a>
+              </div>
+          </td> 
+          <td>
+            <div class="slds-truncate slds-cell-wrap" title="{!sbd.Stage__c}">{!sbd.Stage__c}</div>
+          </td>
+       
+                 
+         
+        </tr>
+          </aura:iteration>   
+      </tbody>
+    </table>  
+    </lightning:card>     
+         
+         
+         
+  </div> 
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                       
+                        
+                        
+                         
+                        
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                <!--    <footer class="slds-modal__footer">
+                        
+                       
+                       
+                    </footer> -->
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+              
+     
+      <Aura:if isTrue="{!v.displayNewPeople}">
+             <c:newPeopleComp displayNewPeople="{!v.displayNewPeople}" searchPeople="{!v.searchPeople}" openSearchModal="{!v.openSearchModal}" >
+             </c:newPeopleComp>
+    
+    
+    
+        </Aura:if>
+    
+    
+    
+    
+    
+    
+</aura:component>

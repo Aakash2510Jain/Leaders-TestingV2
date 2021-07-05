@@ -1,0 +1,14 @@
+.THIS.slds-modal__container{
+     max-width: 70rem;
+     width:200% ;
+    height:100%;
+ }
+.THIS .slds-modal__header{
+      width:160% ;
+  }
+.THIS .slds-p-around_large{
+      width:160% ;
+  }
+.THIS .slds-modal__content{
+      width:160% ;
+  }

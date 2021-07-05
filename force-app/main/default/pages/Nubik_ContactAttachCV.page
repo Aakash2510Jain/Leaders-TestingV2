@@ -1,0 +1,6 @@
+<apex:page standardController="Contact" tabStyle="Contact"
+    extensions="Nubik_ContactAttachCVCtrl">
+  	<apex:sectionHeader title="Contact" subtitle="Attach CV"/>
+	 <c:UploadFile fileName="{!reportName}" parentId="{!parentId}" isCV="true" />
+  
+</apex:page>

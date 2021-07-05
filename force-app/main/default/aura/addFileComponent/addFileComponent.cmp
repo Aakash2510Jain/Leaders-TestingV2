@@ -1,0 +1,46 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" controller="addFileComponentController" >
+	 <aura:attribute name="title" type="String" default="Title" access="global" />
+    <aura:attribute name="recordId" type="String" description="Record to which the files should be attached" />
+    <aura:attribute name="accept" type="List" default="['.jpg', '.jpeg', '.doc', '.docx','.pdf']"/>
+   
+    <aura:attribute name="multiple" type="Boolean" default="true"/>
+    <aura:attribute name="disabled" type="Boolean" default="false"/>
+    <aura:attribute name="selectedType" type="String" />
+    <aura:attribute name="selectedLanguage" type="String"/>
+    <aura:attribute name="files" type="ContentDocument[]"/> 
+    <aura:attribute name="contact" type="Object" ></aura:attribute>
+    <aura:attribute name="FirstName" type="String"></aura:attribute>
+    <aura:attribute name="LastName" type="String"></aura:attribute>
+    <aura:attribute name="setLanguage" type="String"></aura:attribute>
+    
+  <!--  <aura:handler name="Init" value="{!this}" action="{!c.doInit}" ></aura:handler> -->
+     
+    <lightning:card >
+   <!--   <aura:set attribute="title">
+               {!v.title}
+            </aura:set> -->
+        
+    <lightning:select aura:id="selectType" name="select1" label="Select File Type" onchange="{!c.handleSelectValue}" required="true" value="CV">
+        <option value="CV">CV</option>
+        <option value="Psy Test">Psy Test</option>
+        <option value="Other Files">Other Files</option>
+    </lightning:select> 
+        
+    <lightning:select aura:id="selectLanguage" name="select2" label="Language" onchange="{!c.handleSelectLanguage}" Value="English" >
+        
+        <option value="English">English</option>
+        <option value="French">French</option>
+        <option value="Other Language">Other Language</option>
+    </lightning:select>    
+        
+        
+    <lightning:fileUpload  name="fileUploader"
+                           label=""
+                           multiple="{!v.multiple}"
+                           accept="{!v.accept}"
+                           disabled="{!v.disabled}"
+                           recordId="{!v.recordId}"
+                           onuploadfinished="{!c.handleUploadFinished }"/>
+    </lightning:card> 
+
+</aura:component>

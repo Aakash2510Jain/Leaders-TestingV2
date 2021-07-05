@@ -1,0 +1,54 @@
+<aura:component controller="GetvalueOfloc" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    
+    <aura:attribute name="selectedRecord" type="String"  />
+    
+    <aura:attribute name="listOfSearchRecords" type="List" />
+    
+    <aura:attribute name="FilteredSearch" type="List" />
+    
+    <aura:attribute name="SearchKeyWord" type="string"/>
+    
+    <aura:attribute name="objectAPIName" type="string" default=""/>
+    
+    <aura:attribute name="IconName" type="string" default=""/>
+    
+    <aura:attribute name="label" type="string" default="Residence City"/>
+    
+    <aura:attribute name="Message" type="String" default=""/>
+    
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedsObjectRecordEvent" action="{!c.handleComponentEvent}"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+       
+        <div class="slds-form-element__control">
+            
+            <div class="slds-input-has-icon slds-input-has-icon--right">
+                
+                <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                    <lightning:pill class="pillSize" label="{!v.selectedRecord}" name="{!v.selectedRecord}" onremove="{! c.clear }">
+                        <aura:set attribute="media">
+                            <lightning:icon iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                        </aura:set>
+                    </lightning:pill>
+                </div>
+                
+                <div aura:id="lookupField" class="slds-size--8-of-12">
+                       <ui:inputText click="{!c.onfocus}" updateOn="keyup"  keyup="{!c.keyPressController}"  class="slds-float_right" value="{!v.SearchKeyWord}" placeholder="search.." />
+                </div>   
+                
+            </div>
+            
+        </div>
+         
+        <ul style="min-height:40px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+            <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+            <center> {!v.Message}</center>
+            <aura:iteration items="{!v.FilteredSearch}" var="singleRec">
+                <c:LookupforcityResult oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+            </aura:iteration>
+        </ul>
+        
+    </div>
+</aura:component>

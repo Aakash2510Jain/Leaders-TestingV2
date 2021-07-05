@@ -1,0 +1,20 @@
+.THIS.exampleHolder{
+    position: relative;
+    display: inline-block;
+    margin-left: 15px;
+    width: 55px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.THIS .marLeftNinePer{
+    margin-left: 9%;
+    color:white;
+    font-size: 20px;
+}
+.THIS .fontSize16{
+    font-size: 16px;
+}
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+}

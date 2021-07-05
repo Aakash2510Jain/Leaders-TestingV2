@@ -1,0 +1,35 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+	<aura:attribute name="title" type="String" default="Title" access="global" />	
+    <aura:attribute name="orders" type="String[]" default="[]" access="global" />
+    <aura:attribute name="otherOrder" type="String" />   
+
+    <aura:attribute name="orderSelected" type="Map" default="{}" access="global" />
+	
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:registerEvent name="CandidateInputUpdateEvt" type="c:CandidateInputUpdateEvt" />
+    
+    <div class="form slds-p-bottom_small">
+        <lightning:card >
+            <aura:set attribute="title">
+               {!v.title}
+            </aura:set>
+            
+             <div class="c-container slds-p-horizontal_small">
+                <lightning:layout horizontalAlign="spread"   multipleRows="true">
+                    <aura:iteration items="{!v.orders}" var="order">
+                        <lightning:layoutItem flexibility="grow" size="12" largeDeviceSize="6" mediumDeviceSize="6" smallDeviceSize="12">
+                            <lightning:input type="checkbox" label="{!order}" name="{!order}" checked="false" value="{!order}" onchange="{!c.updateInput}"/>
+    						
+                        </lightning:layoutItem>
+                    </aura:iteration>
+                  
+                </lightning:layout>
+                 <lightning:input class="slds-p-top_small" type="text" label="Autre(s), préciser" name="other" value="{!v.otherOrder}" onchange="{!c.updateOtherOrder}"/>
+
+            </div>
+             
+         
+        </lightning:card>
+    </div>
+</aura:component>

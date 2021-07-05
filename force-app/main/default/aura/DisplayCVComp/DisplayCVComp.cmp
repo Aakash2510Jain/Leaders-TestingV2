@@ -1,0 +1,580 @@
+<aura:component  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" controller="OnePagerHelper">
+    <aura:attribute name="FromOnePager" default="false" type="Boolean"/>
+    <aura:attribute name="displayCVComp" type="boolean" />
+    <aura:attribute name="displayOnePagerList" type="boolean" default="True"/>
+    <aura:attribute name="displayOnePager" type="boolean" />
+    <aura:attribute name="displaySelfAssList" type="boolean" default="True"/>
+    <aura:attribute name="SelfAssapplicationData" type="Application__c[]" />
+    <aura:attribute name="displaySelfAss" type="boolean" />
+    <aura:attribute name="displayCV" type="boolean" />
+    <aura:attribute name="Warning" type="boolean" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="cvContactId" type="String" />
+    <aura:attribute name="onePagerId" type="String" />
+    <aura:attribute name="JobDescId" type="String" />
+    <aura:attribute name="LetterId" type="String" />
+    <aura:attribute name="PsyId" type="String" />
+    <aura:attribute name="attachmentId" type="String" />
+    <aura:attribute name="onePagerFromConId" type="String" />
+    <aura:attribute name="selectedopId" type="String" />
+    <aura:attribute name="mydata" type="Object"/>
+    <aura:attribute name="selectedbioId" type="String" />
+    <aura:attribute name="CVID" type="String" />
+    <aura:attribute name="boardCVID" type="String" />
+    <aura:attribute name="onePagerWarning" type="boolean" />
+    <aura:attribute name="OnePagerfromContact" type="boolean" />
+    <aura:attribute name="selectedConId" type="String" />
+    <aura:attribute name="one_Pager_Values" type= "One_Pager_Response__c[]" default=""/>
+    <aura:attribute name="Radar_Values" type= "Radar_Rating_Response__c[]" default=""/>
+    <aura:attribute name="Contact_Values" type= "Contact[]" default=""/>
+    <aura:attribute name="ContactName" type= "String" default=""/>
+    <aura:attribute name="CompanyName" type= "String" default=""/>
+    <aura:attribute name="deleteList" type= "String[]" />
+    <aura:attribute name="displayCVView" type="boolean" />
+    <aura:attribute name="mandateRecId" type="String" />
+    <aura:attribute name="applicationId" type="String" />
+    <aura:attribute name="displayOPComp" type="Boolean" />
+    <aura:attribute name="MainPageapplicationData" type="Application__c[]" />
+    <aura:attribute name="OnePAgerapplicationData" type="Application__c[]" />
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <aura:attribute name="displayAgenda" type="Boolean" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <lightning:navigation aura:id="navService" />
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:attribute name="tabId" type="String" default="English"/>
+    <aura:attribute name="Is_English" type="Boolean" />
+    <aura:attribute name="Include_Compensation" type="Boolean" default="false" />    
+    <aura:attribute name="SelfAssId" type="String" default=""/>
+    <aura:attribute name="displaySplitView" type="boolean" default="false" />
+    <aura:attribute name="contactRecord" type="Object" description=" A simplified view record object to be displayed" />
+    
+   
+   
+    <aura:if isTrue="{!v.FromOnePager}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"  aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open" >  
+            <div class="slds-modal__container" style ="margin-left: 25%;">
+                <header class="slds-modal__header" style="width:160%;margin-right: 50px;">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_large slds-hyphenate">View/Update One Pager</h2>
+                </header>
+                <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer" style="width:160%;margin-right: 50px;">
+                    <thead>
+                        <tr class="slds-text-title_caps">
+                            <th scope="col">
+                                <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">Company Name</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate slds-cell-wrap" title="Assignment">Assignment</div>
+                            </th>
+                            
+                            <th scope="col">
+                                <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Status</div>
+                            </th>  
+                            <th scope="col">
+                                <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">Created Date</div>
+                            </th>
+                            <th scope="col" style="text-align:center">
+                                <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">View One Pager</div>
+                            </th>
+                            <th scope="col" style="text-align:center">
+                                <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">Update One Pager</div>
+                            </th>
+                            
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.MainPageapplicationData}" var="cc" >
+                            <tr class="slds-hint-parent">
+                                <td>
+                                    <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                        <a href="" onclick="{!c.handleClick}" data-record="{!cc.CompanyId__c}" >{!cc.Mandate__r.Company_Name_French__c}</a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                        <a href="" onclick="{!c.handleClick}" data-record="{!cc.Mandate__c}" >{!cc.Mandate__r.Name}</a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate slds-cell-wrap" title="{!cc.Status}">{!cc.Status_Summary_Line__c}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate slds-cell-wrap" title="{!cc.Status}">{!cc.Created_Date_Formula__c}</div> 
+                                </td>
+                                <td style="text-align:center">
+                                    <lightning:button variant="brand" label="View" title="{!cc.Mandate__c}" onclick="{!c.DisplayOP}" value="{!cc.Id}"></lightning:button> 
+                                </td>
+                                <td style="text-align:center">
+                                    <lightning:button variant="brand" label="Update" title="{!cc.Mandate__c}" onclick="{!c.displayWarning}" value="{!cc.Id}"></lightning:button> 
+                                </td>
+                            </tr>
+                        </aura:iteration>   
+                    </tbody>
+                </table>
+            </div>
+            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayCVComp}">
+        <section aura:id="Modalbox" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{!c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">One Pager - {!v.ContactName}</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <div style="margin-left: 40%;">
+                        <lightning:button variant="brand" 
+                                          label="Save"
+                                          title="Save"
+                                          onclick="{!c.save}"/>
+                        <lightning:button variant="neutral" 
+                                          label="Close"
+                                          title="Close"
+                                          onclick="{!c.closeModel }"/>
+                    </div>
+                    <div class="slds-grid slds-gutters">
+                        <lightning:tabset selectedTabId="EOP" >
+                            <lightning:tab label="Edit One Pager" id="EOP">
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col slds-medium-size_3-of-6">
+                                            <span>
+                                                <lightning:tabset selectedTabId="{!v.tabId}" >
+                                                    <div style="margin-left:2%">
+                                                        <lightning:tab label="English" id="English">
+                                                            <aura:iteration items="{!v.one_Pager_Values}" var="al" indexVar="i" >
+                                                                <div class="slds-col slds-medium-size_5-of-5">
+                                                                    <tr>
+                                                                        <td  class="leftmarbody">
+                                                                            <b>{!al.Question_Eng__c}</b>
+                                                                            <lightning:inputRichText   value="{!al.Response__c}" disabled=""/>
+                                                                            
+                                                                        </td>
+                                                                    </tr>
+                                                                </div>
+                                                                <br/>
+                                                                
+                                                            </aura:iteration>
+                                                        </lightning:tab>
+                                                        
+                                                        <lightning:tab label="2nd Language" id="French">
+                                                            <aura:iteration items="{!v.one_Pager_Values}" var="al" indexVar="i" >
+                                                                <div class="slds-col slds-medium-size_5-of-5">
+                                                                    <tr>
+                                                                        <td  class="leftmarbody">
+                                                                            <b>{!al.Question_Fr__c }</b>
+                                                                            
+                                                                            <lightning:inputRichText  value="{!al.Response_Fr__c}" disabled=""/>
+                                                                        </td>
+                                                                    </tr>
+                                                                </div>
+                                                                <br/>
+                                                            </aura:iteration>
+                                                        </lightning:tab>
+                                                        
+                                                        <lightning:tab label="Compensation" id="Compensation">
+                                                            <br/>
+                                                            <div style="margin-left:20px;">
+                                                                <lightning:input aura:id="DisclaimerCheckBox" type="checkbox"
+                                                                                 label="Exclude from One-Pager" 
+                                                                                 name="DisclaimerCheckBox" value="DisclaimerCheckBox" checked="{!v.Include_Compensation}" onchange="{!c.handleCheck}" />
+                                                            </div>
+                                                            <aura:iteration items="{!v.Contact_Values}" var="al" indexVar="i" >
+                                                                
+                                                                <div class="c-container">
+                                                                    <lightning:layout verticalAlign="center" class="x-large">
+                                                                        
+                                                                        <div class="slds-col slds-medium-size_3-of-6">
+                                                                            <br/><br/><br/><br/>
+                                                                            <br/>
+                                                                            
+                                                                            <tr>
+                                                                                <lightning:layoutItem flexibility="auto" padding="around-small">
+                                                                                    <td>
+                                                                                        <lightning:input type="text" label = "Base Salary "    value="{!al.Base_Salary__c}" disabled=""/>
+                                                                                    </td>
+                                                                                </lightning:layoutItem>
+                                                                                <br/>
+                                                                                <lightning:layoutItem flexibility="auto" padding="around-small">
+                                                                                    <td>
+                                                                                        <lightning:input type="text" label = "Allowance " value="{!al.Allowance__c}" disabled=""/>
+                                                                                    </td>
+                                                                                </lightning:layoutItem>
+                                                                                <br/>
+                                                                                <lightning:layoutItem flexibility="auto" padding="around-small">
+                                                                                    <td>
+                                                                                        <lightning:input type="text"  label = "Other"  value="{!al.Other__c}" disabled=""/>
+                                                                                    </td>
+                                                                                </lightning:layoutItem>
+                                                                                <br/>
+                                                                            </tr>
+                                                                        </div>
+                                                                        <div class="slds-col slds-medium-size_3-of-6">
+                                                                            <tr>
+                                                                                
+                                                                                <lightning:layoutItem flexibility="auto" padding="around-small">
+                                                                                    <td>
+                                                                                        <lightning:input type="text" label = "Bonus "    value="{!al.Bonus__c}" disabled=""/>
+                                                                                    </td>
+                                                                                </lightning:layoutItem>
+                                                                                <br/>
+                                                                                <lightning:layoutItem flexibility="auto" padding="around-small">
+                                                                                    <td>
+                                                                                        <lightning:input type="text"  label = "Stock / Equity"  value="{!al.Stock_Equity__c}" disabled=""/>
+                                                                                    </td>
+                                                                                </lightning:layoutItem>
+                                                                                
+                                                                                <br/>
+                                                                            </tr>
+                                                                        </div>
+                                                                    </lightning:layout>
+                                                                </div>
+                                                                <br/><br/>
+                                                                Additional Comments
+                                                                <lightning:layoutItem flexibility="auto" padding="around-small">
+                                                                    <br/>
+                                                                    <td>
+                                                                        <lightning:inputRichText    label = "Additional Comments"  value="{!al.Additional_Comments_for_Compensation__c}" disabled=""/>
+                                                                    </td>
+                                                                </lightning:layoutItem>
+                                                                
+                                                            </aura:iteration>
+                                                        </lightning:tab>
+                                                        <lightning:tab label="Radar-Rating" id="Radar">
+                                                            <aura:iteration items="{!v.Radar_Values}" var="al" indexVar="i" >
+                                                                <div>
+                                                                    <c:Star_Rating value ="{!al.Radar_Rating__c}" label="{!al.Radar_Ques__c}" toExclude="{!al.To_Be_excluded__c}"/>
+                                                                </div>
+                                                            </aura:iteration>
+                                                        </lightning:tab>
+                                                    </div>
+                                                </lightning:tabset> 
+                                            </span>
+                                        </div>
+                                        <div class="slds-col slds-medium-size_3-of-6">
+                                            <lightning:tabset selectedTabId="CV" >
+                                                <lightning:tab label="CV" id="CV">
+                                                    <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.CVID}" width="100%" height="1000px;" frameBorder="0" />    
+                                                </lightning:tab>
+                                                
+                                                <lightning:tab label="CV Board" id="Board Cv">
+                                                    <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.boardCVID}" width="100%" height="1000px;" frameBorder="0" />    
+                                                </lightning:tab>
+                                                
+                                                <lightning:tab label="Letter" id="Letter">
+                                                    <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.LetterId}" width="100%" height="1000px;" frameBorder="0" />    
+                                                </lightning:tab>
+                                                
+                                                <lightning:tab label="One Pager" id="One Pager" >
+                                                    
+                                                    <aura:if isTrue="{!v.displayOnePagerList}">
+                                                        
+                                                        <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer" >
+                                                            <thead>
+                                                                <tr class="slds-text-title_caps">
+                                                                    <th scope="col">
+                                                                        <div class="slds-truncate slds-cell-wrap" title="Assignment">Assignment</div>
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        <div class="slds-truncate slds-cell-wrap" title="Assignment">Assignment Status</div>
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Status</div>
+                                                                    </th>     
+                                                                    <th scope="col">
+                                                                        <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">View One Pager</div>
+                                                                    </th>   
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <aura:iteration items="{!v.OnePAgerapplicationData}" var="cc" >
+                                                                    <tr class="slds-hint-parent">
+                                                                        <td>
+                                                                            <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                                                                <a href="" onclick="{!c.handleClick}" data-record="{!cc.Mandate__c}" >{!cc.Mandate__r.Name}</a>
+                                                                            </div>
+                                                                        </td>
+                                                                        
+                                                                        <td>
+                                                                            <div class="slds-truncate slds-cell-wrap" title="{!cc.Status}">{!cc.Mandate__r.Assignment_Status__c}</div>
+                                                                        </td>
+                                                                        
+                                                                        <td>
+                                                                            <div class="slds-truncate slds-cell-wrap" title="{!cc.Status}">{!cc.Status_Summary_Line__c}</div>
+                                                                        </td>
+                                                                        
+                                                                        <td>
+                                                                            <lightning:button variant="brand" label="View One Pager" title="{!cc.Mandate__c}" onclick="{!c.SetOnePagerId}" value="{!cc.Id}"></lightning:button> 
+                                                                        </td>
+                                                                    </tr>
+                                                                </aura:iteration>   
+                                                            </tbody>
+                                                        </table>
+                                                        
+                                                        <br/>
+                                                        <br/>
+                                                        
+                                                        <div style="leftMargin slds-show_inline">
+                                                            <b>
+                                                                One pager was prepared prior to January 2021 and it is not associated with any specific assignment.
+                                                            </b>
+                                                            <lightning:button class="leftMargin" variant="brand" label="View One Pager" onclick="{!c.SetOnePagerConId}" ></lightning:button> 
+                                                        </div>
+                                                        
+                                                    </aura:if>
+                                                    
+                                                    
+                                                    <aura:if isTrue="{!v.displayOnePager}">
+                                                        <lightning:button  variant="neutral" label="Back To List Of One Pager" onclick="{!c.back}" />
+                                                        <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.onePagerId}" width="100%" height="1000px;" frameBorder="0" />    
+                                                    </aura:if>
+                                                    
+                                                    <aura:if isTrue="{!v.OnePagerfromContact}">
+                                                        <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.onePagerId}" width="100%" height="1000px;" frameBorder="0" />    
+                                                    </aura:if>
+                                                    
+                                                </lightning:tab> 
+                                                
+                                                <lightning:tab label="Self Assesment" id="Self Assesment" >
+                                                    
+                                                    <aura:if isTrue="{!v.displaySelfAssList}">
+                                                        
+                                                        <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer" >
+                                                            <thead>
+                                                                <tr class="slds-text-title_caps">
+                                                                    <th scope="col">
+                                                                        <div class="slds-truncate slds-cell-wrap" title="Assignment">Assignment</div>
+                                                                    </th>
+                                                                    
+                                                                    <th scope="col">
+                                                                        <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Status</div>
+                                                                    </th>     
+                                                                    <th scope="col">
+                                                                        <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">Company</div>
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">View Self Assesment</div>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <aura:iteration items="{!v.SelfAssapplicationData}" var="cc" >
+                                                                    <tr class="slds-hint-parent">
+                                                                        <td>
+                                                                            <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                                                                <a href="" onclick="{!c.handleClick}" data-record="{!cc.Mandate__c}" >{!cc.Mandate__r.Name}</a>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="slds-truncate slds-cell-wrap" title="{!cc.Status}">{!cc.Status_Summary_Line__c}</div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="slds-truncate slds-cell-wrap" title="{!cc.Status}">{!cc.Mandate__r.Company__r.Name}</div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <lightning:button variant="brand" label="View Self Assesment" title="{!cc.Mandate__c}" onclick="{!c.SetSelAssId}" value="{!cc.Id}"></lightning:button> 
+                                                                        </td>
+                                                                    </tr>
+                                                                </aura:iteration>   
+                                                            </tbody>
+                                                        </table>
+                                                        
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!v.displaySelfAss}">
+                                                        <lightning:button  variant="neutral" label="Back To List Of Self Assesment" onclick="{!c.back}" />
+                                                        <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.SelfAssId}" width="100%" height="1000px;" frameBorder="0" />    
+                                                    </aura:if>
+                                                    
+                                                </lightning:tab> 
+                                                
+                                                <lightning:tab label="Job Description" id="Job Description" >
+                                                    
+                                                    <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.JobDescId}" width="100%" height="1000px;" frameBorder="0" />
+                                                    
+                                                </lightning:tab>
+                                                
+                                                <lightning:tab label="Psy Test" id="Psy">
+                                                    <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.PsyId}" width="100%" height="1000px;" frameBorder="0" />    
+                                                </lightning:tab>
+                                                
+                                                <lightning:tab label="External Search" id="Search" >
+                                                    <lightning:button  variant="neutral" label="Google Search" onclick="{!c.googleSearch}" />
+                                                </lightning:tab>
+                                                
+                                            </lightning:tabset>
+                                            
+                                        </div>  
+                                        
+                                    </div>
+                                    
+                                </div>
+                                
+                            </lightning:tab>
+                            
+                            <!--lightning:tab label="View One Pager" id="CV">
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-medium-size_2-of-5">
+                                        <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer" >
+                                            <thead>
+                                                <tr class="slds-text-title_caps">
+                                                    <th scope="col">
+                                                        <div class="slds-truncate slds-cell-wrap" title="Assignment">Assignment</div>
+                                                    </th>
+                                                    
+                                                    <th scope="col">
+                                                        <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Status</div>
+                                                    </th>     
+                                                    <th scope="col">
+                                                        <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">View One Pager</div>
+                                                    </th>   
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.OnePAgerapplicationData}" var="cc" >
+                                                    <tr class="slds-hint-parent">
+                                                        <td>
+                                                            <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                                                <a href="" onclick="{!c.handleClick}" data-record="{!cc.Mandate__c}" >{!cc.Mandate__r.Name}</a>
+                                                            </div>
+                                                        </td>
+                                                        
+                                                        <td>
+                                                            <div class="slds-truncate slds-cell-wrap" title="{!cc.Status}">{!cc.Status_Summary_Line__c}</div>
+                                                        </td>
+                                                        
+                                                        <td>
+                                                            <lightning:button variant="brand" label="View One Pager" title="{!cc.Mandate__c}" onclick="{!c.SetOnePagerId}" value="{!cc.Id}"></lightning:button> 
+                                                        </td>
+                                                    </tr>
+                                                </aura:iteration>   
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="slds-col slds-medium-size_3-of-5">
+                                        <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.onePagerId}" width="100%" height="1000px;" frameBorder="0" />    
+                                    </div>
+                                </div>  
+                            </lightning:tab-->
+                            
+                            
+                            <!--aura:set attribute="else">
+                                    <lightning:tab label="View One Pager" id="CV">
+                                        
+                                        <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.onePagerId}" width="100%" height="1000px;" frameBorder="0" />    
+                                        
+                                    </lightning:tab>
+                                </aura:set-->
+                            
+                            <!--<lightning:tab label="Biography" id="BIO">
+                                <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.selectedbioId}" width="100%" height="1000px;" frameBorder="0" /> 
+                            </lightning:tab>  --> 
+                            
+                        </lightning:tabset> 
+                    </div>
+                    <aura:if isTrue="{!v.displaySplitView}">
+                        <lightning:layout aura:id="splitView">
+                            <div class="slds-col slds-medium-size_1-of-3">
+                                <Span>
+                                    <lightning:tabset selectedTabId="Profile">
+                                        
+                                        <lightning:tab label="Leaders Notes" id="LRN">
+                                            <c:editLeadersNotesComp></c:editLeadersNotesComp> 
+                                        </lightning:tab>
+                                        
+                                        <lightning:tab label="Profile" id="Profile">
+                                            <c:editCandidateProfileComp selectedConId="{!v.selectedConId}"></c:editCandidateProfileComp>  
+                                        </lightning:tab>
+                                        
+                                        <lightning:tab label="One Pager" id="One Pager">
+                                            <c:editCandidateOnePagerComp></c:editCandidateOnePagerComp>
+                                        </lightning:tab>
+                                        
+                                    </lightning:tabset>
+                                </Span>
+                            </div>  
+                            
+                            <div class="slds-col slds-medium-size_2-of-3">    
+                                <Span>
+                                    <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.cvContactId}" width="100%" height="500px;" frameBorder="0" />  
+                                </Span>    
+                            </div>
+                        </lightning:layout>
+                    </aura:if>
+                    <footer class="slds-modal__footer">
+                        
+                        <!--lightning:button variant="brand" 
+                                          label="Save"
+                                          title="Save"
+                                          onclick="{!c.save}"/>
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{!c.closeModel }"/-->
+                    </footer>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.onePagerWarning}">
+        <div style="height:500px" class="border">
+            <section role="dialog" tabindex="-1" class="slds-modal slds-modal_x-small slds-fade-in-open" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                <div class="slds-modal__container border">
+                    <header class="slds-modal__header border">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Reminder</b></h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium slds-p-left_large border" id="modal-content-id-1">
+                        <div style='margin-left:10%'>
+                            <p >Kindly Create The One Pager First..!!</p><br/>
+                            <br/>
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer border">
+                        <br/>
+                        <lightning:button class="slds-button slds-button_brand" name='OK,' label='ok' onclick='{!c.closeModal}'/>
+                    </footer>
+                </div>
+            </section>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayCV}">
+        <c:ViewCV displayCV="{!v.displayCV}"  attId="{!v.attachmentId}" modalHeader="Attachements"  OP="true"/>
+    </aura:if>
+     <aura:if isTrue="{!v.Warning}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"  aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open" >
+        <div style="height: 200px;width: 500px;margin-top: 300px;margin-left: 650px;" class="border">
+            <header class="slds-modal__header border">
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Reminder</b></h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium slds-p-left_large border" id="modal-content-id-1">
+                <div style='margin-left:10%'>
+                    <p >Kindly Update the One-Pager from Assignment Page</p><br/>
+                    <br/>
+                </div>
+            </div>
+            <footer class="slds-modal__footer border">
+                <br/>
+                <lightning:button class="slds-button slds-button_brand" name='OK,' label='ok' onclick='{!c.closeModal}'/>
+            </footer>
+        </div>
+        </section>
+    </aura:if>
+    
+</aura:component>

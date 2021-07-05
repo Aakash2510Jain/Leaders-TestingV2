@@ -1,0 +1,174 @@
+<aura:component controller="SearchCompanyCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,lightning:isUrlAddressable">
+    <aura:attribute name="CountryValueList" 		type="string[]"/>
+    <aura:attribute name="StatusValueList"  		type="string[]"/>
+    <aura:attribute name="StateValueListForCanada"  		type="string[]" default=""/>
+    <aura:attribute name="StateValueList"   		type="string[]"/>
+    <aura:attribute name="IndustryValueList" 		type="string[]"/>
+    <aura:attribute name="selectedIndustryItem" 	type="string[]"/>
+    <aura:attribute name="selectedCountryItem" 		type="string[]"/>
+    <aura:attribute name="selectedStateItem" 		type="string[]"/>
+    <aura:attribute name="ValueForBooleanSearch" type="String" />
+    <aura:attribute name="PeopleObject" type="Object" />
+    <aura:attribute name="AddTootherAssWarning" type="boolean" default="false"/>
+    <aura:attribute name="AssObject" type="Object" />
+    <aura:attribute name="selectedStatusItem" 		type="string[]"/>
+    <aura:attribute name="contactBooleanByAccountId" 		type="Object[]"/>
+    <aura:attribute name="PeopleDetails" type="contact[]"/>
+    <aura:attribute name="AssDetails" type="Mandate__c[]"/>
+    <aura:attribute name="allRecord" 				type="List" 		default="[]"/>
+    <aura:attribute name="fieldList" 			    type="Map"/>
+    <aura:attribute name="allRecordLength" 			type="Integer"/>
+    <aura:attribute name="checkSearchTable" 		type="boolean" 		default="false"/>    
+    <aura:attribute name="clickedViewAll" 			type="boolean" 		default="false"/>
+    <aura:attribute name="selectedRecord" 			type="List"/>    
+    <aura:attribute name="isDelete" 				type="boolean" 		default="false"/>
+    <aura:attribute name="checkSpinner" 			type="boolean" 		default="false"/> 
+    <aura:attribute name="showConfirmDialog" 		type="boolean" 		default="false"/>
+    <aura:attribute name="isDataComing" 			type="boolean" 		default="false"/>
+    <aura:attribute name="isOpen" 					type="boolean" 		default="false"/>
+    <aura:attribute name="data"                     type="List"                        />
+    <aura:attribute name="ButtonColor" type="String"  default="brand" />
+    <aura:attribute name="ShowCompPage" type="boolean"/>    
+    <aura:registerEvent name="appEvent" type="c:passBooleanEvt"/>
+    <aura:handler 		name="init" 	value="{!this}"  action="{!c.doInit}"/>
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <aura:if isTrue="{!v.checkSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </div>
+    </aura:if>
+    
+    <lightning:card  title="" >
+        
+        <lightning:layout horizontalAlign="center" multipleRows="true">    
+            <lightning:button class="buttonWidth" variant="brand" label='Search Assignment' onclick='{!c.navigateToSearchAss}'/>
+            <lightning:button class="buttonWidth" variant="success" label='Search Company' />
+            <lightning:button class="buttonWidth" variant="brand" label='Search People' onclick='{!c.navigateToSearchPeople}'/>
+        </lightning:layout>
+        
+        <br/><br/>
+        
+        <aura:if isTrue="{!v.isDataComing}">
+            
+            <div class="c-container">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="4" padding="around-small">
+                        <div class="custom-box"></div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" padding="around-small">
+                        <div class="custom-box">
+                            <c:MultiSelectPickListComp options="{!v.IndustryValueList}" values="{!v.selectedIndustryItem}" multiSelect="true" label="Industry"/>
+                        </div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" padding="around-small">
+                        <div class="custom-box">
+                            <c:MultiSelectPickListComp options="{!v.StatusValueList}" values="{!v.selectedStatusItem}" multiSelect="true" label="Status"/>
+                        </div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" padding="around-small">
+                        <div class="custom-box"></div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="4" padding="around-small">
+                        <div class="custom-box"></div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" padding="around-small">
+                        <div class="custom-box">
+                            <c:MultiSelectPickListComp options="{!v.CountryValueList}" values="{!v.selectedCountryItem}" multiSelect="true" label="Country"/>
+                        </div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" padding="around-small">
+                        <div class="custom-box" >
+                            <c:MultiSelectPickListComp  ShowCanadaValue="true"  CountryValue = "{!v.selectedCountryItem}" options="{!v.StateValueList}" values="{!v.selectedStateItem}" multiSelect="true" label="State"/>
+                        </div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" padding="around-small">
+                        <div class="custom-box"></div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="4" padding="around-small">
+                        <div class="custom-box"> </div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" padding="around-small">
+                        <div class="custom-box">
+                            <label class="slds-form-element__label" > <b>Boolean Search</b></label> 
+                            <lightning:input  variant = "label-hidden" placeholder="Enter Value for Search" label="Title" name="title" value="{!v.ValueForBooleanSearch}" aria-labelledby="inline-text-label" class="" />
+                        </div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" padding="around-small">
+                        <div class="custom-box"></div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+            <br/>
+            <br/>
+        </aura:if>
+        <lightning:layout horizontalAlign="center" multipleRows="true">
+            <!--button class="slds-button slds-button_brand" onclick="{!c.doSearch}" >Search Companies</button-->
+            <lightning:button class="buttonWidth" variant="success" label='Start Your Search' onclick="{!c.doSearch}"/>
+        </lightning:layout>
+        <br/>
+        <lightning:layout horizontalAlign="center" multipleRows="true">
+            <button class="slds-button slds-button_brand" onclick="{!c.doreset}" >Reset Filters</button>
+            <button class="slds-button slds-button_brand" onclick="{!c.doMerge}" >Merge Duplicate</button>
+            <button class="slds-button slds-button_brand" onclick="{!c.viewAll}" >View All</button>
+        </lightning:layout>
+        <br/>
+        <lightning:layout horizontalAlign="center" multipleRows="true"> 
+            <p class="record" title="Field 1" ><b>Total Records: {!v.allRecordLength}</b></p>
+        </lightning:layout>
+        <br/>
+        <aura:if isTrue="{!v.showConfirmDialog}">
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium">Confirmation</h1>
+                    </header>
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <center><b>Are you sure you want to delete this item?</b></center>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning:button name='No' label='No' onclick='{!c.handleConfirmDialogNo}'/>
+                        <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.handleConfirmDialogYes}'/>
+                    </footer>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>            
+        </aura:if>
+        <aura:if isTrue="{!v.checkSearchTable}">    
+            <lightning:card title="" >
+                <c:SearchCompanyDisplayTable AssObject ="{!v.AssObject}" PeopleObject = "{!v.PeopleObject}" checkSpinner="{!v.checkSpinner}" allRecord="{!v.allRecord}" ShowCompPage = "{!v.ShowCompPage}" fieldList="{!v.fieldList}" checkedSearch="{!v.checkSearchTable}" selectedRecord="{!v.selectedRecord}"  data="{!v.data}"/>
+            </lightning:card>
+        </aura:if>
+    </lightning:card>
+    
+    <aura:if isTrue="{!v.AddTootherAssWarning}">
+        <div style="height:500px" class="border">
+            <section role="dialog" tabindex="-1" class="slds-modal slds-modal_x-small slds-fade-in-open" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                <div class="slds-modal__container border">
+                    <header class="slds-modal__header border">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Reminder</b></h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium slds-p-left_large border" id="modal-content-id-1">
+                        <div style='margin-left:10%'>
+                            <p >Kindly Select The Company First!!..</p><br/>
+                            <br/>
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer border">
+                        <br/>
+                        <lightning:button class="slds-button slds-button_brand" name='OK,' label='ok' onclick='{!c.closeModal}'/>
+                    </footer>
+                </div>
+            </section>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    
+    <aura:if isTrue="{!v.isOpen}">
+        <c:demoModal isOpen="{!v.isOpen}" selectedRecord="{!v.selectedRecord}" isFromSearchEngine="Yes" data="{!v.data}"/>
+    </aura:if>
+</aura:component>

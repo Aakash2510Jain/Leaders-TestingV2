@@ -1,0 +1,1846 @@
+<aura:component implements="force:appHostable,force:hasRecordId,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" Controller="AssignmentProcessNotesController"  access="global" >
+    <aura:attribute name="teamName" type="String"/>
+    <aura:attribute name="mandateId" type="String"/>
+    <aura:attribute name="Ass_notes" type= "Object" default=""/>
+    <aura:attribute name="StatusValues" type= "Object" default=""/>
+    <aura:attribute name="SelectedStatus" type= "String" default=""/>
+    <aura:attribute name="ModuleValues" type= "Object" default=""/>
+    <aura:attribute name="AssignmentName" type= "String" default=""/>
+    <aura:attribute name="CompanyName" type= "String" default=""/>
+    <aura:attribute name="SelectedModule" type= "String" default=""/>
+    <aura:attribute name="today" type="Date" default=""/>
+    <aura:attribute name="displayChangeStatus" type="boolean" default = "false"/>
+    <aura:attribute name="displayChangeModule" type="boolean" default = "false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.reInit}" />
+    
+    <lightning:card title="" >
+    
+        <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+        
+        <div style="margin:1%">
+            
+            <div class="slds-grid slds-gutters"  >
+                
+                <Lightning:input name="Company Name" label="Company Name" value="{!v.CompanyName}" class="inputstyle_2" disabled="true"/>
+                
+                <Lightning:input name="Assignment Name" label="Assignment Name" value="{!v.AssignmentName}" class="inputstyle_1  " disabled="true" />
+               
+                <lightning:input name="Status" label="Status" value="{!v.SelectedStatus}" class="inputstyle " disabled="true"/>
+                
+                <Lightning:button class="slds-m-around_xxx-small  marginleft1perc"  variant="brand" label="Change Status" onclick="{!c.statuschange}" />
+                
+                 <lightning:input name="Module" label="Module" value="{!v.SelectedModule}" class="inputstyle  " disabled="true"/>
+                
+                <Lightning:button class="slds-m-around_xxx-small  marginleft1perc"  variant="brand" label="Change Module" onclick="{!c.Modulechange}" />
+                
+                <Lightning:button class="slds-m-around_xxx-small marginleft1per"  variant="brand" label="{!v.teamName}" onclick="{!c.goBack}" />
+                <Lightning:button class="slds-m-around_xxx-small marginleft1per"  variant="brand" label="Back to My Active Assignment" onclick="{!c.goBackMyAcAss}" />
+            </div>
+            
+            <br/>
+            <br/>
+            <div class="slds-grid slds-gutters">
+                
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionOne}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articleOne" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articleOne" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h1 style="display:inline"><b>1. Contract Approval and Signature</b></h1> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Contract_received_sign_and_upload_in_lra__c)),and(not(empty(v.Ass_notes.Contract_signed_and_sent_Thearin__c )),and(not(empty(v.Ass_notes.X1st_invoice_sent_to_the_client__c)),and(not(empty(v.Ass_notes.Create_other_invoices__c)),and(not(empty(v.Ass_notes.Create_folder_in_One_Drive__c)),true)))))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Contract_received_sign_and_upload_in_lra__c)),and((empty(v.Ass_notes.Contract_signed_and_sent_Thearin__c )),and((empty(v.Ass_notes.X1st_invoice_sent_to_the_client__c)),and((empty(v.Ass_notes.Create_other_invoices__c)),and((empty(v.Ass_notes.Create_folder_in_One_Drive__c)),true)))))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                            
+                                            
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articleOne">
+                            
+                            
+                            
+                            <div class="container">
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Contract received sign and upload in LRA
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Contract_received_sign_and_upload_in_lra__c" class="{!empty(v.Ass_notes.Contract_received_sign_and_upload_in_lra__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Contract_received_sign_and_upload_in_lra__c" class="{!v.Ass_notes.Contract_received_sign_and_upload_in_lra__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Contract_received_sign_and_upload_in_lra__c" class="{!v.Ass_notes.Contract_received_sign_and_upload_in_lra__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Contract signed and sent Thearin
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Contract_signed_and_sent_Thearin__c" class="{!empty(v.Ass_notes.Contract_signed_and_sent_Thearin__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Contract_signed_and_sent_Thearin__c" class="{!v.Ass_notes.Contract_signed_and_sent_Thearin__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Contract_signed_and_sent_Thearin__c" class="{!v.Ass_notes.Contract_signed_and_sent_Thearin__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        1st invoice sent to the client
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="X1st_invoice_sent_to_the_client__c" class="{!empty(v.Ass_notes.X1st_invoice_sent_to_the_client__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="X1st_invoice_sent_to_the_client__c" class="{!v.Ass_notes.X1st_invoice_sent_to_the_client__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="X1st_invoice_sent_to_the_client__c" class="{!v.Ass_notes.X1st_invoice_sent_to_the_client__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Create other invoices
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Create_other_invoices__c" class="{!empty(v.Ass_notes.Create_other_invoices__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Create_other_invoices__c" class="{!v.Ass_notes.Create_other_invoices__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Create_other_invoices__c" class="{!v.Ass_notes.Create_other_invoices__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Create folder in One-Drive
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Create_folder_in_One_Drive__c" class="{!empty(v.Ass_notes.Create_folder_in_One_Drive__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Create_folder_in_One_Drive__c" class="{!v.Ass_notes.Create_folder_in_One_Drive__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Create_folder_in_One_Drive__c" class="{!v.Ass_notes.Create_folder_in_One_Drive__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    
+                                    <br/>
+                                    
+                                    
+                                </div>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col ">
+                                            <lightning:textarea  name="input2" label="Additional Notes :" value="{!v.Ass_notes.Notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectiontwo}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articletwo" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articletwo" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h1 style="display:inline"><b>2. Initial Postion Overview</b></h1> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.IPO__c)),and(not(empty(v.Ass_notes.Share_meeting_dates_with_admin__c )),and(not(empty(v.Ass_notes.Upload_all_info_into_LRA__c)),and(not(empty(v.Ass_notes.Stakeholder_interviews_Survey__c)),and(not(empty(v.Ass_notes.Schedule_bi_weekly_updates__c)),true)))))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.IPO__c)),and((empty(v.Ass_notes.Share_meeting_dates_with_admin__c )),and((empty(v.Ass_notes.Upload_all_info_into_LRA__c)),and((empty(v.Ass_notes.Stakeholder_interviews_Survey__c)),and((empty(v.Ass_notes.Schedule_bi_weekly_updates__c)),true)))))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articletwo">
+                            
+                            
+                            
+                            <div class="container">
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        IPO
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="IPO__c" class="{!empty(v.Ass_notes.IPO__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="IPO__c" class="{!v.Ass_notes.IPO__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="IPO__c" class="{!v.Ass_notes.IPO__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Share meeting dates with admin
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Share_meeting_dates_with_admin__c" class="{!empty(v.Ass_notes.Share_meeting_dates_with_admin__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Share_meeting_dates_with_admin__c" class="{!v.Ass_notes.Share_meeting_dates_with_admin__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Share_meeting_dates_with_admin__c" class="{!v.Ass_notes.Share_meeting_dates_with_admin__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Upload all info into LRA
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Upload_all_info_into_LRA__c" class="{!empty(v.Ass_notes.Upload_all_info_into_LRA__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Upload_all_info_into_LRA__c" class="{!v.Ass_notes.Upload_all_info_into_LRA__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Upload_all_info_into_LRA__c" class="{!v.Ass_notes.Upload_all_info_into_LRA__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Stakeholder interviews Survey
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Stakeholder_interviews_Survey__c" class="{!empty(v.Ass_notes.Stakeholder_interviews_Survey__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Stakeholder_interviews_Survey__c" class="{!v.Ass_notes.Stakeholder_interviews_Survey__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Stakeholder_interviews_Survey__c" class="{!v.Ass_notes.Stakeholder_interviews_Survey__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Schedule bi weekly updates
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Schedule_bi_weekly_updates__c" class="{!empty(v.Ass_notes.Schedule_bi_weekly_updates__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Schedule_bi_weekly_updates__c" class="{!v.Ass_notes.Schedule_bi_weekly_updates__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Schedule_bi_weekly_updates__c" class="{!v.Ass_notes.Schedule_bi_weekly_updates__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    
+                                    <br/>
+                                    
+                                    
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Ipo_notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <br/>
+            
+            
+            
+            
+            
+            
+            <div class="slds-grid slds-gutters">
+                
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionthree}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articlethree" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articlethree" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>3. Document Development</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Brochure_test__c)),and(not(empty(v.Ass_notes.Client_approval__c )),
+                                                      and(not(empty(v.Ass_notes.Send_to_admin_for_proofing_before_sendin__c)),
+                                                      and(not(empty(v.Ass_notes.Upload_final_docs_into_LRA__c)),and(not(empty(v.Ass_notes.Brochure_graphics__c)),
+                                                      and(not(empty(v.Ass_notes.Confirm_LR_notes_bullets__c)),and(not(empty(v.Ass_notes.Professional_Proof_reading_Academic__c)),
+                                                      and(not(empty(v.Ass_notes.Job_description__c)),and(not(empty(v.Ass_notes.Confirm_application_deadline__c)),true)))))))))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Brochure_test__c)),and((empty(v.Ass_notes.Client_approval__c )),
+                                                              and((empty(v.Ass_notes.Send_to_admin_for_proofing_before_sendin__c)),and((empty(v.Ass_notes.Upload_final_docs_into_LRA__c)),
+                                                              and((empty(v.Ass_notes.Brochure_graphics__c)),and((empty(v.Ass_notes.Confirm_LR_notes_bullets__c)),
+                                                              and((empty(v.Ass_notes.Professional_Proof_reading_Academic__c)),and((empty(v.Ass_notes.Job_description__c)),
+                                                              and((empty(v.Ass_notes.Confirm_application_deadline__c)),true)))))))))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articlethree">
+                            
+                            <div class="container">
+                                
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Brochure text
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Brochure_test__c" class="{!empty(v.Ass_notes.Brochure_test__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Brochure_test__c" class="{!v.Ass_notes.Brochure_test__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Brochure_test__c" class="{!v.Ass_notes.Brochure_test__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Client approval
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Client_approval__c" class="{!empty(v.Ass_notes.Client_approval__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Client_approval__c" class="{!v.Ass_notes.Client_approval__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Client_approval__c" class="{!v.Ass_notes.Client_approval__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Upload final docs into LRA
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Upload_final_docs_into_LRA__c" class="{!empty(v.Ass_notes.Upload_final_docs_into_LRA__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Upload_final_docs_into_LRA__c" class="{!v.Ass_notes.Upload_final_docs_into_LRA__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Upload_final_docs_into_LRA__c" class="{!v.Ass_notes.Upload_final_docs_into_LRA__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Send to admin for proofing before sendin
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Send_to_admin_for_proofing_before_sendin__c" class="{!empty(v.Ass_notes.Send_to_admin_for_proofing_before_sendin__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Send_to_admin_for_proofing_before_sendin__c" class="{!v.Ass_notes.Send_to_admin_for_proofing_before_sendin__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Send_to_admin_for_proofing_before_sendin__c" class="{!v.Ass_notes.Send_to_admin_for_proofing_before_sendin__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Brochure graphics
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Brochure_graphics__c" class="{!empty(v.Ass_notes.Brochure_graphics__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Brochure_graphics__c" class="{!v.Ass_notes.Brochure_graphics__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Brochure_graphics__c" class="{!v.Ass_notes.Brochure_graphics__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Confirm LRA notes bullets
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Confirm_LR_notes_bullets__c" class="{!empty(v.Ass_notes.Confirm_LR_notes_bullets__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Confirm_LR_notes_bullets__c" class="{!v.Ass_notes.Confirm_LR_notes_bullets__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Confirm_LR_notes_bullets__c" class="{!v.Ass_notes.Confirm_LR_notes_bullets__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Job description
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Job_description__c" class="{!empty(v.Ass_notes.Job_description__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Job_description__c" class="{!v.Ass_notes.Job_description__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Job_description__c" class="{!v.Ass_notes.Job_description__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Confirm application deadline
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Confirm_application_deadline__c" class="{!empty(v.Ass_notes.Confirm_application_deadline__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Confirm_application_deadline__c" class="{!v.Ass_notes.Confirm_application_deadline__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Confirm_application_deadline__c" class="{!v.Ass_notes.Confirm_application_deadline__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Professional proof reading academic
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Professional_Proof_reading_Academic__c" class="{!empty(v.Ass_notes.Professional_Proof_reading_Academic__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Professional_Proof_reading_Academic__c" class="{!v.Ass_notes.Professional_Proof_reading_Academic__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Professional_Proof_reading_Academic__c" class="{!v.Ass_notes.Professional_Proof_reading_Academic__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Doc_dev_notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+                        <br/>
+                        
+                    </div>
+                </div>
+                
+                
+                
+                <br/>
+                
+                <div class="slds-col slds-size_6-of-12"> 
+                    <div class="slds-col">
+                        
+                        
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionfour}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articlefour" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articlefour" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>4. Advertising</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Advertising_check_list__c)),and(not(empty(v.Ass_notes.Add_to_Leaders_site_share_landing_page__c )),and(not(empty(v.Ass_notes.Screenshot_placed_advertisements__c)),and(not(empty(v.Ass_notes.Add_to_Linkedin__c)),and(not(empty(v.Ass_notes.Invoice_client__c)),true)))))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Advertising_check_list__c)),and((empty(v.Ass_notes.Add_to_Leaders_site_share_landing_page__c )),and((empty(v.Ass_notes.Screenshot_placed_advertisements__c)),and((empty(v.Ass_notes.Add_to_Linkedin__c)),and((empty(v.Ass_notes.Invoice_client__c)),true)))))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articlefour">
+                            
+                            <div class="container">
+                                
+                                <br/>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Advertising check list
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Advertising_check_list__c" class="{!empty(v.Ass_notes.Advertising_check_list__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Advertising_check_list__c" class="{!v.Ass_notes.Advertising_check_list__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Advertising_check_list__c" class="{!v.Ass_notes.Advertising_check_list__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Add to Leaders site share landing page
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Add_to_Leaders_site_share_landing_page__c" class="{!empty(v.Ass_notes.Add_to_Leaders_site_share_landing_page__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Add_to_Leaders_site_share_landing_page__c" class="{!v.Ass_notes.Add_to_Leaders_site_share_landing_page__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Add_to_Leaders_site_share_landing_page__c" class="{!v.Ass_notes.Add_to_Leaders_site_share_landing_page__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Screenshot placed advertisements
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Screenshot_placed_advertisements__c" class="{!empty(v.Ass_notes.Screenshot_placed_advertisements__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Screenshot_placed_advertisements__c" class="{!v.Ass_notes.Screenshot_placed_advertisements__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Screenshot_placed_advertisements__c" class="{!v.Ass_notes.Screenshot_placed_advertisements__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Add to linkedin
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Add_to_Linkedin__c" class="{!empty(v.Ass_notes.Add_to_Linkedin__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Add_to_Linkedin__c" class="{!v.Ass_notes.Add_to_Linkedin__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Add_to_Linkedin__c" class="{!v.Ass_notes.Add_to_Linkedin__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Invoice client
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Invoice_client__c" class="{!empty(v.Ass_notes.Invoice_client__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Invoice_client__c" class="{!v.Ass_notes.Invoice_client__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Invoice_client__c" class="{!v.Ass_notes.Invoice_client__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Adv_notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionfive}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articlefive" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articlefive" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>5. Research</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Target_company_list_strategically__c)),and(not(empty(v.Ass_notes.Research_launch_meeting_Consultant_and__c )),true))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Target_company_list_strategically__c)),and((empty(v.Ass_notes.Research_launch_meeting_Consultant_and__c )),true))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articlefive">
+                            
+                            <div class="container">
+                                <br/>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Target company list strategically
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Target_company_list_strategically__c" class="{!empty(v.Ass_notes.Target_company_list_strategically__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Target_company_list_strategically__c" class="{!v.Ass_notes.Target_company_list_strategically__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Target_company_list_strategically__c" class="{!v.Ass_notes.Target_company_list_strategically__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Research launch meeting Consultant
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Research_launch_meeting_Consultant_and__c" class="{!empty(v.Ass_notes.Research_launch_meeting_Consultant_and__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Research_launch_meeting_Consultant_and__c" class="{!v.Ass_notes.Research_launch_meeting_Consultant_and__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Research_launch_meeting_Consultant_and__c" class="{!v.Ass_notes.Research_launch_meeting_Consultant_and__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Research_Notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                 <div class="slds-col slds-size_6-of-12">    
+                    <div class="slds-col">
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionseven}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articleseven" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articleseven" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>6. Leaders Report Meeting</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.LRA_notes__c)),and(not(empty(v.Ass_notes.Proofing__c )),and(not(empty(v.Ass_notes.Google_background_check__c)),
+                                                      and(not(empty(v.Ass_notes.Share_meeting_date_and_report_info_with__c)),
+                                                      and(not(empty(v.Ass_notes.Printing__c)),true)))))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.LRA_notes__c)),and((empty(v.Ass_notes.Proofing__c )),and((empty(v.Ass_notes.Google_background_check__c)),
+                                                              and((empty(v.Ass_notes.Share_meeting_date_and_report_info_with__c)),
+                                                              and((empty(v.Ass_notes.Printing__c)),true)))))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>  
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        
+                        
+                        <div class="container">
+                            
+                            <div class="slds-hide slds-p-around--medium" aura:id="articleseven">
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        LRA notes
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="LRA_notes__c" class="{!empty(v.Ass_notes.LRA_notes__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="LRA_notes__c" class="{!v.Ass_notes.LRA_notes__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="LRA_notes__c" class="{!v.Ass_notes.LRA_notes__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Proofing
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Proofing__c" class="{!empty(v.Ass_notes.Proofing__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Proofing__c" class="{!v.Ass_notes.Proofing__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Proofing__c" class="{!v.Ass_notes.Proofing__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Google background check
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Google_background_check__c" class="{!empty(v.Ass_notes.Google_background_check__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Google_background_check__c" class="{!v.Ass_notes.Google_background_check__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Google_background_check__c" class="{!v.Ass_notes.Google_background_check__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Share meeting date and report info with
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Share_meeting_date_and_report_info_with__c" class="{!empty(v.Ass_notes.Share_meeting_date_and_report_info_with__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Share_meeting_date_and_report_info_with__c" class="{!v.Ass_notes.Share_meeting_date_and_report_info_with__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Share_meeting_date_and_report_info_with__c" class="{!v.Ass_notes.Share_meeting_date_and_report_info_with__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Printing
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Printing__c" class="{!empty(v.Ass_notes.Printing__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Printing__c" class="{!v.Ass_notes.Printing__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Printing__c" class="{!v.Ass_notes.Printing__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.LRM_Notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+              
+            </div>
+            
+            <br/>
+            
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionsix}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articlesix" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articlesix" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>7. Screening</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.One_pager__c)),and(not(empty(v.Ass_notes.Send_Module_2_billing__c )),true))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.One_pager__c)),and((empty(v.Ass_notes.Send_Module_2_billing__c )),true))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                            
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articlesix">
+                            
+                            <div class="container">
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Send Module 2 billing
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Send_Module_2_billing__c" class="{!empty(v.Ass_notes.Send_Module_2_billing__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Send_Module_2_billing__c" class="{!v.Ass_notes.Send_Module_2_billing__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Send_Module_2_billing__c" class="{!v.Ass_notes.Send_Module_2_billing__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        One pager
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="One_pager__c" class="{!empty(v.Ass_notes.One_pager__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="One_pager__c" class="{!v.Ass_notes.One_pager__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="One_pager__c" class="{!v.Ass_notes.One_pager__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                
+                                <br/>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            
+                        </div>
+                        
+                        
+                        
+                    </div>
+                </div> 
+                
+                 <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionnine}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articlenine" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articlenine" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>8. Selection Meeting</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Biographies__c)),and(not(empty(v.Ass_notes.Video_submission__c )),and(not(empty(v.Ass_notes.Self_assessment__c)),and(not(empty(v.Ass_notes.Extend_invitation_for_interviews__c)),and(not(empty(v.Ass_notes.Written_assessment__c)),true)))))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Biographies__c)),and((empty(v.Ass_notes.Video_submission__c )),and((empty(v.Ass_notes.Self_assessment__c)),and((empty(v.Ass_notes.Extend_invitation_for_interviews__c)),and((empty(v.Ass_notes.Written_assessment__c)),true)))))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        <div class="container">
+                            
+                            <div class="slds-hide slds-p-around--medium" aura:id="articlenine">
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Biographies
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Biographies__c" class="{!empty(v.Ass_notes.Biographies__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Biographies__c" class="{!v.Ass_notes.Biographies__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Biographies__c" class="{!v.Ass_notes.Biographies__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Video submission
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Video_submission__c" class="{!empty(v.Ass_notes.Video_submission__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Video_submission__c" class="{!v.Ass_notes.Video_submission__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Video_submission__c" class="{!v.Ass_notes.Video_submission__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Self assessment
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Self_assessment__c" class="{!empty(v.Ass_notes.Self_assessment__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Self_assessment__c" class="{!v.Ass_notes.Self_assessment__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Self_assessment__c" class="{!v.Ass_notes.Self_assessment__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Extend invitation for interviews
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Extend_invitation_for_interviews__c" class="{!empty(v.Ass_notes.Extend_invitation_for_interviews__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Extend_invitation_for_interviews__c" class="{!v.Ass_notes.Extend_invitation_for_interviews__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Extend_invitation_for_interviews__c" class="{!v.Ass_notes.Extend_invitation_for_interviews__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Written assessment
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Written_assessment__c" class="{!empty(v.Ass_notes.Written_assessment__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Written_assessment__c" class="{!v.Ass_notes.Written_assessment__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Written_assessment__c" class="{!v.Ass_notes.Written_assessment__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        one pager
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Schedule_bi_weekly_updates__c" class="{!empty(v.Ass_notes.Schedule_bi_weekly_updates__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Schedule_bi_weekly_updates__c" class="{!v.Ass_notes.Schedule_bi_weekly_updates__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Schedule_bi_weekly_updates__c" class="{!v.Ass_notes.Schedule_bi_weekly_updates__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Sel_meet_notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <br/>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+            <br/>
+            
+            <div class="slds-grid slds-gutters">
+                
+                   <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectioneight}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articleeight" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articleeight" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>9. Interviews</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Interview_schedule__c)),and(not(empty(v.Ass_notes.Billing_2nd_instalment__c )),
+                                                      and(not(empty(v.Ass_notes.Interview_binders__c)),and(not(empty(v.Ass_notes.Remove_advertising__c)),
+                                                      and(not(empty(v.Ass_notes.Catering__c)),and(not(empty(v.Ass_notes.Reserve_boardroom__c)),
+                                                      and(not(empty(v.Ass_notes.Candidate_expense_form_check_for_clien__c)),true)))))))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Interview_schedule__c)),and((empty(v.Ass_notes.Billing_2nd_instalment__c )),
+                                                              and((empty(v.Ass_notes.Interview_binders__c)),and((empty(v.Ass_notes.Remove_advertising__c)),
+                                                              and((empty(v.Ass_notes.Catering__c)),and((empty(v.Ass_notes.Reserve_boardroom__c)),
+                                                              and((empty(v.Ass_notes.Candidate_expense_form_check_for_clien__c)),true)))))))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articleeight"> 
+                            
+                            <div class="container">
+                                
+                                <br/>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Interview schedule
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Interview_schedule__c" class="{!empty(v.Ass_notes.Interview_schedule__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Interview_schedule__c" class="{!v.Ass_notes.Interview_schedule__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Interview_schedule__c" class="{!v.Ass_notes.Interview_schedule__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Billing 2nd instalment
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Billing_2nd_instalment__c" class="{!empty(v.Ass_notes.Billing_2nd_instalment__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Billing_2nd_instalment__c" class="{!v.Ass_notes.Billing_2nd_instalment__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Billing_2nd_instalment__c" class="{!v.Ass_notes.Billing_2nd_instalment__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Interview binders
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Interview_binders__c" class="{!empty(v.Ass_notes.Interview_binders__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Interview_binders__c" class="{!v.Ass_notes.Interview_binders__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Interview_binders__c" class="{!v.Ass_notes.Interview_binders__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Remove advertising
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Remove_advertising__c" class="{!empty(v.Ass_notes.Remove_advertising__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Remove_advertising__c" class="{!v.Ass_notes.Remove_advertising__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Remove_advertising__c" class="{!v.Ass_notes.Remove_advertising__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Catering
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Catering__c" class="{!empty(v.Ass_notes.Catering__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Catering__c" class="{!v.Ass_notes.Catering__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Catering__c" class="{!v.Ass_notes.Catering__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Candidate expense form check for client
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Candidate_expense_form_check_for_clien__c" class="{!empty(v.Ass_notes.Candidate_expense_form_check_for_clien__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Candidate_expense_form_check_for_clien__c" class="{!v.Ass_notes.Candidate_expense_form_check_for_clien__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Candidate_expense_form_check_for_clien__c" class="{!v.Ass_notes.Candidate_expense_form_check_for_clien__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Reserve boardroom
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Reserve_boardroom__c" class="{!empty(v.Ass_notes.Reserve_boardroom__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Reserve_boardroom__c" class="{!v.Ass_notes.Reserve_boardroom__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Reserve_boardroom__c" class="{!v.Ass_notes.Reserve_boardroom__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                
+                                
+                                <br/>
+                                
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Int_Notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionten}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articleten" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articleten" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>10. References</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Reference_report__c)),and(not(empty(v.Ass_notes.Reference__c )),true))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Reference_report__c)),and((empty(v.Ass_notes.Reference__c )),true))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                                
+                            </section>
+                        </div>
+                        
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articleten">
+                            
+                            <div class="container">
+                                
+                                <br/>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Reference report
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Reference_report__c" class="{!empty(v.Ass_notes.Reference_report__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Reference_report__c" class="{!v.Ass_notes.Reference_report__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Reference_report__c" class="{!v.Ass_notes.Reference_report__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        References
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Reference__c" class="{!empty(v.Ass_notes.Reference__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Reference__c" class="{!v.Ass_notes.Reference__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Reference__c" class="{!v.Ass_notes.Reference__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Ref_Notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <br/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <br/>
+            
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectioneleven}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articleeleven" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articleeleven" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>11. Offer Negotiation</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Criminal_and_credit_check__c)),and(not(empty(v.Ass_notes.Education_verification__c )),
+                                                      and(not(empty(v.Ass_notes.Let_candidates_go__c)),and(not(empty(v.Ass_notes.Offer_letter_Employment_contract__c))
+                                                      ,true))))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Criminal_and_credit_check__c)),and((empty(v.Ass_notes.Education_verification__c )),
+                                                              and((empty(v.Ass_notes.Let_candidates_go__c)),and((empty(v.Ass_notes.Offer_letter_Employment_contract__c)),true))))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articleeleven">
+                            
+                            <div class="container">
+                                <br/>
+                                
+                                <br/>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Criminal and credit check
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Criminal_and_credit_check__c" class="{!empty(v.Ass_notes.Criminal_and_credit_check__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Criminal_and_credit_check__c" class="{!v.Ass_notes.Criminal_and_credit_check__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Criminal_and_credit_check__c" class="{!v.Ass_notes.Criminal_and_credit_check__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Education verification
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Education_verification__c" class="{!empty(v.Ass_notes.Education_verification__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Education_verification__c" class="{!v.Ass_notes.Education_verification__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Education_verification__c" class="{!v.Ass_notes.Education_verification__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Let candidates go
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Let_candidates_go__c" class="{!empty(v.Ass_notes.Let_candidates_go__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Let_candidates_go__c" class="{!v.Ass_notes.Let_candidates_go__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Let_candidates_go__c" class="{!v.Ass_notes.Let_candidates_go__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Offer letter Employment contract
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Offer_letter_Employment_contract__c" class="{!empty(v.Ass_notes.Offer_letter_Employment_contract__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Offer_letter_Employment_contract__c" class="{!v.Ass_notes.Offer_letter_Employment_contract__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Offer_letter_Employment_contract__c" class="{!v.Ass_notes.Offer_letter_Employment_contract__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Offer_neg_notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                
+                                
+                                <br/>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectiontwelve}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articletwelve" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articletwelve" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>12. On Boarding</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Work_Place_Big_5__c)),and(not(empty(v.Ass_notes.Send_final_on_boarding_plan__c )),
+                                                      and(not(empty(v.Ass_notes.Draft_on_boarding_plan__c)),and(not(empty(v.Ass_notes.First_90_days__c)),
+                                                      and(not(empty(v.Ass_notes.Client_input_to_on_boarding_plan__c)),true)))))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Work_Place_Big_5__c)),and((empty(v.Ass_notes.Send_final_on_boarding_plan__c )),
+                                                              and((empty(v.Ass_notes.Draft_on_boarding_plan__c)),and((empty(v.Ass_notes.First_90_days__c)),
+                                                              and((empty(v.Ass_notes.Client_input_to_on_boarding_plan__c)),true)))))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articletwelve">
+                            <div class="container">
+                                
+                                <br/>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Work Place Big 5
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Work_Place_Big_5__c" class="{!empty(v.Ass_notes.Work_Place_Big_5__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Work_Place_Big_5__c" class="{!v.Ass_notes.Work_Place_Big_5__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Work_Place_Big_5__c" class="{!v.Ass_notes.Work_Place_Big_5__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Send final on boarding plan
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Send_final_on_boarding_plan__c" class="{!empty(v.Ass_notes.Send_final_on_boarding_plan__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Send_final_on_boarding_plan__c" class="{!v.Ass_notes.Send_final_on_boarding_plan__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Send_final_on_boarding_plan__c" class="{!v.Ass_notes.Send_final_on_boarding_plan__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Draft on boarding plan
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Draft_on_boarding_plan__c" class="{!empty(v.Ass_notes.Draft_on_boarding_plan__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Draft_on_boarding_plan__c" class="{!v.Ass_notes.Draft_on_boarding_plan__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Draft_on_boarding_plan__c" class="{!v.Ass_notes.Draft_on_boarding_plan__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        First 90 days
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="First_90_days__c" class="{!empty(v.Ass_notes.First_90_days__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="First_90_days__c" class="{!v.Ass_notes.First_90_days__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="First_90_days__c" class="{!v.Ass_notes.First_90_days__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Client input to on boarding plan
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Client_input_to_on_boarding_plan__c" class="{!empty(v.Ass_notes.Client_input_to_on_boarding_plan__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Client_input_to_on_boarding_plan__c" class="{!v.Ass_notes.Client_input_to_on_boarding_plan__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Client_input_to_on_boarding_plan__c" class="{!v.Ass_notes.Client_input_to_on_boarding_plan__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.On_Boarding_Notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                
+                                
+                                <br/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+            <br/>
+            
+            <div class="slds-grid slds-gutters">
+                
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionthirteen}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float--left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articleethirteen" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articleethirteen" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>13. Close-Out</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Update_summary_lines_in_LRA_to_reflect_f__c)),and(not(empty(v.Ass_notes.Update_project_history_with_final_candid__c )),
+                                                      and(not(empty(v.Ass_notes.Add_tracking_list_to_LRA_move_folder_in__c)),and(not(empty(v.Ass_notes.X3_month_check_in__c)),
+                                                      and(not(empty(v.Ass_notes.X1_year_check_in__c)),true)))))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Update_summary_lines_in_LRA_to_reflect_f__c)),and((empty(v.Ass_notes.Update_project_history_with_final_candid__c )),
+                                                              and((empty(v.Ass_notes.Add_tracking_list_to_LRA_move_folder_in__c)),and((empty(v.Ass_notes.X3_month_check_in__c)),
+                                                              and((empty(v.Ass_notes.X1_year_check_in__c)),true)))))}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        <div class="slds-hide slds-p-around--medium" aura:id="articleethirteen">
+                            
+                            <div class="container">
+                                
+                                
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Update summary lines in LRA to reflect
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Update_summary_lines_in_LRA_to_reflect_f__c" class="{!empty(v.Ass_notes.Update_summary_lines_in_LRA_to_reflect_f__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Update_summary_lines_in_LRA_to_reflect_f__c" class="{!v.Ass_notes.Update_summary_lines_in_LRA_to_reflect_f__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Update_summary_lines_in_LRA_to_reflect_f__c" class="{!v.Ass_notes.Update_summary_lines_in_LRA_to_reflect_f__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Update project history with final candid
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Update_project_history_with_final_candid__c" class="{!empty(v.Ass_notes.Update_project_history_with_final_candid__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Update_project_history_with_final_candid__c" class="{!v.Ass_notes.Update_project_history_with_final_candid__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Update_project_history_with_final_candid__c" class="{!v.Ass_notes.Update_project_history_with_final_candid__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Add tracking list to LRA move folder in
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Add_tracking_list_to_LRA_move_folder_in__c" class="{!empty(v.Ass_notes.Add_tracking_list_to_LRA_move_folder_in__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Add_tracking_list_to_LRA_move_folder_in__c" class="{!v.Ass_notes.Add_tracking_list_to_LRA_move_folder_in__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Add_tracking_list_to_LRA_move_folder_in__c" class="{!v.Ass_notes.Add_tracking_list_to_LRA_move_folder_in__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        3 month check in
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="X3_month_check_in__c" class="{!empty(v.Ass_notes.X3_month_check_in__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="X3_month_check_in__c" class="{!v.Ass_notes.X3_month_check_in__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="X3_month_check_in__c" class="{!v.Ass_notes.X3_month_check_in__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        6 month check in
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="X6_month_check_n__c" class="{!empty(v.Ass_notes.X6_month_check_n__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="X6_month_check_n__c" class="{!v.Ass_notes.X6_month_check_n__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="X6_month_check_n__c" class="{!v.Ass_notes.X6_month_check_n__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        1 year check in
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="X1_year_check_in__c" class="{!empty(v.Ass_notes.X1_year_check_in__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="X1_year_check_in__c" class="{!v.Ass_notes.X1_year_check_in__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="X1_year_check_in__c" class="{!v.Ass_notes.X1_year_check_in__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_3-of-6">
+                                        Send Satisfaction Survey
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-6">
+                                        <span onclick="{!c.updateField}" data-fieldValue="" data-fieldName="Send_satisfaction_survey__c" class="{!empty(v.Ass_notes.Send_satisfaction_survey__c)?'reddot':'whitedot'}"></span><span class="dotTextClass">To Do</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Completed" data-fieldName="Send_satisfaction_survey__c" class="{!v.Ass_notes.Send_satisfaction_survey__c=='Completed'?'greendot':'whitedot'}"></span><span class="dotTextClass">Completed</span>
+                                        <span onclick="{!c.updateField}" data-fieldValue="Not Required" data-fieldName="Send_satisfaction_survey__c" class="{!v.Ass_notes.Send_satisfaction_survey__c=='Not Required'?'darkgreydot':'whitedot'}"> </span> <span class="dotTextClass">Not Required</span>                         
+                                    </div>
+                                    <br/>
+                                </div>
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Close_Out_Notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+                                
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <!--div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectiontfourteen}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float-left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articleFourteen" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articleFourteen" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                
+                                
+                                
+                                <h2 style="display:inline"><b>14. Sourcing</b></h2> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!and(not(empty(v.Ass_notes.Sourcing_notes__c)),true)}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Sourcing_notes__c)),true)}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        <div class="slds-hide slds-p-around-medium" aura:id="articleFourteen">
+                            
+                            <div class="container">
+                                
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Sourcing_notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>                                        
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div-->
+            </div>
+            
+            <br/>
+            
+            <!--div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionfifteen}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float-left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articlefifteen" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articlefifteen" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                <h1 style="display:inline"><b>15. Continued Sourcing</b></h1> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!(not(empty(v.Ass_notes.Continued_Sourcing_notes__c)))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Continued_Sourcing_notes__c)),true)}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        <div class="slds-hide slds-p-around-medium" aura:id="articlefifteen">
+                            
+                            
+                            
+                            <div class="container">
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Continued_Sourcing_notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-col">
+                        <div class="slds-page-header" style="cursor: pointer;" onclick="{!c.sectionSixteen}">
+                            
+                            <section class="slds-clearfix " >
+                                <div class="slds-float-left margintop1perc ">
+                                    <lightning:icon class="slds-show" aura:id="articleSixteen" iconName="utility:add" size="x-small" alternativeText="Indicates add"/>
+                                    <lightning:icon class="slds-hide" aura:id="articleSixteen" iconName="utility:dash" size="x-small" alternativeText="Indicates dash"/>
+                                </div>
+                                <h1 style="display:inline"><b>16
+                                    . Invoice</b></h1> 
+                                <div style="display:inline;margin-left:4%;float:right">
+                                    <aura:if  isTrue="{!(not(empty(v.Ass_notes.Invoice_notes__c)))}" >
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval" variant="inverse" iconName="action:approval" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <aura:if  isTrue="{!and((empty(v.Ass_notes.Invoice_notes__c)),true)}" >
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" variant="inverse" iconName="action:close" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                                </aura:set>
+                                                
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                                
+                            </section>
+                        </div>
+                        
+                        <div class="slds-hide slds-p-around-medium" aura:id="articleSixteen">
+                            
+                            
+                            
+                            <div class="container">
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_6-of-6">
+                                        <div class="slds-col">
+                                            <lightning:textarea name="input2" label="Additional Notes :" value="{!v.Ass_notes.Invoice_notes__c}"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div-->
+            
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+        </div>
+        
+        
+        <aura:if isTrue="{!v.displayChangeModule}">
+            <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    
+                    <div class="slds-modal__header">
+                        <button class="slds-button slds-button_brand" Style="float:right" title="Close" onclick="{!c.closeModule}">
+                            X
+                        </button>
+                        <h2 id="header99" class="slds-text-heading--medium">Change Modlue</h2>
+                    </div>
+                    <div class="slds-modal__content slds-p-around--medium">
+                        
+                        <lightning:select aura:id="selectstatus" name="selectstatus" label="Select Status" value="{!v.SelectedModule}" >
+                            <option value="" selected="true">--NONE--</option>
+                            <aura:iteration items="{!v.StatusValues}" var="op">
+                                <option value="{!op}" text="{!op}" />  
+                            </aura:iteration>
+                            
+                        </lightning:select> 
+                        
+                        
+                        
+                        <br/>
+                        <button class="slds-button slds-button_brand" onclick="{!c.updateModule}">Change Module</button>
+                        <button class="slds-button slds-button_outline-brand"  onclick="{!c.closeModule}">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div> 
+        </aura:if>
+        <aura:if isTrue="{!v.displayChangeStatus}">
+            <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    
+                    <div class="slds-modal__header">
+                        <button class="slds-button slds-button_brand" Style="float:right" title="Close" onclick="{!c.closeStatus}">
+                            X
+                        </button>
+                        <h2 id="header99" class="slds-text-heading--medium">Change Status</h2>
+                    </div>
+                    <div class="slds-modal__content slds-p-around--medium">
+                        
+                        <lightning:select aura:id="selectstatus" name="selectstatus" label="Select Status" value="{!v.SelectedStatus}" >
+                            <option value="" selected="true">--NONE--</option>
+                            <aura:iteration items="{!v.StatusValues}" var="op">
+                                <option value="{!op}" text="{!op}"  />  
+                            </aura:iteration>
+                            
+                        </lightning:select> 
+                        
+                        
+                        
+                        <br/>
+                        <button class="slds-button slds-button_brand" onclick="{!c.updatestatus}">Change Status</button>
+                        <button class="slds-button slds-button_outline-brand" onclick="{!c.closeStatus}">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div> 
+        </aura:if>
+        
+        
+        
+        
+    </lightning:card>
+</aura:component>

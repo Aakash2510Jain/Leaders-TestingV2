@@ -1,0 +1,5 @@
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="candidateIds" type="set" />
+    <aura:attribute name="resultWrapperList" type="object" />
+    <aura:attribute name="selectedCount" type="Integer" />
+</aura:event>

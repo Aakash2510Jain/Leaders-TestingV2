@@ -1,0 +1,122 @@
+<apex:page StandardController="Note" extensions="AssignmentCVSplitCtrl"  >
+    <apex:panelGrid columns="2" width="100%"  >
+    
+    <apex:outputPanel style="float:align; width=50%"   >
+           <apex:tabPanel switchType="Client" >
+            <apex:tab id="lrn" title="Leaders Report Note" label="Leaders Report Note"  >
+            <apex:sectionHeader title="Leaders Report Notes Edit" subtitle="New Leaders Report Notes"   />
+    <apex:pageMessages id="myMessagesLeadersNotes" />   
+    <apex:form id="form">
+        <apex:pageBlock title="" mode="Edit"  >
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!saveLeaderNote}" value="Save" />
+             <!--   <apex:commandButton onclick="window.open('/{!leaderNote.Candidate_Assigned__r.Mandate__c}');" value="Go to Assignment"/> -->
+                
+                <apex:commandButton action="{!cancelLeaderNote}" oncomplete="window.opener.top.location.reload(); window.close();"  value="Close" immediate="true"/> <!-- action="{!cancelLeaderNote}" -->
+
+            </apex:pageBlockButtons>
+        
+            <!-- INFORMATIONS -->
+            <apex:pageBlockSection title="Information" columns="1"> 
+                
+                <apex:inputField value="{!leadersNote.Contact__c }" id="LeaderNoteContact"/>
+                <apex:inputField value="{!leadersNote.Candidate_Assigned__c  }" id="LeaderNoteCandidateAssigned" />
+                
+            </apex:pageBlockSection>
+            
+            <!-- DESCRIPTION -->
+            <apex:pageBlockSection title="Description" columns="1"> 
+                
+                
+                <apex:inputField value="{!leadersNote.Status_Summary_Line__c}"/>
+                <apex:inputField value="{!leadersNote.Description__c}"/>
+                
+                
+              <!--  <apex:inputField value="{!leadersNote.Status_Summary_Line__c  }" />
+                <apex:inputField value="{!leadersNote.Description__c   }"/>  -->
+                
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+                </apex:form>
+              
+            <!--   <apex:include id="tab1" pageName="LeadersReportNoteEdit" /> -->
+                <!--	<apex:actionSupport action="{!createReportNote}" /> -->
+              </apex:tab>
+        
+               
+                <apex:tab id="orgn" title="Origin" label="Origin " >
+                
+                <apex:sectionHeader title="Origin Edit" subtitle="Origin Edit" />
+                    <apex:pageMessages id="MyMessagesorigins" />
+                   <apex:form > 
+                   <Apex:PageBlock >
+                       <apex:pageBlockButtons >
+                       <apex:commandButton action="{!saveOrigin}" value="Save" />
+                           <apex:commandButton onclick="window.opener.top.location.reload();   window.close()" value="close" />    
+                       </apex:pageBlockButtons>
+                       <apex:pageBlockSection title="Origin">
+                           <apex:inputField value="{!leadersNote.Candidate_Assigned__r.Origin__c}" id="contactorigin"/>
+                       
+                       </apex:pageBlockSection>
+                    
+                    
+                    
+                    </Apex:PageBlock>
+                </apex:form>
+                
+                
+                
+                
+                
+                </apex:tab> 
+                <apex:tab id="note" title="Notes" label="Notes"  >
+          <!--       <apex:relatedList subject="{!contactid}" list="CombinedAttachments" id="nanda" title="Create New Notes"  />   --> 
+           <!--      <c:NotesComponent parentId="{!contactid}"></c:NotesComponent>   -->
+                 <apex:sectionHeader title="Notes Edit" subtitle="New Notes" />
+                   <apex:PageMessages id="myMessagesnotes" /> 
+                    <c:NotesComponent parentId="{!contactid}"></c:NotesComponent>            
+                 <apex:form >      
+                <apex:pageBlock >
+                
+        <!--        <apex:commandButton action="{!goToNewNote}" title="Create New Note" value="Create New Note" oncomplete="openWindow()" ></apex:commandButton> -->
+          <!--          <apex:commandLink action="{!goToNewNote}" value="Create New Note" target="_blank"/> -->
+                     <apex:pageBlockButtons >
+                      <apex:commandButton action="{!saveNote}" value="Save" />
+                      <!--   <apex:commandButton onclick="window.open('/{!leaderNote.Candidate_Assigned__r.Mandate__c}');" value="Go to Assignment"/> -->
+                      <apex:commandButton value="Close" onclick="window.opener.top.location.reload();  window.close()" immediate="true"/> <!-- action="{!cancelNote}"-->
+
+                      </apex:pageBlockButtons>
+        
+                     <!-- INFORMATIONS -->
+                       <apex:pageBlockSection title="Information" columns="1"> 
+                           
+                           <apex:inputField value="{!stdNote.isPrivate}" id="noteprivate" />      
+                           <apex:inputField value="{!stdNote.Title }" id="notetitle"/>
+                           <apex:inputField value="{!stdNote.Body }" id="notebody"  />
+                
+                        </apex:pageBlockSection>
+                     </apex:pageBlock>
+                    </apex:form>
+                   
+            </apex:tab>
+            </apex:tabPanel>
+          
+            
+       
+        
+    
+    </apex:outputPanel>
+    
+    <apex:outputPanel style="width=100%"  >
+       <!-- style="float:left width:120px;" --> 
+    
+    
+   
+        <apex:iframe src="/servlet/servlet.FileDownload?file={!cvid}"  scrolling="true" height="1000px"/> 
+        
+    
+    
+    </apex:outputPanel>
+</apex:panelGrid>
+</apex:page>

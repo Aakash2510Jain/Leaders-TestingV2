@@ -1,0 +1,150 @@
+<aura:component >
+    <aura:attribute name="allRecord" type="List"/>
+    <aura:attribute name="fieldList" type="Map"/>
+    <aura:attribute name="allData" type="List"/>
+    <aura:attribute name="currentPageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="50"/>
+    <aura:attribute name="totalPages" type="Integer" default="0"/>
+    <aura:attribute name="pageList" type="List"/>
+    <aura:attribute name="displayJD" type="Boolean"/>
+    <aura:attribute name="JobDescId" type="String"/>
+      <aura:attribute name="JDid" type="String"/>
+    <aura:attribute name="checkedSearch" type="boolean"/>
+    <aura:attribute name="ShowAssPage" type="boolean"/>
+    <aura:attribute name="data" type="List"/>
+    <aura:attribute name="fieldMap" type="Map" />
+    <aura:attribute name="fieldLabelList" type="List"/>
+    <aura:attribute name="fieldAPIList" type="List"/>
+    <aura:attribute name="sortAsc" type="boolean" default="true"/>
+    <aura:attribute name="StateValue" type="String" default="State"/>
+    <aura:attribute name="CountryValue" type="String" default="Country"/>
+    <aura:attribute name="clickedViewAll" type="boolean"/>
+    <aura:attribute name="selectedRecord" type="List"/>    
+    <aura:attribute name="isDelete" type="boolean"/>
+    
+    <aura:attribute name="checkSpinner" type="boolean" default="false"/> 
+    <aura:handler event="c:passBooleanEvt" action="{!c.handleViewAllEvent}"/>
+    <aura:handler name="init" value="{!this}"  action="{!c.doInit}"/>
+    
+    <aura:method name="getJdId"  > 
+        <aura:attribute name="displayJD" type="Boolean" /> 
+        <aura:attribute name="JobDescId" type="String" /> 
+    </aura:method>
+    
+    <div class="slds-m-around_xx-large">
+        <div class="slds-grid slds-wrap">
+            <h1 class="slds-text-heading--medium">Assignments</h1>
+            <br/>
+            <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_4-of-4">
+                <table class="slds-table slds-table_cell-buffer slds-table_fixed-layout slds-max-large-table_stacked-horizontal slds-table_bordered ">
+                    
+                    <thead>
+                        <tr class="slds-text-title_caps">
+                            <td style="width:40px"></td>
+                            <aura:iteration items="{!v.fieldMap}" var="field" indexVar="key" >                          
+                                <th class="" scope="col" name="{!field}" onclick="{!c.sortByField}">
+                                    {!field.Label}  
+                                    <span style="margin-left:1%">
+                                        <aura:if isTrue="{!field.sortAsc==true}">
+                                            <lightning:icon iconName="utility:chevrondown" alternativeText="Event" title="Event" size="xx-small" />
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:chevronup" alternativeText="Event" title="Event" size="xx-small"/>
+                                            </aura:set>
+                                        </aura:if> 
+                                    </span>
+                                </th>
+                            </aura:iteration>
+                            
+                        </tr>                                            
+                    </thead>
+                    <tbody>
+                        <aura:if isTrue="{!v.clickedViewAll==true}">
+                            <aura:iteration items="{!v.allRecord}" var="rec">
+                                <tr class="slds-hint-parent">
+                                    <td> 
+                                        <ui:inputCheckbox   value="" text="{!rec}" change="{!c.onCheck}"/>  
+                                    </td>      
+                                    <aura:iteration items="{!v.fieldMap}" var="fieldNm">
+                                        <aura:if isTrue="{!fieldNm.value == 'Name'}">
+                                            <th style="width: 150px;" data-label="Opportunity Name" scope="row">
+                                                <div class="slds-truncate slds-cell-wrap" title="Cloudhub">
+                                                    <c:SearchCompanyDisplayValue record="{!rec}" fieldName="{!fieldNm.value}" searchAss="True"/>
+                                                </div>    
+                                            </th>    
+                                            <aura:set attribute="else">
+                                                <th data-label="Opportunity Name" scope="row">
+                                                    <div class="slds-truncate slds-cell-wrap" title="Cloudhub">
+                                                        <c:SearchCompanyDisplayValue record="{!rec}" fieldName="{!fieldNm.value}" searchAss="True"/>
+                                                    </div>    
+                                                </th>
+                                            </aura:set>
+                                        </aura:if>
+                                    </aura:iteration> 
+                                </tr>
+                            </aura:iteration>              
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!not(v.clickedViewAll==true)}">
+                            <aura:iteration items="{!v.data}" var="rec">
+                                <tr class="slds-hint-parent">
+                                    <td> <ui:inputCheckbox   value="" text="{!rec }" change="{!c.onCheck}" />  
+                                    </td>      
+                                    <aura:iteration items="{!v.fieldAPIList}" var="fieldNm">
+                                        <td data-label="Opportunity Name" scope="row">
+                                            <div class="slds-truncate slds-cell-wrap" title="Cloudhub">
+                                                <c:SearchCompanyDisplayValue record="{!rec}" fieldName="{!fieldNm}" displayJD="{!v.displayJD}"  ShowAssPage="{!v.ShowAssPage}" JDid="{!v.JDid}"  JobDescId="{!rec.Job_description_Id__c}" searchAss="true"/>
+                                            </div>    
+                                        </td>
+                                    </aura:iteration>        
+                                    
+                                </tr>
+                            </aura:iteration>              
+                        </aura:if>
+                    </tbody>
+                </table>
+                <aura:if isTrue="{!not(v.clickedViewAll==true)}">
+                    <aura:if isTrue="{!v.checkedSearch}">
+                        <!--This Code for Pagination-->
+                        <lightning:layout multipleRows="true" horizontalAlign="center">
+                            <lightning:layoutItem padding="around-small" flexibility="auto">
+                                <lightning:button label="First" iconName="utility:left" iconPosition="left"
+                                                  onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/>
+                                <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                                                  onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/>
+                                <span class="slds-p-horizontal_x-small">
+                                    <a onclick="{!c.processMe}" name="1" 
+                                       class="{! (v.currentPageNumber == 1) ? 'selected' : ''}">1</a>
+                                </span>
+                                <span class="slds-p-horizontal_xxx-small">
+                                    <a>...</a>
+                                </span>
+                                <aura:iteration items="{!v.pageList}" var="item">
+                                    <span class="slds-p-horizontal_x-small">
+                                        <a onclick="{!c.processMe}" name="{!item}"
+                                           class="{! (v.currentPageNumber == item) ? 'selected' : ''}">{!item}</a>
+                                    </span>
+                                </aura:iteration>
+                                
+                                <span class="slds-p-horizontal_xxx-small">
+                                    <a>...</a>
+                                </span>
+                                <span class="slds-p-horizontal_x-small">
+                                    <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                                       class="{! (v.currentPageNumber == v.totalPages) ? 'selected' : ''}">{!v.totalPages}</a>
+                                </span>
+                                <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                                                  disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/>
+                                <lightning:button label="Last" iconName="utility:right" iconPosition="right" 
+                                                  disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onLast}"/>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </aura:if>
+                </aura:if>   
+            </div>
+        </div>
+    </div>
+    <aura:if isTrue="{!v.displayJD}">
+        <c:ViewCV displayJD="{!v.displayJD}" attId="{!v.JDid}"  modalHeader="Job-Description" />
+    </aura:if>
+    
+</aura:component>

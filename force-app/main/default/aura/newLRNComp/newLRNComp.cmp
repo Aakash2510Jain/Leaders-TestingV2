@@ -1,0 +1,329 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="newLRNCompController" >
+    <!-- Attributes and Veriables -->    
+    <aura:attribute name="openLRNComp" type="boolean" ></aura:attribute>
+    <aura:attribute name="openEditLRNComp" type="boolean"></aura:attribute>
+    <aura:attribute name="displayNewPeople" type="boolean" />
+    <aura:attribute name="isView" type="boolean" />
+    <aura:attribute name="noNotes" type="boolean" />
+    <aura:attribute name="noNotesFromOtherAss" type="boolean" />
+    <aura:attribute name="displayCompetency" type="boolean" />
+    <aura:attribute name="candidateId" type="String" ></aura:attribute>
+    <aura:attribute name="SelectedNotes" type="String[]" />
+    <aura:attribute name="SelectedallNotes" type="boolean" />
+    <aura:attribute name="leaderNote" type="sObject" />//
+    <aura:attribute name="notesTitle" type="String" />
+    <aura:attribute name="notesId" type="String" />
+    <aura:attribute name="OnePagerRating" type="sObject" />
+    <aura:attribute name="NotesList" type="List"/>
+    <aura:attribute name="NotesLists" type="List"/>
+    <aura:attribute name="NotesListfromAllAss" type="List"/>
+    <aura:attribute name="competencyWrapper" type="object[]" />
+    <aura:attribute name="insertedLRN" type="sObject"/>
+    <aura:attribute name="mandateId" type="String" />
+    <aura:attribute name="candidateAssigned" type="String" />
+    <aura:attribute name="Text_va" type="String" />
+    <aura:attribute name="ContactName" type="String" />
+    <aura:attribute name="SSLValue" type="String" />
+    <aura:attribute name="Description" type="String" />
+    <aura:attribute name="IsMultipicklist" type="Boolean" default="false"/>
+    <aura:attribute name="SSLValues" type="String" />
+    <aura:attribute name="mydata" type="Object"/>
+    <aura:attribute name="selectedValue" type="String" />
+    <aura:handler event="c:NewLRNCompEvent" action="{!c.doEvent}" />
+    <aura:attribute name="mandateRecId" type="String" />
+    <aura:attribute name="mydataLst" type="String[]" default="['A','A','A','A','A']" />
+    <aura:attribute name="checkSpinner" type="boolean" default="false"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="displayWarning" type="Boolean"  default="false"/>
+    <aura:method name="callChildInit" action="{!c.doInit}" description="Sample method with parameters"> 
+        <aura:attribute name="canId" type="String" default="parameter 1"/> 
+    </aura:method>
+    
+    <lightning:notificationsLibrary aura:id="notifLib" />
+    <aura:attribute name="showConfirmDialog" type="boolean" default="false"/>
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <section aura:id="Modalbox" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+        <aura:if isTrue="{!v.checkSpinner}">
+            <div class="exampleHolder">
+                <lightning:spinner alternativeText="Loading" size="medium" />
+            </div>
+        </aura:if>
+        <div class="slds-modal__container">
+            
+            <header class="slds-modal__header" style="background-color:#004d99;">
+                <lightning:buttonIcon iconName="utility:close"
+                                      onclick="{!c.closeModel }"
+                                      alternativeText="close"
+                                      variant="bare-inverse"
+                                      class="slds-modal__close"/>
+                <h1 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate" style="color:white;font-size:30px;"><b>Leaders Report Note</b></h1>
+            </header>
+            
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <div aura:id="searchbody" class="slds-card__body">
+                    <br></br>
+                    <br></br>   
+                    
+                    
+                    <div class="slds-grid slds-gutters" style="margin-top:10px">
+                        <div class="slds-col">
+                            <label> Name </label>
+                            <ui:inputText label="" value="{!v.leaderNote.Contact__r.Name}" disabled="true" />
+                        </div>
+                        
+                        <div class="slds-col">
+                            <label> Company </label>
+                            <ui:inputText label="" value="{!v.leaderNote.Candidate_Assigned__r.Current_Company_French__c}" disabled="true" /> 
+                        </div>
+                        
+                        <div class="slds-col">
+                            <label> Title </label>
+                            <ui:inputText label="" value="{!v.leaderNote.Candidate_Assigned__r.Current_Title__c}" disabled="true" />
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="slds-grid slds-gutters" style="margin-top:10px">
+                        <div style ="margin-left:10px">
+                            <Lightning:select aura:id="SSL" label="Status Summary Line" value="{!v.selectedValue}" onchange="{!c.openFinalAcceptanceDialogue}">
+                                <option value="">--None--</option>
+                                <aura:iteration items="{!v.SSLValues}" var="SSL" >
+                                    <option value="{!SSL}" text="{!SSL}" selected="{!SSL==v.leaderNote.Status_Summary_Line__c}"/>
+                                </aura:iteration>   
+                            </Lightning:select>
+                        </div>
+                        <aura:if isTrue="{!v.selectedValue == 'Final candidate, has accepted the offer of employment.'}">
+                            <div style ="margin-left:45px">
+                                <lightning:input aura:id="canSD" type="date" name="input1" label="Enter Candidate Start Date" value="{!v.leaderNote.Candidate_Offer_Date__c}" messageWhenValueMissing="Please put candidate start date." required = "{!v.selectedValue == 'Final candidate, has accepted the offer of employment.'}"/>
+                            </div>
+                        </aura:if>
+                        <br></br>
+                        
+                    </div>
+                    <br/>
+                    <div>
+                        <lightning:inputRichText aura:id="profile" label="Profile" value="{!v.leaderNote.Description__c}" />
+                    </div>
+                    
+                    
+                    <br/><br/><br/>
+                    <br/>
+                    
+                    <header class="slds-modal__header" style="background-color:#004d99;">
+                        <h1 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate" style="color:white;font-size:30px;"><b>Notes From Related Assignments</b></h1>
+                    </header>
+                    <br/>
+                    
+                    <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title_caps">
+                                
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Assignment">Assignment</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title=" Company">Company</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Status</div>
+                                </th>     
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes"> Notes </div>
+                                </th>  
+                                
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <aura:iteration items="{!v.NotesList}" var="cc" >
+                                <tr class="slds-hint-parent">
+                                    <td>
+                                        <a href="" onclick="{!c.handleClick}" data-record="{!cc.Mandate__r.Id}" >{!cc.Related_Mandate__c}</a>
+                                    </td>
+                                    
+                                    
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Client_Company__c}">{!cc.Current_Company_French__c}</div>
+                                    </td>
+                                    <td>
+                                        {!cc.Status_Summary_Line__c}
+                                    </td>
+                                    
+                                    <td>
+                                        <lightning:button variant="brand" aura:id="viewId" label="View"  onclick="{!c.viewNotes}" value="{!v.candidateId}" ></lightning:button>
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                            
+                            
+                            <aura:iteration items="{!v.mydata}" var="cc" >
+                                
+                                <tr class="slds-hint-parent">
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                            <a href="" onclick="{!c.handleClick}" data-record="{!cc.Mandate__r.Id}" >{!cc.Mandate__r.Name}</a>
+                                        </div>
+                                    </td>
+                                    
+                                    
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Client_Company__c}">{!cc.Client_Company__c}</div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Status_Summary_Line__c}">{!cc.Status_Summary_Line__c}</div>
+                                    </td>
+                                    
+                                    <td>
+                                        <lightning:button variant="brand" aura:id="viewId" label="View" name="{!cc.Mandate__r.Name}" title="{!cc.Current_Company_French__c}" onclick="{!c.viewNotes}" value="{!cc.Id}" ></lightning:button>
+                                    </td>
+                                    
+                                </tr>
+                            </aura:iteration>   
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+            
+            
+            <footer class="slds-modal__footer">
+                <lightning:button label="Save" 
+                                  variant="brand" 
+                                  name="Save" 
+                                  onclick="{!c.saveLRN}"></lightning:button>
+                
+                <lightning:button variant="neutral" 
+                                  label="Cancel"
+                                  title="Close"
+                                  onclick="{!c.closeModel }"/>
+                
+            </footer>
+        </div>
+    </section>
+    
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    <!--###### MODAL BOX Part END Here ######-->
+    
+    <Aura:if isTrue="{!v.displayNewPeople}">
+        <c:newPeopleComp displayNewPeople="{!v.displayNewPeople}" searchPeople="{!v.searchPeople}" openSearchModal="{!v.openSearchModal}" >
+        </c:newPeopleComp>
+    </Aura:if>
+    
+    <div aura:id="ModalDialogPlaceholder" />
+    
+    <aura:if isTrue="{!v.isView}">
+       
+        <!--Use "slds-m-around_xx-large" class to add standard X-Large padding to the component--> 
+        <div class="slds-m-around_xx-large" style="width: 100%;border-right: 1px solid #d8dde6;border-left: 1px solid #d8dde6;margin-left: 2%;">
+            
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+                <aura:if isTrue="{!v.Spinner}">
+                    <div class="exampleHolder">
+                        <lightning:spinner alternativeText="Loading" size="medium" />
+                    </div>
+                </aura:if>
+                <div class="slds-modal__container" >
+                    
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModal }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.notesTitle}</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="border-style: groove;">
+                        <aura:if isTrue="{!v.noNotesFromOtherAss}">
+                            <table class="slds-table slds-table--bordered">
+                                <thead>
+                                    <tr class="slds-text-title--caps">
+                                        <th scope="col">Created Date</th>
+                                        <th scope="col">Status </th>
+                                        <th scope="col" >Description</th>
+                                        <th scope="col" >Delete Notes</th>
+                                        <th scope="col" >Transfer Notes
+                                            <div style="margin-left:35px"  >
+                                                <ui:inputCheckbox label= "All" class="myCheckbox" change="{!c.selectAll}"/>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    <aura:iteration items="{!v.NotesLists}" var="notes" indexVar="index">
+                                        <tr>
+                                            <td>
+                                                {!notes.Created_Date_Formula__c}
+                                            </td>
+                                            <td>
+                                                {!notes.Status_Summary_Line__c}
+                                            </td>
+                                            <td style="white-space:pre-wrap; word-wrap:break-word">
+                                                <aura:if isTrue="{!index == 0}">
+                                                    <aura:unescapedHtml value="{!notes.Description__c}"/>
+                                                </aura:if>
+                                            </td>
+                                            <td style="white-space:pre-wrap; word-wrap:break-word">
+                                                <lightning:button variant="brand" label="Delete" onclick="{!c.showWarning}" title="Delete" value="{!notes.Id}"></lightning:button> 
+                                            </td>
+                                            <td>
+                                                <div style="margin-left:35px"  >
+                                                    <aura:if isTrue="{!index == 0}">
+                                                        <ui:inputCheckbox aura:id="TheCheckBox" class="myCheckbox"  name="{!notes.Description__c}" change="{!c.addNotes}"></ui:inputCheckbox>
+                                                    </aura:if>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                            <aura:set attribute ="else">
+                                No Notes Available
+                            </aura:set>
+                            
+                        </aura:if>
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" 
+                                          label="Save"
+                                          title="Save"
+                                          onclick="{! c.saveNotes }"/>
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeModal }"/>
+                        
+                    </footer>
+                </div>
+               
+                
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>
+     <aura:if isTrue="{!v.displayWarning}">
+                    <div style="height:75px;width:75px;border-style: inset" class="border" >
+                        <section role="dialog" tabindex="-1" class="slds-modal slds-modal_x-small slds-fade-in-open" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                            <div class="slds-modal__container " >
+                                <header class="slds-modal__header " style="border-style: inset">
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Warning</b></h2>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium slds-p-left_large border" id="modal-content-id-1" style="border-style: inset">
+                                    <div style='margin-left:10%'>
+                                        <p >are you sure you want to delete the Note??</p><br/>
+                                        <br/>
+                                    </div>
+                                </div>
+                                <footer class="slds-modal__footer border" style="border-style: inset">
+                                    <br/>
+                                    <lightning:button class="slds-button slds-button_brand" name='YES' label='YES' onclick='{!c.deleteNoteFromOtherAss}'/>
+                                    <lightning:button class="slds-button slds-button_brand" name='NO' label='NO' onclick='{!c.closeWarning}'/>
+                                </footer>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="slds-backdrop slds-backdrop_open"></div>
+                </aura:if>
+    
+</aura:component>

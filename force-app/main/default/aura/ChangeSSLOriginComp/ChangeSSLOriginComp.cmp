@@ -1,0 +1,65 @@
+<aura:component controller="ChangeSSLOriginCompCtrl">
+    <aura:attribute name="selectedcandidateIds" type="List" />
+    <aura:attribute name="potentialCandidateIds" type="List"/>
+    
+    <aura:attribute name="mandateRecId" type="String"/>
+    <aura:attribute name="selectedCount" type="Integer" />
+    <aura:attribute name="displayChangeSSLOriginModal" type="Boolean"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="sslList" type="List" default="[]"/>
+    <aura:attribute name="originList" type="List" default="[]"/>
+    <aura:attribute name="recordList" type="List" required="true"/>
+    <aura:attribute name="selectedSSLValue" type="String" default=""/>
+    <aura:attribute name="selectedOriginValue" type="String" default=""/>
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <div class="slds-modal__container">
+            <!-- ###### MODAL BOX HEADER Start ######-->
+            <header class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close"
+                                      onclick="{! c.closeModal }"
+                                      alternativeText="close"
+                                      variant="bare-inverse"
+                                      class="slds-modal__close"/>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Change SSL/Origin</h2>
+            </header>
+            <aura:if isTrue="{!!empty(v.recordList)}">
+                <!--###### MODAL BOX BODY Part Start######-->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning:layout horizontalAlign="center">
+                        <lightning:layoutItem padding="horizontal-small">
+                            <Lightning:select aura:id="ssl" label="Status Summary Line" value="{!v.selectedSSLValue}" >
+                                <option value="none">--None--</option>
+                                <aura:iteration items="{!v.sslList}" var="ssl" >
+                                    <option value="{!ssl}" text="{!ssl}" />
+                                </aura:iteration>   
+                            </Lightning:select>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="horizontal-small">
+                            <Lightning:select aura:id="origin" label="Origin" value="{!v.selectedOriginValue}" >
+                                <option value="none">--None--</option>
+                                <aura:iteration items="{!v.originList}" var="origin" >
+                                    <option value="{!origin}" text="{!origin}" />
+                                </aura:iteration>   
+                            </Lightning:select>
+                        </lightning:layoutItem>   
+                    </lightning:layout>
+                    <!-- Records component -->
+                    <c:CandidatesListDynamicComp recordList="{!v.recordList}" />
+                </div>
+            </aura:if>
+            <!--###### MODAL BOX FOOTER Part Start ######-->
+            <footer class="slds-modal__footer">
+                <!--lightning:buttonGroup-->
+                <lightning:button variant="brand" label="Save" title="Save" onclick="{!c.saveSummaryStatusLine}" />
+                <lightning:button variant="neutral" 
+                                  label="Cancel"
+                                  title="Cancel"
+                                  onclick="{! c.closeModal }"/>
+                <!--/lightning:buttonGroup-->
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</aura:component>

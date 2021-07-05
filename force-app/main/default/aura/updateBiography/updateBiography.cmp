@@ -1,0 +1,73 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	
+     <aura:attribute name="recordId" type="string" />
+    <aura:attribute name="displayUpdateBio" type="boolean" />
+    
+    <lightning:card>  
+       <div class="slds-m-around-large">
+           
+         <!--###### MODAL BOX Start From Here ######--> 
+   	  <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open slds-modal_large ">
+
+          <div class="slds-modal__container">
+          
+         <!-- ###### MODAL BOX HEADER Part Start From Here ######-->
+         
+          <div class="slds-modal__header">
+           	<button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+           	X
+             <span class="slds-assistive-text">Close</span>
+             </button>
+             <h2 id="header99" class="slds-text-heading--medium">Update Biography</h2>
+          </div>
+            
+            <div class="slds-grid slds-gutters">
+  					<div class="slds-col slds-medium-size_2-of-3 ">
+   						 <span>
+                             
+                          <aura:if isTrue="{!v.displayUpdateBio}">
+                        		<div class="slds-modal__content slds-p-around--medium">
+                         <!-- <p><b>The goal of this blog is to provide tips and tricks/workarounds for salesforce developer and admins.
+                          Many of us face the same issues and have the same questions when using and implementing Salesforce.
+                          As a community of users and developers, it is important for us to share our experiences.
+                          I try to reach out to other users and help the Salesforce community in general.
+                          Much of this blog will focus on Lightning(code &amp; config.) but I will also
+                          cover some of the more basic topics in salesforce.
+                          </b>
+                        </p> -->
+           
+               				<!--<iframe  src="{! 'https://leadersinternational_search_c.cs79.visual.force.com/apex/BiographyDataEntry?contactId='+v.recordId}" width="100%" height="800px;" frameBorder="0" /> -->
+                                    <iframe src="{! $Site.CurrentSiteUrl+'/apex/BiographyDataEntry?contactId='+v.recordId}" width="100%" height="800px;" frameBorder="0" />
+         					 </div>
+                          </aura:if>    
+       					 </span>
+ 					 </div>
+                      		<div class="slds-col slds-medium-size_1-of-3">
+                        	<span>
+           
+                                <iframe src="{! $Site.CurrentSiteUrl+'/apex/ViewCV?id='+v.recordId}" width="100%" height="835px;" frameBorder="0" ></iframe> 
+                        	</span>
+                     		 </div>
+                        
+ 			</div>
+         	<!--###### MODAL BOX BODY Part Start From Here ######-->
+          
+              
+            
+            
+            
+            
+          <!--###### MODAL BOX FOOTER Part Start From Here ######-->
+     <!--     <div class="slds-modal__footer">
+            <button class="slds-button slds-button_neutral" onclick="{!c.closeModel}" >Cancel</button>
+            <button class="slds-button slds-button_brand" onclick="{!c.likenClose}">Save</button>
+          </div> -->
+        </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop--open"></div> 
+      <!--###### MODAL BOX Part END Here ######-->
+    
+ 
+  </div>
+</lightning:card>   
+</aura:component>

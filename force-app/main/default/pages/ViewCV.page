@@ -1,0 +1,19 @@
+<apex:page standardController="Contact" extensions="ViewCV_Ctrl" lightningStylesheets="true" >
+<apex:pageMessages id="MyMessage"></apex:pageMessages>
+    <apex:outputPanel rendered="{!Contact.hasCV__c}" >
+     
+      <apex:iframe src="/servlet/servlet.FileDownload?file={!att.Id}" height="1000px" width="100%" />
+  <!--  <iframe src="data:{!att.ContentType};base64,{!pdf}" height = "1000px" width="100%"   ></iframe> -->
+    
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!not(Contact.hasCV__c)}">
+    
+        <apex:outputText style="fontsize :300px" > No CV for this candidate. </apex:outputText>
+    
+    
+    </apex:outputPanel>
+    
+    
+    
+    
+</apex:page>

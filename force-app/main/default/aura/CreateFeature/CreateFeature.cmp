@@ -1,0 +1,74 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="showPeopleModal" type="Boolean" default="false"></aura:attribute>
+    <aura:attribute name="showCompanyModal" type="Boolean" default="false"></aura:attribute>
+    <aura:attribute name="searchPeople" type="string" ></aura:attribute>
+    <aura:attribute name="searchCompany" type="string"></aura:attribute>
+    <aura:attribute name="searchBD" type="string"></aura:attribute>
+    <aura:attribute name="openSearchModal" type="boolean" default="false" ></aura:attribute>
+    <aura:attribute name="openSearchCompanyModal" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="openSearchBDModal" type="boolean" default="false"></aura:attribute>                  
+    
+    
+    
+    <div class="slds-app-launcher__tile-body" style="height:240px">
+        
+        <ul class="slds-grid slds-grid_pull-padded slds-wrap" style="padding: 4%">
+            <li class="slds-p-horizontal_xx-small slds-size_1-of-1 slds-medium-size_1-of-4">
+                <article class="slds-card" style="padding:2%">
+                    <lightning:input value="{!v.searchPeople}" placeholder="Candidate Name" type="text" label="" name="People" aura:id="searchPeople"  ></lightning:input>
+                    <lightning:button class="slds-m-around_x-small" onclick="{!c.openSearch}" variant="brand" label="Create People" iconName="utility:search"></lightning:button>
+                </article>
+                
+            </li>
+            
+            <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-4">
+                <article class="slds-card" style="padding:2%">
+                    <lightning:input placeholder="Company Name" value="{!v.searchCompany}" required="false" type="text" label="" name="Company" aura:id="searchCompany" ></lightning:input>
+                    <lightning:button class="slds-m-around_x-small" onclick="{!c.openSearchCompany}" variant="brand" label="Create Company" iconName="utility:search"></lightning:button>  
+                </article>
+            </li>
+            
+                      
+            <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-4" style="display:inline !important">
+                <article class="slds-card" style="padding:9%">
+                    <lightning:button label="New Business Development" 
+                                      variant="brand" 
+                                      class="slds-m-around_x-small"
+                                      name="NewBD" 
+                                      onclick="{!c.addBD}"></lightning:button>
+                    
+                </article>
+            </li>
+            
+        </ul>
+        
+        <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="Modalbox" class="slds-modal slds-modal_large">
+            <div class="slds-modal__container" style="width: 65%;">
+                <div class="slds-modal__header">
+                    New People
+                </div>
+                <div class="slds-modal__content slds-p-around--medium">
+                    
+                    <iframe src="{! $Site.CurrentSiteUrl+'/apex/NewPeople'}" width="100%" height="835px;" frameBorder="0" />
+                </div>
+                
+            </div>
+        </div>
+        <div class="slds-backdrop " aura:id="Modalbackdrop"></div>     
+        
+        <aura:if isTrue="{!v.openSearchModal}">
+            <c:searchPeopleComp searchPeople="{!v.searchPeople}" openSearchModal ="{!v.openSearchModal}" ></c:searchPeopleComp> 
+        </aura:if> 
+        
+        
+        <aura:if isTrue="{!v.openSearchCompanyModal}">
+            <c:searchCompanyComp searchCompany="{!v.searchCompany}" openSearchCompanyModal="{!v.openSearchCompanyModal}"></c:searchCompanyComp>
+        </aura:if> 
+        
+        <aura:if isTrue="{!v.openSearchBDModal}">
+            <c:SearchBDComp searchBD="{!v.searchBD}" openSearchBDModal="{!v.openSearchBDModal}"></c:SearchBDComp>
+        </aura:if> 
+        
+    </div>     
+</aura:component>

@@ -1,0 +1,22 @@
+<aura:component implements="force:appHostable,force:hasRecordId,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" 
+                access="global" controller="AssignCandiLightningController" >
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="displayNewRelAssign" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="showFileUpload" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="showNotesAndAttachment" type="Boolean" default="false" />
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>   
+
+    <Lightning:card class="slds-m-around_xx-small slds-m-top_none slds-m-bottom_none zeroPadding">
+            <lightning:button label="Human Capital Study List" title="Human Capital Study List" variant="brand" onclick="{!c.BackToAssCan}" ></lightning:button>
+        
+    </Lightning:card>
+    
+    <aura:if isTrue="{!v.showNotesAndAttachment}">
+        <c:RelatedFilesComp mandateId="{!v.recordId}" showThisModal="{!v.showNotesAndAttachment}"></c:RelatedFilesComp>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showFileUpload}">
+        <c:FileUpload_v2 recordId="{!v.recordId}" optionList="['Research Strategy','Signed Contract','Corporate Presentation','Job Description','Executive Summary','Others']"  showFileUpload="{!v.showFileUpload}"></c:FileUpload_v2>
+    </aura:if>
+    
+</aura:component>

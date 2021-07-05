@@ -1,0 +1,298 @@
+<!--
+ - Created by  on 12-03-2019.
+ -->
+
+<aura:component description="AddNewCandidate" controller="AddApplicationToAssignmentLightning" implements="flexipage:availableForRecordHome,force:hasRecordId">
+    
+    <aura:attribute name="mandateRecId" type="String"/>
+    <aura:attribute name="mandate" type="Map" default="{}"/>
+    <aura:attribute name="ObjectApi" type="String"/>
+    <aura:attribute name="LookupLabel" type="String"/>
+    <aura:attribute name="SSLValues" type="List" />
+    <aura:attribute name="originList" type="List" default="[]"/>
+    <aura:attribute name="locationList" type="List" default="[]"/>
+    
+    <aura:attribute name="RequiredLoccation" type="boolean" default="false"/>
+    
+    <aura:attribute name="selectedSSLValue" type="String" />
+    <aura:attribute name="selectedOriginValue" type="String" />
+    <aura:attribute name="selectedLocationValue" type="String" />
+    <aura:attribute name="displayNewCandidate" type="Boolean" default="false"/>
+    <aura:attribute name="showLookupDialog" type="Boolean" default="false"/>
+    <aura:attribute name="showNewContact" type="Boolean" default="true"/>
+    <aura:attribute name="showNewAccount" type="Boolean" default="false"/>
+    
+    <aura:attribute name="showContactForm" type="Boolean" default="false"/>
+    <aura:attribute name="showAccountForm" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:attribute name="appRec" type="Application__c" default="{'sobjectType':'Application__c'}"/>
+    
+    <!-- event handler -->
+    <aura:handler name="doneEvent" event="c:done" action="{!c.doneEventHandler}"/>
+    <aura:handler name="oSelectedAccountEvent" event="c:selectedAccountEvent" action="{!c.handleComponentEvent}"/>
+    <!-- lookup selected records -->
+    <aura:attribute name="selectedContactRecord" type="Map" default="{}" />
+    <aura:attribute name="selectedAccRecord" type="Map" default="{}" />
+    <!-- new contact attributes -->
+    
+    <aura:attribute name="contactData" type="Contact" default="{}"/>
+    <!-- new account attributes -->
+    <aura:attribute name="newAccount" type="Object"/>
+    <aura:attribute name="simpleNewAccount" type="Object"/>
+    <aura:attribute name="newAccountError" type="String"/>
+    <aura:attribute name="richTextValidity" type="Boolean" default="true"/>
+    
+    <lightning:spinner aura:id="mySpinner" class="slds-hide"/>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <div class="slds-modal__container">
+            
+            <header class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close"
+                                      onclick="{! c.closeModal }"
+                                      alternativeText="close"
+                                      variant="bare-inverse"
+                                      class="slds-modal__close"/>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Candidate</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="min-height: 70%;">
+                
+                
+                
+                <aura:if isTrue="{!v.showLookupDialog &amp;&amp; v.showNewContact &amp;&amp; !v.showContactForm}" >
+                    <Lightning:layout>
+                        <lightning:layoutItem padding="horizontal-small" class="maxWidth">    
+                            <!--c:DyanmicLookup ObjectApi="{!v.ObjectApi}" selectedRecord="{!v.selectedContactRecord}" displayName="Select People"/-->
+                            <lightning:input type="text" name="input1" label="Select People" value="{!v.selectedContactRecord.Name}" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="horizontal-small" class="btnMargin">
+                            <lightning:button variant="brand" label="Go" title="Search contact" onclick="{!c.searchContacts}"/>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="horizontal-small" class="btnMargin">
+                            <lightning:button variant="brand" label="New" title="Create Contact" onclick="{!c.newContact}"/>
+                        </lightning:layoutItem>
+                    </Lightning:layout><br/>
+                    <aura:if isTrue="{!!v.showContactForm}">
+                        <lightning:layout pullToBoundary="medium">
+                            <lightning:layoutItem >
+                                <c:StaticTableComponent aura:id="dtcContact" fieldAPIs="['Name','Account.Name','Company_Name_French__c','Title','Industry_Type__c','Functional_Area_1__c','Off_Limit__c','Contact_Off_Limit__c']" objectAPI="Contact" initialSearchString="{!v.selectedContactRecord.Name}" selectedRecord="{!v.selectedContactRecord}" replaceHeaders="Account.Name:Company Name"/>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </aura:if>
+                    
+                </aura:if>
+                <!-- account selection  -->
+                <aura:if isTrue="{!v.showLookupDialog &amp;&amp; v.showNewAccount &amp;&amp; !v.showAccountForm}" >
+                    <Lightning:layout>
+                        <lightning:layoutItem padding="horizontal-small" class="maxWidth">    
+                            <lightning:input type="text" name="input1" label="Select Company" value="{!v.selectedAccRecord.Name}" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="horizontal-small" class="btnMargin">
+                            <lightning:button variant="brand" label="Go" title="Search contact" onclick="{!c.searchAccounts}"/>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem padding="horizontal-small" class="btnMargin">
+                            <lightning:button variant="brand" label="New" title="Create Account" onclick="{!c.newAccount}"/>
+                        </lightning:layoutItem>
+                    </Lightning:layout><br/>
+                    <aura:if isTrue="{!!v.showAccountForm}">
+                        <lightning:layout pullToBoundary="medium">
+                            <lightning:layoutItem >
+                                <c:DynamicTableComponent aura:id="dtcAccount" fieldAPIs="['Name','Company_Name_French__c']" objectAPI="Account" initialSearchString="{!v.selectedAccRecord.Name}" selectedRecord="{!v.selectedAccRecord}"/>
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </aura:if>
+                </aura:if>
+                <aura:if isTrue="{!!v.showLookupDialog}">    
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem  size="6" padding="horizontal-small">
+                            <lightning:layout>
+                                <lightning:layoutItem  size="8" padding="horizontal-medium">
+                                    <lightning:input type="text" aura:id="mainForm" name="input1" label="Select People" value="{!v.selectedContactRecord.Name}" required="true" />
+                                </lightning:layoutItem>
+                                <lightning:layoutItem  size="4" class="slds-p-top_large">
+                                    <lightning:button variant="brand" label="Search People" iconName="utility:search" iconPosition="right" title="Lookup" onclick="{!c.lookupClick}" />
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                            
+                            <lightning:layout>
+                                <lightning:layoutItem  size="12">
+                                    <div class="slds-p-bottom_large slds-p-left_large" >
+                                        <lightning:recordEditForm aura:id="recordViewForm"
+                                                                  recordId="{!v.selectedContactRecord.Id}"
+                                                                  objectApiName="Contact">
+                                            <lightning:messages />
+                                            <!--               <lightning:inputField fieldName="Residance_Country__c" />
+                                         <lightning:inputField fieldName="Residence_State__c" />
+                                           <lightning:inputField fieldName="Residence_City__c"/>
+                              -->     
+                                            <!--lightning:inputField fieldName="MailingAddress" required="{!v.RequiredLoccation}"/-->
+                                            <!--lightning:button aura:id="submit" type="submit" label="Update record" class="slds-m-top_medium" /-->
+                                        </lightning:recordEditForm>
+                                    </div>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem  size="6" padding="horizontal-small">
+                            <lightning:layout>
+                                <lightning:layoutItem size="12" alignmentBump="left">
+                                    <lightning:input type="text" aura:id="mainForm" name="input1" label="Assignment"  disabled="true" required="true" value="{!v.mandate.Name}"/>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                            
+                            <lightning:layout>
+                                <lightning:layoutItem size="12" alignmentBump="left">
+                                    <Lightning:select aura:id="mainForm" label="Status Summary Line" value="{!v.appRec.Status_Summary_Line__c}" required="false">
+                                        <option value="">--None--</option>
+                                        <aura:iteration items="{!v.SSLValues}" var="SSL" >
+                                            <option value="{!SSL}" text="{!SSL}"/>
+                                        </aura:iteration>
+                                    </Lightning:select>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                            <lightning:layout>
+                                <lightning:layoutItem size="12" alignmentBump="left">
+                                    <Lightning:select aura:id="mainForm" label="Origin" value="{!v.appRec.Origin__c}">
+                                        <option value="">--None--</option>
+                                        <aura:iteration items="{!v.originList}" var="origin" >
+                                            <option value="{!origin}" text="{!origin}" />
+                                        </aura:iteration>
+                                    </Lightning:select>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                            <lightning:layout>
+                                <lightning:layoutItem size="12" alignmentBump="left">
+                                    
+                                    <lightning:inputRichText aura:id="description" value="{!v.appRec.Description__c}" label="Leader Report Note" labelVisible="true" /><!-- valid="{v.richTextValidity}" messageWhenBadInput="invalid" -->
+                                    
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                        </lightning:layoutItem>
+                        
+                    </lightning:layout>
+                    <div class="slds-m-top_medium"  style="float:right">
+                        <lightning:button variant="brand" label="Save" title="Save" onclick="{!c.saveAppRecord}" />
+                        <lightning:button variant="brand" label="Cancel" title="Cancel" onclick="{!c.closeModal}" />
+                    </div>
+                </aura:if>
+                
+                
+                <aura:if isTrue="{!v.showContactForm}">
+                    
+                    
+                    <!-- Display the new contact form -->
+                    <div class="Create Contact">
+                        <lightning:card iconName="action:new_contact" title="Create Contact">
+                            
+                            <lightning:recordEditForm
+                                                      
+                                                      onsubmit="{!c.handleContactSubmit}"
+                                                      onsuccess="{!c.handleContactSuccess}"
+                                                      objectApiName="Contact"
+                                                      aura:id="myContactForm">
+                                <!-- the messages component is for error messages -->
+                                <lightning:messages />
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning:inputField fieldName="FirstName" value="{!v.contactData.FirstName}" aura:id="input_field_Firstname"/>
+                                        <!--lightning:inputField fieldName="AccountId" /-->
+                                        <lightning:inputField fieldName="LastName" value="{!v.contactData.LastName}" aura:id="input_field_Lastname" />
+                                        <lightning:inputField fieldName="Title" value="{!v.contactData.Title}" required="true"/>
+                                        <lightning:inputField fieldName="Title_FR__c" value="{!v.contactData.Title_FR__c}"/>
+                                        <lightning:inputField fieldName="Functional_Area_1__c" required="true" value="{!v.contactData.Functional_Area_1__c}" />
+                                        <lightning:layout >
+                                            <lightning:layoutItem size="9">
+                                                <lightning:input type="Add" name="input1" aura:id="contactField" label="Select Company" value="{!v.selectedAccRecord.Name}" />
+                                            </lightning:layoutItem>
+                                            <lightning:layoutItem padding="horizontal-small" class="slds-p-top_large" size="3">
+                                                <lightning:button variant="brand" label="Company" iconName="utility:search" iconPosition="right" title="Create" onclick="{!c.openAccountform}" />
+                                            </lightning:layoutItem>
+                                        </lightning:layout>
+                                        
+                                        <!--lightning:inputField fieldName="MailingStreet" value="{!v.contactData.MailingStreet}" />
+                                        <lightning:inputField fieldName="MailingCity" value="{!v.contactData.MailingCity}"/-->
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <!-- More lightning:inputField components here -->
+                                        <lightning:inputField fieldName="Job_Level__c" value="{!v.contactData.Job_Level__c}"/>
+                                        <lightning:inputField fieldName="Residance_Country__c" value="{!v.contactData.Residance_Country__c}"/>
+                                        <lightning:inputField fieldName="Residence_State__c" value="{!v.contactData.Residence_State__c}"/>
+                                        <lightning:inputField fieldName="Residence_City__c" value="{!v.contactData.Residence_City__c}"/>
+                                        
+                                        <lightning:inputField fieldName="Phone" value="{!v.contactData.Phone}"/>
+                                        <lightning:inputField fieldName="Email" value="{!v.contactData.Email}"/>
+                                        <lightning:inputField fieldName="MobilePhone" value="{!v.contactData.MobilePhone}"/>
+                                        <lightning:inputField fieldName="LinkedIn_URL__c" value="{!v.contactData.LinkedIn_URL__c}"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-m-top_medium">
+                                    
+                                </div>
+                                
+                                <div class="slds-m-top_medium"  style="float:right">
+                                    
+                                    <lightning:button  variant="brand" type="submit" name="save" label="Save"  />
+                                    <lightning:button variant="brand" label="Cancel" title="Cancel" onclick="{!c.cancelShowNewContact}" />
+                                    
+                                </div>
+                            </lightning:recordEditForm>
+                            
+                        </lightning:card>
+                    </div>
+                    
+                </aura:if>
+                <aura:if isTrue="{!v.showAccountForm}">
+                    
+                    
+                    <!-- Display the new contact form -->
+                    <div class="Create Account">
+                        <lightning:card iconName="action:new_account" title="Create Account">
+                            
+                            <lightning:recordEditForm
+                                                      
+                                                      onsubmit="{!c.handleAccountSubmit}"
+                                                      onsuccess="{!c.handleAccountSuccess}"
+                                                      objectApiName="Account"
+                                                      onerror = "{!c.handleAccerror}"
+                                                      aura:id="myAccForm"
+                                                      >
+                                <!-- the messages component is for error messages -->
+                                <lightning:messages />
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning:inputField fieldName="Name" aura:id="accName"/>
+                                        <lightning:inputField fieldName="Industry_Types__c" required="true" />
+                                        <!--lightning:inputField fieldName="AccountId" /-->
+                                        <lightning:inputField fieldName="Phone" />
+                                        
+                                        <!--lightning:inputField fieldName="BillingStreet" />
+                                        <lightning:inputField fieldName="BillingCity" /-->
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <!-- More lightning:inputField components here -->
+                                        
+                                        <lightning:inputField fieldName="Country__c" />
+                                        <lightning:inputField fieldName="State__c" />
+                                        <lightning:inputField fieldName="City__c" />
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-m-top_medium">
+                                </div>
+                                <div class="slds-m-top_medium"  style="float:right">
+                                    <lightning:button  variant="brand" type="submit" name="save" label="Save" />
+                                    <lightning:button variant="brand" label="Cancel" title="Cancel" onclick="{!c.cancelAccountForm}" />
+                                </div>
+                            </lightning:recordEditForm>
+                            
+                        </lightning:card>
+                    </div>
+                    
+                </aura:if>
+                
+            </div>
+            <!--###### MODAL BOX FOOTER Part Start ######-->
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"/>
+</aura:component>

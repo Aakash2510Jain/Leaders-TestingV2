@@ -1,0 +1,162 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,lightning:isUrlAddressable,lightning:hasPageReference" access="global" controller="BiographyDataEntryLightning" >
+    <aura:attribute name="displayUpdateBioNew" type="boolean"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.getRecordTypes}"/>
+    <aura:attribute name="recordTypes" type="Object"/>
+    <aura:attribute name="checkSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="attId" type="String"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:attribute name="profileName" type="String"/>
+    <aura:attribute name="conRecord" type="Contact" default="{'sobjectType':'Contact', 'Leadership_Qualities__c':''}"/>
+    <aura:attribute name="isrelatedListButton" type="boolean" default="false"/>
+    <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute type="string[]" name="IdsTodeleteList"/>
+    <aura:handler name="deleteEvent"  event="c:DeleteEvt"
+                  action="{!c.handledelete}"/>
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    
+    <aura:attribute name="experienceList" type="List" default="[{'record':{
+                                                               'sobjectType': 'Work_Experience__c',
+                                                               'Company__c': '',
+                                                               'Title__c': '',
+                                                               'Title_FR__c': '',
+                                                               'Start_Year__c': '',
+                                                               'End_Year__c': '',
+                                                               'Current_del__c': ''
+                                                               },'lookupObj':{}]"/> 
+    <aura:attribute name="educationList" type="List" default="[{'record':{
+                                                              'sobjectType': 'Work_Experience__c',
+                                                              'Company__c': '',
+                                                              'Title__c': '',
+                                                              'Title_FR__c': '',
+                                                              'Start_Year__c': '',
+                                                              'End_Year__c': '',
+                                                              'Current_del__c': ''
+                                                              },'lookupObj':{}]"/> 
+    <aura:attribute name="professionalList" type="List" default="[{'record':{
+                                                                 'sobjectType': 'Work_Experience__c',
+                                                                 'Company__c': '',
+                                                                 'Title__c': '',
+                                                                 'Title_FR__c': '',
+                                                                 'Start_Year__c': '',
+                                                                 'End_Year__c': '',
+                                                                 'Current_del__c': ''
+                                                                 },'lookupObj':{}]"/> 
+    <aura:attribute name="boardList" type="List" default="[{'record':{
+                                                          'sobjectType': 'Work_Experience__c',
+                                                          'Company__c': '',
+                                                          'Title__c': '',
+                                                          'Title_FR__c': '',
+                                                          'Start_Year__c': '',
+                                                          'End_Year__c': '',
+                                                          'Current_del__c': ''
+                                                          },'lookupObj':{}]"/>
+    
+    
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+        
+        <aura:if isTrue="{!v.checkSpinner}">
+            <div class="exampleHolder">
+                <lightning:spinner alternativeText="Loading" size="medium" />
+            </div>
+        </aura:if>
+        <div class="slds-modal__container">
+            <!-- Modal/Popup Box Header Starts here-->
+            <header class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close"
+                                      onclick="{! c.closeModel }"
+                                      alternativeText="close"
+                                      variant="bare-inverse"
+                                      class="slds-modal__close"/>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Create / Modify Biography</h2>
+            </header>
+            
+            <!--Modal/Popup Box Body Starts here-->
+            <!--iframe src="{! $Site.CurrentSiteUrl+'/apex/ViewCV?id='+v.recordId}" width="100%" height="400px" frameBorder="0" /-->
+            <!--      <aura:if isTrue="{!not(empty(v.attId))}">
+                <iframe src="{!'/servlet/servlet.FileDownload?file='+v.attId}" height="1000px" width="100%" />
+            </aura:if> -->
+            
+            <aura:if isTrue="{!(empty(v.attId))}">
+                <div style="background:white;">
+                    <div style="margin-left:2%">
+                        No CV available  
+                    </div>
+                    
+                </div>
+            </aura:if>
+            
+            <div class="slds-modal__content slds-p-around_medium slds-scrollable" id="modal-content-id-1">
+                
+                <div style="margin-left: 40%;">
+                <lightning:button variant="neutral"
+                                  label="Cancel"
+                                  title="Cancel"
+                                  onclick="{! c.closeModel }"/>
+                <lightning:button variant="brand" label="Save" title="Brand action" onclick="{!c.save}" />
+                
+                </div>
+                <lightning:accordion activeSectionName="" allowMultipleSectionsOpen ="true">
+                    
+                    <!--lightning:accordionSection name="CandidateResume" label="Candidate Resume" class="wrapper">  
+                    </lightning:accordionSection-->
+                    <!--aura:if isTrue="{!(empty(v.attId))}">
+                    <lightning:accordionSection name="Candidate Resume" label="Candidate">
+                        No CV available                   
+                    </lightning:accordionSection>
+                    </aura:if-->
+                    
+                    <lightning:accordionSection name="Experience" label="Experience">
+                        <c:BigraphyRecordType aura:id="expCmp" role="experienceList" profileName="{!v.profileName}" recordTypeIds="{!v.recordTypes.Experience}" experienceList="{!v.experienceList}"></c:BigraphyRecordType>
+                    </lightning:accordionSection>
+                    <lightning:accordionSection name="Education" label="Education">
+                        <c:BigraphyRecordType aura:id="eduCmp" role="educationList" profileName="{!v.profileName}" recordTypeIds="{!v.recordTypes.Education}" educationList="{!v.educationList}"></c:BigraphyRecordType>
+                        
+                    </lightning:accordionSection>
+                    <lightning:accordionSection name="Professional Association" label="Professional Association">
+                        <c:BigraphyRecordType aura:id="proCmp" role="professionalList" profileName="{!v.profileName}" recordTypeIds="{!v.recordTypes.Professional_Order}" professionalList="{!v.professionalList}"></c:BigraphyRecordType>
+                        
+                    </lightning:accordionSection>
+                    <lightning:accordionSection name="Board of directors" label="Board of directors">
+                        <c:BigraphyRecordType aura:id="brdCmp" role="boardList" profileName="{!v.profileName}" recordTypeIds="{!v.recordTypes.Professional_Association}" boardList="{!v.boardList}"></c:BigraphyRecordType>
+                        
+                    </lightning:accordionSection>
+                    
+                    <lightning:accordionSection name=" Biography Comments" label=" Biography Comments">
+                        <h2 class="header"> Biography Comments</h2>
+                        <lightning:inputRichText value="{!v.conRecord.Additional_Comments__c}" placeholder="Type Here"/> 
+                    </lightning:accordionSection>
+                    
+                    <lightning:accordionSection name="General Section" label="General Section">
+                        <h2 class="header">Compensation</h2>
+                        <lightning:inputRichText value="{!v.conRecord.Compensation__c}" placeholder="Type Here"/>
+                        <br/>
+                        <h2 class="header">Availability</h2>
+                        <lightning:inputRichText value="{!v.conRecord.Availability__c}" placeholder="Type Here"/>
+                        <br/>
+                        <h2 class="header">Relocation</h2>
+                        <lightning:inputRichText value="{!v.conRecord.relocation__c}" placeholder="Type Here"/>
+                        <br/>
+                        <h2 class="header">Job Search</h2>
+                        <lightning:inputRichText value="{!v.conRecord.Job_Search__c	}" placeholder="Type Here"/>
+                        <br/>
+                    </lightning:accordionSection>
+                    
+                    
+                    
+                    
+                </lightning:accordion>
+                <div class="slds-align_absolute-center slds-p-top_small">
+                    
+                </div>
+                
+            </div>
+            <!--Modal/Popup Box Footer Starts here-->
+            <footer class="slds-modal__footer">
+               </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    
+</aura:component>

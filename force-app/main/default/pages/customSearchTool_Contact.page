@@ -1,0 +1,341 @@
+<apex:page controller="customSearchTool_Contact" docType="html-5.0" lightningStylesheets="true">
+    <style>
+.sectionColumn {
+    width: 15% !important;
+    padding-left: 1% !important;
+}
+.sectionColumn2 {
+    width: 20% !important;
+    padding-left: 1% !important;
+    padding-right:10% !important;
+}
+
+.labelColumn {
+    width: 15% !important;
+    padding-left: 1% !important;
+}
+.labelColumn2 {
+    width: 15% !important;
+    padding-left: 1% !important;
+}
+ 
+  .greenRound {
+        width:10px;
+        height:10px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        background-color: #95aec5;
+        }
+        
+        .greyRound, .greyRoundCV {
+        width:10px;
+        height:10px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        background-color: #32af5c;
+        }
+        
+        .greyRoundCV:hover {
+            cursor: pointer; 
+        }
+        
+        
+</style>
+    <apex:form id="myForm">
+        <apex:PageBlock title="Custom Search Tool : Contacts" id="filterBlock">
+            <apex:selectList id="gender" value="{!fCriteria}" size="1"
+                label="Gender">
+                <apex:selectOptions value="{!FilterCriteria}" />
+            </apex:selectList>
+            <apex:pageMessages id="theMessages" />
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!resetFilters}" value="Reset Filters"
+                    rerender="filterBlock,cTable,theMessages" />
+                <apex:commandButton action="{!searchContactsBegining}"
+                    value="Search Contacts" rerender="cTable,theMessages" />
+                <apex:commandButton action="{!addToAssignment}"
+                    value="Add to Assignment" rerender="cTable,theMessages" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="2" rendered="{!$Profile.Name!='Force.com Leaders + FR Assignment'}">
+        
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+                    <apex:outputLabel value="Functional Area 1" />
+                    <apex:inputField id="fArea" value="{!con.Functional_Area_1__c}"
+                        label="Functional Area 1">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+                    <apex:outputLabel value="Competency 1" />
+                    <apex:inputField id="compet" value="{!con.Competencies_1__c}"
+                        label="Competency 1">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+                    <apex:outputLabel value="Functional Area 2" />
+                    <apex:inputField id="fArea2" value="{!con.Functional_Area_2__c}"
+                        label="Functional Area 2">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+                    <apex:outputLabel value="Competency 2" />
+                    <apex:inputField id="compet2" value="{!con.Competencies_2__c}"
+                        label="Competency 2">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+                    <apex:outputLabel value="Functional Area 3" />
+                    <apex:inputField id="fArea3" value="{!con.Functional_Area_3__c}"
+                        label="Functional Area 3">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+                    <apex:outputLabel value="Competency 3" />
+                    <apex:inputField id="compet3" value="{!con.Competencies_3__c}"
+                        label="Competency 3">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+                    <apex:outputLabel value="Functional Area 4" />
+                    <apex:inputField id="fArea4" value="{!con.Functional_Area_4__c}"
+                        label="Functional Area 4">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+                    <apex:outputLabel value="Competency 4" />
+                    <apex:inputField id="compet4" value="{!con.Competencies_4__c}"
+                        label="Competency 4">
+ 
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+                    <apex:outputLabel value="Industry" />
+                    <apex:selectList id="indust" value="{!industryFilter}"
+                        multiselect="true" size="5" label="Industry">
+                        <apex:selectOptions value="{!Industries}" />
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+                    <apex:outputLabel value="Job Level" />
+                    <apex:selectList id="jobl" value="{!jobLevelFilter}"
+                        multiselect="true" size="5" label="Job Level">
+                        <apex:selectOptions value="{!JobLevels}" />
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+                    <apex:outputLabel value="Prof Designation" />
+                    <apex:selectList id="profD" value="{!profDesignationFilter}"
+                        multiselect="true" size="5" label="Prof Designation">
+                        <apex:selectOptions value="{!ProfDesignations}" />
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+                    <apex:outputLabel value="Education" />
+                    <apex:selectList id="educ" value="{!educationFilter}"
+                        multiselect="true" size="5" label="Education">
+                        <apex:selectOptions value="{!Educations}" />
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+                    <apex:outputLabel value="Language Spoken" />
+                    <apex:selectList id="langu" value="{!languageFilter}"
+                        multiselect="true" size="5" label="Language Spoken">
+                        <apex:selectOptions value="{!Languages}" />
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                
+                <!-- customization for swiss starts 23rd Jan 2019 -->
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn" rendered="{!($Profile.Name=='Force.com Leaders team 3 + BusDev'|| $Profile.Name=='Force.com Leaders team 3') }" labelStyleClass="labelColumn">
+                    <apex:outputLabel value="Client Domicile" />
+                    <apex:selectList id="cd" value="{!cdFilter}"
+                        multiselect="true" size="5" label="Client Domicile">
+                        <apex:selectOptions value="{!ClientDomicile}" />
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                
+                <!-- customization for swiss ends 23rd Jan 2019 -->
+                
+                
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+                    
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+                    <apex:outputLabel value="Country" />
+                    <!--<apex:selectList id="region" value="{!regionFilter}"
+                        multiselect="true" size="5" label="Region">
+                        <apex:selectOptions value="{!Regions}" />
+                    </apex:selectList>-->
+                    <apex:inputField id="mCountry" value="{!con.MailingCountryCode }"
+                                     label="Mailing Country"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+                    <apex:outputLabel value="States" />
+                    <apex:inputField id="mStates" value="{!con.MailingStateCode }"
+                                     label="Mailing States"/>
+                </apex:pageBlockSectionItem>
+                
+                <!--<apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+                    <apex:outputLabel value="Gender" />
+                    <apex:selectList id="gender" value="{!genderFilter}"
+                        multiselect="true" size="5" label="Gender">
+                        <apex:selectOptions value="{!Genders}" />
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>-->
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+                    
+                    <apex:outputLabel value="Title" for="Ttile" />
+                    <apex:inputText id="Ttile" value="{!TitleFilter}" />
+                </apex:pageBlockSectionItem>
+                <!--<apex:pageBlockSectionItem dataStyleClass="sectionColumn" labelStyleClass="labelColumn">
+                    
+                    <apex:outputLabel value="Birthdate Start Date" for="sdate" />
+                    <apex:input id="sdate" value="{!sDate}" type="auto" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="sectionColumn2" labelStyleClass="labelColumn2">
+                    <apex:outputLabel value="Birthdate End Date" for="edate" />
+                    <apex:input id="edate" value="{!eDate}" type="auto" />
+                </apex:pageBlockSectionItem>-->
+            </apex:pageBlockSection>
+            
+            
+            <apex:pageBlockSection columns="2" rendered="{!$Profile.Name=='Force.com Leaders + FR Assignment'}">
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Domaine d'expertise 1" />
+                    <apex:inputField id="dExp1" value="{!con.Comp_tences_5__c }"
+                        label="Domaine d'expertise 1">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Domaine d'expertise 2" />
+                    <apex:inputField id="dExp2" value="{!con.Domaine_d_expertise_6__c  }"
+                        label="Domaine d'expertise 2">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Job Level" />
+                    <apex:inputField id="jLevel" value="{!con.Job_Level_team5__c   }"
+                        label="Job Level">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Prof designation" />
+                    <apex:inputField id="pTitle" value="{!con.Prof_Title__c    }"
+                        label="Prof designation">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Expérience en gouvernance" />
+                    <apex:inputField id="expGv" value="{!con.Exp_rience_en_gouvernance__c     }"
+                        label="Expérience en gouvernance">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Region administrative" />
+                    <apex:inputField id="regionAdm" value="{!con.R_gion_administrative__c      }"
+                        label="Region administrative">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Industries " />
+                    <apex:inputField id="industries" value="{!con.Industries_2__c       }"
+                        label="Industries ">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Stade développement de l'entreprise  " />
+                    <apex:inputField id="stdDev" value="{!con.Stade_de_d_veloppement_de_l_entreprise__c        }"
+                        label="Stade développement de l'entreprise  ">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Ventes de l'entreprise" />
+                    <apex:inputField id="venteEntreprise" value="{!con.Ventes_de_l_entreprise__c         }"
+                        label="Ventes de l'entreprise">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                
+                   <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Genre" />
+                    <apex:inputField id="genre" value="{!con.Gender__c         }"
+                        label="Genre">
+
+                    </apex:inputField>
+                </apex:pageBlockSectionItem>
+                
+            </apex:pageBlockSection>
+        </apex:PageBlock>
+        <apex:PageBlock id="cTable">
+            <apex:pageBlockSection >
+                <apex:outputText style="font-size :10pt" value="{!total_size}" ><b> Total Number of Results : </b>  </apex:outputText>
+            </apex:pageBlockSection>
+            
+            <apex:PageBlockTable value="{!cWrapperList}"
+                rendered="{!AND(cWrapperList != null,cWrapperList.size>0)}" var="cw"  styleClass="table">
+                <apex:column >
+                    <apex:inputCheckbox value="{!cw.selected}" />
+                </apex:column>
+                <apex:column headerValue="Name">
+                    <apex:outputLink value="/{!cw.theContact.Id}" target="_blank">{!cw.theContact.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!cw.theContact.Title}" />
+                <apex:column value="{!cw.theContact.Account.Name}" />
+                <apex:column value="{!cw.theContact.Phone}" />
+                <apex:column value="{!cw.theContact.Email}" />
+                <apex:column width="50px">
+                    
+                    <apex:outputPanel layout="block" rendered="{!cw.hasCV}" styleClass="greyRoundCV" onclick="window.open('/servlet/servlet.FileDownload?file={!cw.cvId}','_blank')"/>        
+
+                    
+                    <apex:outputPanel layout="block" styleClass="greenRound" rendered="{!NOT(cw.hasCV)}"></apex:outputPanel>
+                    <apex:facet name="header">
+                        CV
+                    </apex:facet>
+                </apex:column>
+           
+                <apex:column width="50px">
+                    <apex:outputPanel layout="block" styleClass="greyRound" rendered="{!cw.hasOnePager}"></apex:outputPanel>
+                    <apex:outputPanel layout="block" styleClass="greenRound" rendered="{!NOT(cw.hasOnePager)}"></apex:outputPanel>
+                    <apex:facet name="header">
+                        One pager
+                    </apex:facet>
+                </apex:column>
+            </apex:PageBlockTable>
+            
+             <apex:outputPanel id="btnPage">
+             Page # {!pageNumber} sur {!totalPages}
+             <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>
+             
+             <apex:commandButton action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>        
+             
+             <apex:commandButton action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>
+             
+             <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="cTable,btnPage" status="myStatus" oncomplete="fixTable()"/>
+        </apex:outputPanel>  
+            
+        </apex:PageBlock>
+    </apex:form>
+</apex:page>

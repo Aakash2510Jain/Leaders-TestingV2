@@ -1,0 +1,21 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+	<aura:attribute name="title" type="String" default="Title" access="global" />
+ <aura:attribute name="item" type="Map" default="{}" access="global" />
+    <div class="form slds-p-bottom_small">
+        <lightning:card >
+            <aura:set attribute="title">
+               {!v.title}
+            </aura:set>
+            
+             <div class="c-container slds-p-horizontal_small">
+               <lightning:select name="selectItem" label="Seriez-vous intéressé à faire partie d'un comité consultatif ou un comité d'investissement?" value="{!v.item.comittee}" onchange="{!c.updateInput}">
+                    <option value="">- Sélectionner une valeur -</option>
+                    <option value="Oui">Oui</option>
+                   <option value="Non">Non</option>
+                </lightning:select>
+            </div>
+             
+         
+        </lightning:card>
+    </div>
+</aura:component>

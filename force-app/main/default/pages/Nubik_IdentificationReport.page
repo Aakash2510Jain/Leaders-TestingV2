@@ -1,0 +1,732 @@
+<apex:page standardController="Mandate__c" extensions="Nubik_IdentificationReportController">
+    <apex:includeScript value="//code.jquery.com/jquery-2.1.1.js"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.Chart_js ,'FileSaver.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.Chart_js ,'canvas-toBlob.js')}"/>
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"/>
+    <apex:includeScript value="{!$Resource.ChartPieceLabel }"/>
+    
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+    
+        function validate() {
+            /*if (!j$("[id$='human']").is(":checked") && !j$("[id$='potential']").is(":checked")
+                && !j$("[id$='biography']").is(":checked") && !j$("[id$='onePager']").is(":checked")
+                && !j$("[id$='cv']").is(":checked")){
+                alert('{!$Label.Validation}');
+            }           
+            else{
+
+                if (j$("[id$='human']").is(":checked") && (j$("[id$='endDateId']").val() == ''
+                    || j$("[id$='startDateId']").val() == '')) {
+                    alert('{!$Label.Dates_Validation}');
+                }
+                else{*/
+                    alert('{!$Label.Generation_Notification}');
+                    return true;
+                /*}
+            }
+            return false;*/
+        }
+    
+        function generateCharts() {
+           ctx = j$("#canvas").get(0).getContext("2d");
+            
+            //CHART__All_Competencies
+            var mychart = new Chart(ctx, chart_allCompetencies);
+            var url_base64jp = document.getElementById("canvas").toDataURL("image/png");           
+            uploadChart("CHART__All_Competencies",url_base64jp);
+            
+            
+            //CHART__CandidateByStatus
+            mychart = new Chart(ctx, chart_candidateByStatus);
+            var url_base64jp = document.getElementById("canvas").toDataURL("image/png");           
+            uploadChart("CHART__CandidateByStatus",url_base64jp);
+            
+            //CHART__CandiateToDiscuss
+            mychart = new Chart(ctx, chart_candidateToDiscuss);
+            var url_base64jp = document.getElementById("canvas").toDataURL("image/png");           
+            uploadChart("CHART__CandiateToDiscuss",url_base64jp);
+            
+            //CHART_Compentency
+             var i=1;
+            for(var cptName in competencyCharts) {
+               
+
+                mychart = new  Chart(ctx, competencyCharts[cptName]);
+                var url_base64jp = document.getElementById("canvas").toDataURL("image/png");           
+                uploadChart("CHART__Custom_Competency_"+i,url_base64jp);
+                 console.log("CHART__Custom_Competency_"+i);
+               i++;
+            }
+        }
+    
+        j$( document ).ready(function() { 
+            generateCharts() ;
+            if (!j$("[id$='human']").is(":checked")){
+                j$(".date").parent().hide();
+            }
+            
+            if (!j$("[id$='cStatus']").is(":checked")){
+                j$(".cStatusClass").parent().hide();
+            } 
+            
+            if (!j$("[id$='cToDiscuss']").is(":checked")){
+                j$(".cToDiscussClass").parent().hide();
+            } 
+            
+            if (!j$("[id$='cAllCompetencies']").is(":checked")){
+                j$(".cAllCompetenciesClass").parent().hide();
+            } 
+            
+            if (!j$("[id$='cGender']").is(":checked")){
+                j$(".cGenderClass").parent().hide();
+            } 
+            
+            if (!j$("[id$='cRegion']").is(":checked")){
+                j$(".cRegionClass").parent().hide(); 
+            } 
+            
+            if (!j$("[id$='cExperience']").is(":checked")){
+                j$(".cExperienceClass").parent().hide();
+            } 
+            
+            if (!j$("[id$='cEducation']").is(":checked")){
+                j$(".cEducationClass").parent().hide();
+            } 
+            
+            if (!j$("[id$='cRevenue']").is(":checked")){
+                j$(".cRevenueClass").parent().hide();
+            } 
+              
+            j$("[id$='human']").on("click", function(){
+                if(j$(this).is(":checked")){
+                    j$(".date").parent().show();
+                }else{
+                    j$(".date").parent().hide(); 
+                }
+            });
+            
+            j$("[id$='cStatus']").on("click", function(){
+                if(j$(this).is(":checked")){
+                    j$(".cStatusClass").parent().show();
+                }else{
+                    j$(".cStatusClass").parent().hide(); 
+                }
+            }); 
+            
+            j$("[id$='cAllCompetencies']").on("click", function(){
+                if(j$(this).is(":checked")){
+                    j$(".cAllCompetenciesClass").parent().show();
+                }else{
+                    j$(".cAllCompetenciesClass").parent().hide(); 
+                }
+            }); 
+            
+            j$("[id$='cToDiscuss']").on("click", function(){
+                if(j$(this).is(":checked")){
+                    j$(".cToDiscussClass").parent().show();
+                }else{
+                    j$(".cToDiscussClass").parent().hide(); 
+                }
+            }); 
+             
+            j$("[id$='cGender']").on("click", function(){
+                if(j$(this).is(":checked")){
+                    j$(".cGenderClass").parent().show();
+                }else{
+                    j$(".cGenderClass").parent().hide(); 
+                }
+            });
+            
+            j$("[id$='cRegion']").on("click", function(){
+                if(j$(this).is(":checked")){
+                    j$(".cRegionClass").parent().show();
+                }else{
+                    j$(".cRegionClass").parent().hide(); 
+                }
+            });
+            
+            j$("[id$='cExperience']").on("click", function(){
+                if(j$(this).is(":checked")){
+                    j$(".cExperienceClass").parent().show();
+                }else{
+                    j$(".cExperienceClass").parent().hide(); 
+                }
+            });
+            
+            j$("[id$='cEducation']").on("click", function(){
+                if(j$(this).is(":checked")){
+                    j$(".cEducationClass").parent().show();
+                }else{
+                    j$(".cEducationClass").parent().hide(); 
+                }
+            });
+            
+            j$("[id$='cRevenue']").on("click", function(){
+                if(j$(this).is(":checked")){
+                    j$(".cRevenueClass").parent().show();
+                }else{
+                    j$(".cRevenueClass").parent().hide(); 
+                }
+            });
+            
+        });
+    </script>
+    <apex:PageMessages />
+   
+    <div style="max-height:550px;max-width:750px;">
+         <!--  -->
+        <canvas id="canvas" style="position:absolute;z-index:-1" height="400" width="500"></canvas>
+    </div>    
+    <apex:form >
+        <apex:pageBlock id="theBlock" title="{!$Label.Identification_Report}">
+            <apex:pageBlockButtons location="bottom">               
+                <apex:commandButton value="{!$Label.Generate}" status="resultStatus" onClick="return validate()" action="{!generate}" />
+                <apex:commandButton value="{!$Label.Cancel}" onClick="window.location.href='/{!masterId}';return false;"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="{!$Label.Select_reports_to_generate}" columns="1">
+            
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Report Type" for="reportType"/>
+                    <apex:selectList id="reportType" value="{!reportType}" size="1">
+                        <apex:selectOptions value="{!ReportTypes}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                
+                
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Cover_Page_Label}" for="cPage"/>
+                    <apex:inputCheckbox value="{!coverPage}" id="cPage"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Add Candidate Cover Page" for="cPage"/>
+                    <apex:inputCheckbox value="{!candidateCoverPageReport}" id="cPage"/>
+                </apex:pageBlockSectionItem>
+            
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Module" for="languages"/>
+                    <apex:selectList id="languages" value="{!reportCover}" size="1">
+                        <apex:selectOptions value="{!ReportCovers}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+            
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Next follow up date" for="nextFollowUp"/>
+                    <apex:inputText value="{!nextfollowUp}" onfocus="DatePicker.pickDate(true, this, false);" id="nextFollowUp"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Job_Description}" for="jDescription"/>
+                    <apex:inputCheckbox value="{!jobDescription}" id="jDescription"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Research_Strategy}" for="researchStrategy"/>
+                    <apex:inputCheckbox value="{!researchStrategy}" id="researchStrategy"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem > 
+                    <apex:outputLabel value="{!$Label.Potential_candidates_only}" for="potential"/> 
+                    <apex:inputCheckbox value="{!potentialCandidates}" id="potential"/> 
+               </apex:pageBlockSectionItem> 
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Biography_report}" for="biography"/>
+                    <apex:inputCheckbox value="{!biographyReport}" id="biography"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.CV}" for="cv"/>
+                    <apex:inputCheckbox value="{!CV}" id="cv"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.One_pager}" for="onePager"/>
+                    <apex:inputCheckbox value="{!onePager}" id="onePager"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Psy_Test_Label}" for="pTest"/>
+                    <apex:inputCheckbox value="{!psyTest}" id="pTest"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Interview_Questionnaire_Label}" for="iQuestionnaire"/>
+                    <apex:inputCheckbox value="{!interviewQuestionnaire}" id="iQuestionnaire"/>
+                </apex:pageBlockSectionItem>
+            
+                <!-- 
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Hogan_Report}" for="cv"/>
+                    <apex:inputCheckbox value="{!hoganReport}" id="hoganReport"/>
+                </apex:pageBlockSectionItem>
+                -->
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Human_Capital_Study}" for="human"/>
+                    <apex:inputCheckbox value="{!humanCapitalStudy}" id="human" >
+                      <apex:actionSupport event="onclick" reRender="theBlock"/>	
+                    </apex:inputCheckbox>
+                    
+                </apex:pageBlockSectionItem>
+                
+ <!--Ankita starts -->   
+            <!--    <apex:pageBlockSectionItem rendered="{!humanCapitalStudy}">
+                    <apex:outputLabel value="{!$Label.Human_Capital_Study_SSL}" for="humanSSL" />
+                    <apex:inputCheckbox value="{!humanCapitalStudySSL}" id="humanSSL" />
+                </apex:pageBlockSectionItem> -->
+ 
+                
+                <apex:pageBlockSectionItem rendered="{!humanCapitalStudy}" >
+                    <apex:outputLabel value="Sort By" for="HCSSortBy"/>
+                    <apex:selectList id="HCSSortBy" value="{!hcsSortBy}" size="1">
+                        <apex:selectOptions value="{!HCSSortByOptions}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+<!--Ankita Ends -->                
+                <apex:pageBlockSectionItem dataStyleClass="date" rendered="{!and((not(isColemanProfile)),humanCapitalStudy)}">
+                    <apex:outputLabel value="{!$Label.Start_Date}" for="startDateId"/>
+                    <apex:inputText value="{!startDate}" onfocus="DatePicker.pickDate(false, this, false);" id="startDateId"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="date" rendered="{!and((not(isColemanProfile)),humanCapitalStudy)}">
+                    <apex:outputLabel value="{!$Label.End_Date}" for="endDateId"/>
+                    <apex:inputText value="{!endDate}" onfocus="DatePicker.pickDate(false, this, false);" id="endDateId"/>
+                </apex:pageBlockSectionItem>
+                
+                <!-- 
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.Language}" for="languages"/>
+                    <apex:selectList id="languages" value="{!language}"
+                        size="1">
+                        <apex:selectOptions value="{!languages}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem> 
+                 -->
+                 
+            </apex:pageBlockSection>     
+                 
+                 <!-- Chart Reports -->
+            <apex:pageBlockSection title="Select research analytics reports to generate:" columns="1" id="chartSection">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Candidate by Status" for="cStatus"/>
+                    <apex:inputCheckbox value="{!candidateByStatus}" >
+                    <apex:actionsupport event="onclick" rerender="theBlock" />     
+                        </apex:inputCheckbox>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!candidateByStatus}">
+                    <apex:outputLabel value="Title"/>
+                    <apex:inputText value="{!theAssignment.Candidate_status_title__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!candidateByStatus}">
+                    <apex:outputLabel value="Notes"/>
+                    <apex:inputTextarea value="{!theAssignment.Candidate_status_notes__c}" style="width: 500px;" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="All competencies for all candidates" for="cAllCompetencies"/>
+                    <apex:inputCheckbox value="{!allCompetenciesAllCandidates}" >
+                        <apex:actionsupport event="onclick" rerender="theBlock" />     
+                </apex:inputCheckbox>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!allCompetenciesAllCandidates}">
+                    <apex:outputLabel value="Title"/>
+                    <apex:inputText value="{!theAssignment.All_candidate_status_title__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!allCompetenciesAllCandidates}">
+                    <apex:outputLabel value="Notes"/>
+                    <apex:inputTextarea value="{!theAssignment.All_candidate_status_notes__c}" style="width: 500px;" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Candidate to discuss" for="cToDiscuss"/>
+                    <apex:inputCheckbox value="{!candidateToDiscuss}" >
+                    <apex:actionsupport event="onclick" rerender="theBlock" />     
+                        </apex:inputCheckbox>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!candidateToDiscuss}">
+                    <apex:outputLabel value="Title"/>
+                    <apex:inputText value="{!theAssignment.Candidate_to_discuss_title__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!candidateToDiscuss}">
+                    <apex:outputLabel value="Notes"/>
+                    <apex:inputTextarea value="{!theAssignment.Candidate_to_discuss_notes__c}" style="width: 500px;" rows="5"/>
+                </apex:pageBlockSectionItem>
+                 
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel > <strong>COMPETENCIES</strong></apex:outputPanel>
+                    
+                </apex:pageBlockSectionItem>
+               
+                <apex:variable value="{!1}" var="index"/>
+
+                <apex:repeat value="{!competencies}" var="competency">
+
+                    <apex:pageBlockSectionItem rendered="{!competency.Type__c!='Text'}">
+                        <apex:outputLabel value="{!competency.Competencies__c }"/>
+                        <apex:inputCheckbox value="{!competencyChart[competency.Competencies__c ]}">
+                            <apex:actionsupport event="onclick" rerender="theBlock" />     
+                        </apex:inputCheckbox>
+
+                       
+                    </apex:pageBlockSectionItem>
+
+                      
+                    <apex:pageBlockSectionItem id="cptChart" rendered="{!competencyChart[competency.Competencies__c ]}">
+                        
+                        <apex:outputLabel value="Title"/>
+                        <apex:inputText value="{!competencyTitle[competency.Competencies__c ]}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!competencyChart[competency.Competencies__c ]}">
+                        <apex:outputLabel value="Notes"/>
+                        <apex:inputTextarea value="{!competencyNote[competency.Competencies__c ]}" style="width: 500px;" rows="5"/>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:variable value="{!index+1}" var="index"/>
+                </apex:repeat>
+                
+                
+                
+                <!--<apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Candidate by Gender" for="cGender"/>
+                    <apex:inputCheckbox value="{!candidateByGender}" id="cGender"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem dataStyleClass="cGenderClass">
+                    <apex:outputLabel value="Tiltle"/>
+                    <apex:inputText value="{!theAssignment.Candidate_gender_title__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="cGenderClass">
+                    <apex:outputLabel value="Notes"/>
+                    <apex:inputTextarea value="{!theAssignment.Candidate_gender_notes__c}" style="width: 500px;" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Candidate by Region" for="cRegion"/>
+                    <apex:inputCheckbox value="{!candidateByRegion}" id="cRegion"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem dataStyleClass="cRegionClass">
+                    <apex:outputLabel value="Tiltle"/>
+                    <apex:inputText value="{!theAssignment.Candidate_region_title__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="cRegionClass">
+                    <apex:outputLabel value="Notes"/>
+                    <apex:inputTextarea value="{!theAssignment.Candidate_region_notes__c}" style="width: 500px;" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Candidate by Years of Experience" for="cExperience"/>
+                    <apex:inputCheckbox value="{!candidateByExperience}" id="cExperience"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem dataStyleClass="cExperienceClass">
+                    <apex:outputLabel value="Tiltle"/>
+                    <apex:inputText value="{!theAssignment.Candidate_experience_title__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="cExperienceClass">
+                    <apex:outputLabel value="Notes"/>
+                    <apex:inputTextarea value="{!theAssignment.Candidate_experience_notes__c}" style="width: 500px;" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Candidate by Education Level" for="cEducation"/>
+                    <apex:inputCheckbox value="{!candidateByEducation}" id="cEducation"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem dataStyleClass="cEducationClass">
+                    <apex:outputLabel value="Tiltle"/>
+                    <apex:inputText value="{!theAssignment.Candidate_education_title__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="cEducationClass">
+                    <apex:outputLabel value="Notes"/>
+                    <apex:inputTextarea value="{!theAssignment.Candidate_education_notes__c}" style="width: 500px;" rows="5"/>
+                </apex:pageBlockSectionItem>
+                
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Candidate by Revenue" for="cRevenue"/>
+                    <apex:inputCheckbox value="{!candidateByRevenue}" id="cRevenue"/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem dataStyleClass="cRevenueClass">
+                    <apex:outputLabel value="Tiltle"/>
+                    <apex:inputText value="{!theAssignment.Candidate_revenue_title__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem dataStyleClass="cRevenueClass">
+                    <apex:outputLabel value="Notes"/>
+                    <apex:inputTextarea value="{!theAssignment.Candidate_revenue_notes__c}" style="width: 500px;" rows="5"/>
+                </apex:pageBlockSectionItem>-->
+                
+                <!-- End Chart Reports -->
+
+            </apex:pageBlockSection>                
+        </apex:pageBlock>
+        
+       
+    </apex:form> 
+    
+    <script>
+      
+      Visualforce.remoting.timeout = 120000; 
+    
+    //Chart data
+    var label_allCompetencies = [{!allCompetencies}];
+    var allCompetenciesId = [{!allCompetenciesId}];
+    var data_allCompetenciesAverage = [{!allCompetenciesData}];
+   
+    var label_candidateStatus = [{!allCandidateStatus}];
+    var date_candidateStatusByStatus = [{!allCandidateStatusData}];
+    
+    var label_candidateIds = {!candidateContactIds};
+    var data_competenciesAverageByCandidate = {!competenciesAverageByCandidate};
+    
+    var candidateNameById = {!candidateNameById};
+    var picklistValuesMapByCompetencyName = {!picklistValuesMapByCompetencyName};
+    var dataValuesMapByCompetencyName = {!dataValuesMapByCompetencyName};
+   
+     console.log(picklistValuesMapByCompetencyName);
+    console.log('data_competenciesAverageByCandidate');
+    console.log(data_competenciesAverageByCandidate);
+    
+    //Chart definition
+    Chart.defaults.global.defaultFontFamily = "'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+    Chart.defaults.global.legend.position = 'bottom';
+    Chart.defaults.global.legend.labels.usePointStyle = true;
+    Chart.defaults.global.legend.labels.boxWidth = 15;
+    Chart.defaults.global.tooltips.backgroundColor = '#000';
+    Chart.defaults.global.defaultFontSize = 20;
+    
+    
+     var bgColors = [ "#C8102E",
+                      "#414141",
+                       "#f9953e",
+                       "#177bb2",
+                       "#504e70",
+                       "#517a27",
+                       "#ba403f",
+                       "#637277",
+                       "#960f3c", 
+                       "#387727",
+                       "#387727",
+                       "#387727"];
+
+    
+    var chartOptions =  {
+             animation : false,
+        
+
+            legend: {
+                position: 'bottom',
+                display: true,
+                fullWidth: true,
+                labels: {
+                    fontSize: 14,
+                    fontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                    fontColor:"#000000",
+                    padding:50,
+                    pointLabelFontSize: 30,
+                }
+            },
+             scale: {
+                 reverse: false,
+                 ticks: {
+                     beginAtZero: true,
+                             suggestedMin:1,
+                        suggestedMax:5,
+                        stepSize: 1,
+                 
+                       
+                 },
+                  pointLabels: { fontSize:16 }
+             }
+         };
+    
+     var pieChartOptions =  {
+             animation : false,
+        
+
+            legend: {
+                position: 'bottom',
+                display: true,
+                fullWidth: true,
+                labels: {
+                    fontSize: 20,
+                    fontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                    fontColor:"#000000",
+                    padding:30,
+                    pointLabelFontSize: 40
+                }
+            },
+              pieceLabel: {
+                mode: 'percentage',
+                precision: 0,
+                fontSize: 15
+              }
+         };
+    
+    var barChartOptions =  {
+ 
+
+            legend: {
+                display: false
+                    },
+            
+             scales: { 
+                xAxes: [{
+                    gridLines: {
+                        display:false
+                                },
+                    ticks: {
+                        fontSize: 17
+                            }
+                       }],
+                 
+                yAxes: [{
+                    gridLines: {
+                        display:true
+                               },
+                    ticks: {
+                         suggestedMin: 0, 
+                       fontSize: 17
+                           }
+                       }]   
+                     },
+    animation: {
+duration: 0,
+onComplete: function () {
+    // render the value of the chart above the bar
+
+    
+    var ctx = this.chart.ctx;
+    ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
+    ctx.fillStyle = this.chart.config.options.defaultFontColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+     this.data.datasets.forEach(function (dataset) {
+                    for (var i = 0; i < dataset.data.length; i++) {
+                        var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
+                            scale_max = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._yScale.maxHeight;
+                        ctx.fillStyle = '#444';
+                        var y_pos = model.y - 5;
+                        // Make sure data value does not get overflown and hidden
+                        // when the bar's value is too close to max value of scale
+                        // Note: The y value is reverse, it counts from top down
+                        if ((scale_max - model.y) / scale_max >= 0.93)
+                            y_pos = model.y + 35, ctx.fillStyle = '#ffffff'; 
+                        ctx.fillText(dataset.data[i], model.x, y_pos);
+
+        }
+    });
+}}
+         };
+    
+    /*All Competencies Chart*/    
+     var chart_allCompetencies ={
+         type: 'radar',
+         data: { labels: label_allCompetencies,
+                datasets: [ getRadarDataSet("Average Evaluation", data_allCompetenciesAverage,bgColors[0])]} ,
+         options: chartOptions
+     }
+     console.log(label_candidateStatus);
+     console.log(date_candidateStatusByStatus);
+    /*Candidate by Status Chart*/
+    var chart_candidateByStatus = {
+         type: 'pie',
+         data: {
+                    labels: label_candidateStatus,
+                    datasets: [
+                        {
+                            data: date_candidateStatusByStatus,
+                            backgroundColor: bgColors
+                        }]
+                } ,
+         options: pieChartOptions
+     };
+    
+    /*Candidate to discuss Chart*/
+    var chart_candidateToDiscuss = {
+         type: 'radar',
+         data: { labels: label_allCompetencies,
+                datasets: getChandiateToDiscussDataSet() } ,
+         options: chartOptions
+     }
+    
+    /*Competencies Charts*/
+    var competencyCharts = {};
+    for(var i=0;i<label_allCompetencies.length;i++) {
+        competencyCharts[label_allCompetencies[i]] = getChartCompetencyData(label_allCompetencies[i]);
+    }
+    
+    function getChartCompetencyData(cptName) {
+        var chartData= {
+            type: 'bar',
+            data: {
+                labels: picklistValuesMapByCompetencyName[cptName],
+                datasets: [
+                    {
+                        backgroundColor: bgColors,
+                        borderColor: bgColors,
+                        borderWidth: 1,
+                        data:  dataValuesMapByCompetencyName[cptName],
+                    }
+                ]
+            },
+            options: barChartOptions
+        };
+        
+        
+        return chartData;
+    }
+    
+    function getChandiateToDiscussDataSet() {
+        var dateSet = [];
+         
+       
+        for(var i=0;i<label_candidateIds.length;i++) {
+            var datas = [];
+            for(var j=0;j<allCompetenciesId.length;j++)
+                datas.push(data_competenciesAverageByCandidate[label_candidateIds[i]][allCompetenciesId[j]]);
+            console.log('datas');
+            console.log(candidateNameById[label_candidateIds[i]]);
+            console.log(datas);
+            dateSet.push(getRadarDataSet(candidateNameById[label_candidateIds[i]],datas, bgColors[i]));
+        }
+    
+        return dateSet;
+    }
+    
+    function getRadarDataSet(label, data, color) {
+
+        return {
+                label: label,
+                backgroundColor: "rgba(0,0,0,0)",
+                borderColor: color,
+                pointBackgroundColor: color,
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: color,
+                data: data
+            } ;
+    }
+    
+      function uploadChart(chartName, base64Chart) {
+             Visualforce.remoting.Manager.invokeAction(
+              '{!$RemoteAction.Nubik_IdentificationReportController.uploadAttachment}', 
+              chartName,
+              '{!Mandate__c.Id}', 
+              base64Chart,
+              function(result, event){
+                  console.log(result);
+              });
+      }
+    
+    </script>
+</apex:page>

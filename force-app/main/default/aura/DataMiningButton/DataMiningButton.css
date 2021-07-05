@@ -1,0 +1,11 @@
+.THIS.myBtn 
+{
+  width: 200px;
+  background-color: #eee;
+  color: black;
+  display: block;
+  padding: 5px;
+  text-decoration: none;
+  border:none;  
+  text-align: left;
+}

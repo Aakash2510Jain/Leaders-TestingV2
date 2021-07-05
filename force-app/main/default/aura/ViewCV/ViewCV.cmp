@@ -1,0 +1,135 @@
+<aura:component controller="ViewCVCMPController">
+    <aura:attribute name="displayCV" default="false" type="Boolean"/>
+    <aura:attribute name="displayOP" default="false" type="Boolean"/>
+    <aura:attribute name="displayPSY" type="Boolean" default="false" />
+    <aura:attribute name="isSelfAss" default="false" type="Boolean" />
+    <aura:attribute name="viewCVfromPeople" type="boolean"/>
+    <aura:attribute name="viewOPfromPeople" type="boolean"/>
+    <aura:attribute name="displayJD" default="false" type="Boolean" />
+    <aura:attribute name="AppId" type="String"/>
+    <aura:attribute name="OP" default="false" type="Boolean"/>
+    <aura:attribute name="contactId" type="String"/>
+    <aura:attribute name="modalHeader" type="String"/>
+    <aura:attribute name="width" type="String" default="100%"/>
+    <aura:attribute name="attId" type="String" default=""/>
+    <aura:attribute name="SelfAssId" type="String" default=""/>
+    <aura:attribute name="MainPageapplicationData" type="Application__c[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!v.isSelfAss}">
+        <section aura:id="Modalbox" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div aura:id="MainDiv" class="slds-modal__container ">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModal }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.modalHeader}</h2>
+                </header>
+                <lightning:card>
+                    <div style="Width:100%">
+                        <div style="Width:40%;float:left">
+                            <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer" >
+                                <thead>
+                                    <tr class="slds-text-title_caps">
+                                        <th scope="col">
+                                            <div class="slds-truncate slds-cell-wrap" title="Assignment">Assignment</div>
+                                        </th>
+                                        
+                                        <th scope="col">
+                                            <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Status</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Company</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">View Self-Assessment</div>
+                                        </th>   
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.MainPageapplicationData}" var="cc" >
+                                        <tr class="slds-hint-parent">
+                                            <td>
+                                                <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                                    <a href="" onclick="{!c.handleClick}" data-record="{!cc.Mandate__c}" >{!cc.Mandate__r.Name}</a>
+                                                </div>
+                                            </td>
+                                            
+                                            <td>
+                                                <div class="slds-truncate slds-cell-wrap" title="{!cc.Status}">{!cc.Status_Summary_Line__c}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate slds-cell-wrap" title="{!cc.Status}">{!cc.Mandate__r.Company__r.Name}</div>
+                                            </td>
+                                            <td>
+                                                <lightning:button variant="brand" label="View Self-Assessment" title="{!cc.Mandate__c}" onclick="{!c.SetSelAssId}" value="{!cc.Id}"></lightning:button> 
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>   
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="Width:60%;display:inline;float:left">
+                            <iframe src="{!'/servlet/servlet.FileDownload?file='+v.SelfAssId}" height="800px" width="{!v.width}" />
+                        </div>
+                    </div>
+                </lightning:card>
+                <footer class="slds-modal__footer" >
+                    <lightning:button variant="neutral" 
+                                      label="Close"
+                                      title="Close"
+                                      onclick="{! c.closeModal }"/>
+                </footer> 
+                <aura:set attribute="else">
+                    <footer class="slds-modal__footer" >
+                        <lightning:button variant="neutral" 
+                                          label="Close"
+                                          title="Close"
+                                          onclick="{! c.closeModal }"/>
+                    </footer>
+                </aura:set>
+                
+            </div>
+        </section>
+        <aura:set attribute="else">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+                <div aura:id="MainDiv" class="slds-modal__container ">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModal }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.modalHeader}</h2>
+                    </header>
+                    <aura:if isTrue="{!not(empty(v.attId))}">
+                        <iframe src="{!'/servlet/servlet.FileDownload?file='+v.attId}" height="800px" width="{!v.width}" />
+                    </aura:if>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    
+                    <aura:if isTrue="{!v.OP}">
+                        <footer class="slds-modal__footer" >
+                            <lightning:button variant="neutral" 
+                                              label="Close"
+                                              title="Close"
+                                              onclick="{! c.closeModal }"/>
+                        </footer> 
+                        <aura:set attribute="else">
+                            <footer class="slds-modal__footer" style="width:100%">
+                                <lightning:button variant="neutral" 
+                                                  label="Close"
+                                                  title="Close"
+                                                  onclick="{! c.closeModal }"/>
+                            </footer>
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </section>
+        </aura:set>
+    </aura:if>
+    
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</aura:component>

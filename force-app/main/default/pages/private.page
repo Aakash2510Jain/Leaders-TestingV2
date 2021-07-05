@@ -1,0 +1,4 @@
+<apex:page standardController="Contact" tabStyle="Contact">
+<apex:outputLabel value="Private Address" for="theCheckbox"/>
+
+</apex:page>

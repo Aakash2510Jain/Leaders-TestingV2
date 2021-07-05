@@ -1,0 +1,97 @@
+<aura:component >
+    
+    <aura:attribute name="displayNewCandidate" type="Boolean" default="false"/>
+    <aura:attribute name="SearchKeyWord" type="String" default=""/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+	<aura:registerEvent name="oSelectedRecordEvent" type="c:selectedsObjectRecordEvent"/>
+    
+    
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <div class="slds-modal__container">
+            
+            <header class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close"
+                                      onclick="{! c.closeModal }"
+                                      alternativeText="close"
+                                      variant="bare-inverse"
+                                      class="slds-modal__close"/>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Candidate</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="min-height: 70%;">
+                
+                
+                
+                    <!-- <force:recordData aura:id="accountRecordCreator" 
+                        layoutType="FULL"
+                        targetRecord="{!v.newAccount}"
+                        targetFields="{!v.simpleNewAccount}"
+                        targetError="{!v.newAccountError}" /> -->
+                    
+                    <!-- Display the new contact form -->
+                    <div class="Create Account">
+                        <lightning:card iconName="action:new_account" title="Create Account">
+                            <!-- <div class="slds-p-horizontal-onesmallhipenheresmall">
+                                <lightning:input aura:id="accField" label="Name" value="{!v.simpleNewAccount.Name}" required="true"/>
+                                <lightning:input aura:id="accField" type="phone" name="phone" label="Phone Number"
+                                pattern="^(1?(-?\d{3})-?)?(\d{3})(-?\d{4})$"
+                                messageWhenPatternMismatch="The phone number must contain 7, 10, or 11 digits. Hyphens are optional."
+                                value="{!v.simpleNewAccount.Phone}" required="true"/>
+                                <lightning:input aura:id="accField" label="Title" value="{!v.simpleNewContact.Description}"/>
+                                
+                            </div> -->
+                            <lightning:recordEditForm
+                                                      
+                                                      onsubmit="{!c.handleAccountSubmit}"
+                                                      onsuccess="{!c.handleAccountSuccess}"
+                                                      objectApiName="Account"
+                                                      onerror = "{!c.handleAccerror}"
+                                                      aura:id="myAccForm"
+                                                      >
+                                <!-- the messages component is for error messages -->
+                                <lightning:messages />
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        
+                                        
+                                        <lightning:inputField fieldName="Name" aura:id="accName"/>
+                                        <lightning:inputField fieldName="Phone" />
+                                        <lightning:inputField fieldName="Off_Limit_by_User__c" />
+                                        <lightning:inputField fieldName="BillingStreet" />
+                                        <lightning:inputField fieldName="BillingState" />
+                                        
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning:inputField fieldName="Industry_Types__c" required="true" />
+                                        <lightning:inputField fieldName="Website" />
+                                        <lightning:inputField fieldName="BillingCity" />
+                                        <lightning:inputField fieldName="BillingCountry" />
+                                       
+                                        <lightning:inputField fieldName="BillingPostalCode" />
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-m-top_medium" style="float:right">
+                                    <lightning:button disabled="{!v.disabled}" variant="brand" type="submit" name="Save" label="Save" />
+                                     <lightning:button variant="neutral"
+                                                          label="Cancel"
+                                                          title="Cancel"
+                                                          onclick="{! c.closeModal }"/>
+                                </div>
+                            </lightning:recordEditForm>
+                        </lightning:card>
+                    </div>
+                    
+                    <!-- Display Lightning Data Service errors -->
+                    <!-- <aura:if isTrue="{!not(empty(v.newAccountError))}">
+                        <div class="recordError">
+                            {!v.newAccountError}</div>
+                    </aura:if> -->
+               
+            </div>
+            
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"/>
+    
+</aura:component>

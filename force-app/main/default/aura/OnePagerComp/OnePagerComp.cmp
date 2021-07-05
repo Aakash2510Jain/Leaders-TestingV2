@@ -1,0 +1,67 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="contact" type="Object" description="The record object to be displayed" />
+    <aura:attribute name="contactRecord" type="Object" description=" A simplified view record object to be displayed" />
+    
+    <aura:attribute name="recordSaveError" type="String" description="An Error message bound to force:recordData" />
+    
+    <force:recordData aura:id="conRec"
+                      layoutType="FULL"
+                      recordId="{!v.recordId}"
+                      targetError="{!v.recordSaveError}"
+                      targetRecord="{!v.contact}"
+                      targetFields="{!v.contactRecord}"
+                      mode="EDIT"
+                      recordUpdated="{!c.recordUpdated}" />
+    
+    
+     <div class="slds-grid slds-gutters">
+                                   <div class="slds-col">
+                                   <span>
+                                      	<lightning:tabset selectedTabId="English" >
+                       					<lightning:tab label="English" id="English">
+                            			<h2 class="header">Profile</h2>
+                         				<lightning:inputRichText aura:id="profile" label="Profile" value="{!v.contactRecord.Profile__c}" />
+                         				<br></br>
+			                         	<h2 class="header">Areas For Development</h2>
+                                        <lightning:inputRichText aura:id="AreasForDev" label="Areas For Development" value="{!v.contactRecord.Areas_for_Development__c}" />
+                                        <br></br>
+                                        <h2 class="header">Strengths</h2>
+                                        <lightning:inputRichText aura:id="Strength" label="Strengths" value="{!v.contactRecord.Strengths__c}" />
+                        				</lightning:tab>
+                            
+                       				    <lightning:tab label="2nd Language" id="French">
+                            
+                                        <h2 class="header">Profile(2)</h2>
+                                        <lightning:inputRichText aura:id="profile" label="Profile" value="{!v.contactRecord.Profile_FR__c}" />
+                                        <br></br>
+                                        <h2 class="header">Areas For Development(2)</h2>
+                                        <lightning:inputRichText aura:id="AreasForDev" label="Areas For Development" value="{!v.contactRecord.Points_de_developpement__c}" />
+                                        <br></br>
+                                        <h2 class="header">Strengths(2)</h2>
+                                        <lightning:inputRichText aura:id="Strength" label="Strengths" value="{!v.contactRecord.Points_forts__c}" />
+                            
+                                        </lightning:tab>    
+                                        </lightning:tabset> 
+                                       
+                                       <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{!c.closeModel }"/>
+                        <lightning:button variant="brand" 
+                                          label="Save"
+                                          title="Save"
+                                          onclick="{!c.saveRecord }"/>
+                                       
+                                   </span>
+                                   </div>
+         
+           
+                                   
+  
+       </div>
+                        
+    
+    
+</aura:component>

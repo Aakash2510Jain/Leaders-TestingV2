@@ -1,0 +1,195 @@
+.THIS.body{
+    font-family: myriad-pro;
+  
+    background-color: white;
+}
+
+.THIS .SellerCentral_Interest{
+    /*This selector must not remove. Using in Google analytics*/
+}
+ 
+@font-face {
+   font-family: myriad-pro;
+  /*src: url(/resource/Myriad_Pro/MyriadPro/MyriadProRegular.ttf);*/ 
+    src: url(/resource/WFS_Resources/WFS_Resources/MyriadPro/MyriadProRegular.ttf);
+}
+.THIS .slds-form-element__label{
+   font-size: 16px !important;
+     
+}  
+
+.THIS .mainbody{
+  /* padding-left: 19%;*/
+        max-width: 70%;
+    	position:relative;
+    	 font-family: myriad-pro;
+        margin-left: 32px;
+      font-size: 16px;
+    line-height: 19px; 
+}
+
+.THIS .labelHeight{
+    height: 64px;
+}
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+}
+.THIS .nowrap{
+   white-space: nowrap; 
+}
+.THIS.message{
+background-color: #f3f9fc;
+    color: #1a74a8;
+    width: 100%;
+    min-width: 800px;
+    padding: 25px;
+    text-align: center;
+    text-align: -webkit-center;
+    text-align: -moz-center;
+    border-bottom: 1px solid #1a74a8;
+    color: #444;
+    border-top: 1px solid #1a74a8;
+    font-family: myriad-pro;
+}
+.THIS span.number{    
+    width: 20px;
+    height: 20px;
+    float: left;
+    background: #e8e8e8;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.THIS .custom_heading {
+	 
+    margin-left: 20px;
+    display: block;
+    width: 100%;
+    margin-bottom: 50px;
+    position:relative;
+    top: 22px;
+}
+.THIS .custom_heading h2{
+    
+  margin-bottom: 1px;
+  width: 375px;
+  height: 46px;
+  font-size: 24px;
+  line-height: 1.92;
+  letter-spacing: normal;
+  color: var(--2-b-3339-dark-gray);
+   white-space: nowrap;
+}
+
+.THIS .custom_heading p{   
+  width: 697px;
+  height: 38px;
+  font-size: 16px;
+  line-height: 1.19;
+  letter-spacing: normal;
+  color: var(--2-b-3339-dark-gray);
+  
+}
+.THIS .item{
+    /*border-bottom: 1px solid #d4d4d4;
+    padding-left: 0;
+	padding-right:0 */
+}
+
+.THIS .inputField{
+    width: 300px;
+    margin-top: 15px;
+    margin-left: 45px;
+}
+.THIS .slds-pill_link{
+    padding: 5px 15px;   
+    margin-right: 5px;    
+    background-color: rgb(232, 232, 232);
+    
+}
+
+.THIS .contactInfo{
+    margin-left:0px;
+    margin-top: 0px;
+}
+
+.THIS .progressbar{
+    box-shadow: 0 2px 19px 0 rgba(0, 0, 0, 0.15);
+    padding: 20px;  
+    border-radius: 4px;
+    float: right;    
+    position: fixed;
+    top: 20px;
+    right: 15%;
+    font-size: 16px;
+    z-index: 1;
+    background: #ffffff;
+                    
+     width: 257px;
+     height: 75px;
+       
+   
+
+   
+}
+.THIS .displayNone{
+    display:none;
+}
+                
+.THIS.slds-modal__footer{
+                    
+ padding: .75rem 11.76rem !important;
+}
+
+.THIS .rectangle{
+    width: 1214px;
+    height: 97px;
+    background-color: var(--f-7-f-9-fa-title-section-ghost-white);  
+    box-shadow: 0 2px 19px 0 rgb(233, 234, 236);
+    padding-top: 26px;
+}
+.THIS .condition{
+  margin-left: 6px;                         
+  width: 336px;
+  height: 16px;
+  font-size: 16px;
+  color: var(--2-b-3339-dark-gray);
+}
+ .THIS .condiv{
+      padding-bottom: 1px;                              
+ }
+.THIS .submitChk{
+    width: 16px;
+    height: 16px;
+    background-color: #017dc6;  
+}
+                                
+.THIS .successMSg{
+	width: 342px;
+    height: 79px;
+    border-radius: 9px;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.13);
+    background-color: #e8f5e5;
+    top: 2px;
+   
+    right: 4%;             
+ }
+.THIS .succinfo{
+    position: fixed;
+    float: right;
+    right: 7%;
+    top: 2%;                               
+    width: 213px;
+    height: 42px;
+    font-family: MyriadPro;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: var(--2-b-3339-dark-gray);
+  }

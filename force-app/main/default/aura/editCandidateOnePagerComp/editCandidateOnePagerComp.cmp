@@ -1,0 +1,64 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	 <aura:attribute name="optionslanguage" type="List"
+                           default="[{'label':'English', 'value':'English'},
+                                    {'label':'2nd Language','value':'2nd Language'},]" />
+    
+    <aura:attribute name="selectedLanguage" type="String" />
+    <aura:attribute name="selectedEnglish" type="boolean" default="true" />
+    <aura:attribute name="selected2ndLang" type="boolean" default="false" />
+    
+     <lightning:combobox name="Language" label="Language" value="English" options="{!v.optionslanguage }" onchange="{! c.handleChangeLanguage }"/>
+    
+	<Aura:if isTrue="{!v.selectedEnglish}">
+    <section>
+        <lightning:recordEditForm
+            aura:id="editnotesform"                      
+            onload="{!c.handleLoad}"
+            onsubmit="{!c.handleSubmit}"
+            onsuccess="{!c.handleSuccess}"
+            recordId="0030B000028jMBrQAM"
+            objectApiName="Contact">
+            <!-- the messages component is for error messages -->
+            <lightning:messages />
+
+            <lightning:inputField fieldName="Profile__c" />
+            <lightning:inputField fieldName="Strengths__c" />
+            <lightning:inputField fieldName="Areas_for_Development__c" />
+       <!--    <lightning:inputField fieldName="Title" />
+            <lightning:inputField fieldName="MobilePhone" />
+            <lightning:inputField fieldName="Phone" />
+            <lightning:inputField fieldName="Email" /> -->
+            <div class="slds-m-top_medium">
+                <lightning:button variant="brand" type="submit" name="save" label="Save" />
+            </div>
+        </lightning:recordEditForm>
+        
+    </section>
+        
+        <aura:set attribute="else">
+    		<lightning:recordEditForm
+            aura:id="editnotesform"                      
+            onload="{!c.handleLoad}"
+            onsubmit="{!c.handleSubmit}"
+            onsuccess="{!c.handleSuccess}"
+            recordId="0030B000028jMBrQAM"
+            objectApiName="Contact">
+            <!-- the messages component is for error messages -->
+            <lightning:messages />
+
+            <lightning:inputField fieldName="Profile_FR__c" />
+            <lightning:inputField fieldName="Points_forts__c" />
+            <lightning:inputField fieldName="Points_de_developpement__c" />
+       <!--    <lightning:inputField fieldName="Title" />
+            <lightning:inputField fieldName="MobilePhone" />
+            <lightning:inputField fieldName="Phone" />
+            <lightning:inputField fieldName="Email" /> -->
+            <div class="slds-m-top_medium">
+                <lightning:button variant="brand" type="submit" name="save" label="Save" />
+            </div>
+        </lightning:recordEditForm>
+    	</aura:set>
+    
+    </Aura:if>    
+    
+</aura:component>

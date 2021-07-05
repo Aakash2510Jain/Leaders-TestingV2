@@ -1,0 +1,37 @@
+.THIS .searchBar{
+    margin-top: 0.5% !important;
+    background-color: #eee;
+    border:#1589ee 
+        
+}
+
+.THIS .vertical-menu {
+    width: 200px;
+}
+
+.THIS .vertical-menu li {
+    background-color: #eee;
+    color: black;
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+}
+
+.THIS .topbutton
+{
+    
+    background-color: #eee;
+    width: 200px;
+    height:38px;
+    margin-top: 15px;
+    margin-right: 25px;
+}
+
+.THIS .vertical-menu li:hover {
+    background-color: #ccc;
+}
+
+.THIS .vertical-menu li.active {
+    background-color: #004d99;
+    color: white;
+}

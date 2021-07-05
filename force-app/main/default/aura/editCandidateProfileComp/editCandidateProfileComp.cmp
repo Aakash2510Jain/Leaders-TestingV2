@@ -1,0 +1,35 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="disabled" type="Boolean" default="false" />
+    <aura:attribute name="saved" type="Boolean" default="false" />
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:attribute name="selectedConId" type="String" />
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner />
+    </aura:if>
+    <!--  <aura:if isTrue="{!!v.saved}"> -->
+        <lightning:recordEditForm
+            aura:id="editnotesform"                      
+            onload="{!c.handleLoad}"
+            onsubmit="{!c.handleSubmit}"
+            onsuccess="{!c.handleSuccess}"
+            recordId="{!v.selectedConId}"
+            objectApiName="Contact">
+            <!-- the messages component is for error messages -->
+            <lightning:messages />
+
+            <lightning:inputField fieldName="FirstName" />
+            <lightning:inputField fieldName="LastName" />
+            <lightning:inputField fieldName="AccountId" />
+           <lightning:inputField fieldName="Title" />
+            <lightning:inputField fieldName="MobilePhone" />
+            <lightning:inputField fieldName="Phone" />
+            <lightning:inputField fieldName="Email" /> 
+            <div class="slds-m-top_medium">
+                <lightning:button variant="brand" type="submit" name="save" label="Save" />
+            </div>
+        </lightning:recordEditForm>
+        <!--  <aura:set attribute="else">
+            <p>Saved!</p>
+        </aura:set> -->
+   <!-- </aura:if> -->
+</aura:component>

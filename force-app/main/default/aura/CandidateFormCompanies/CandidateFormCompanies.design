@@ -1,0 +1,4 @@
+<design:component >
+	<design:attribute name="title" label="Title" description="Title of the section" />    
+	<design:attribute name="companiesType" label="Type"/>    
+</design:component>

@@ -1,0 +1,79 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="addFileComponentController" >
+	<aura:attribute name="recordId" type="String"></aura:attribute>
+    <aura:Attribute name="displayCvPsyModal" type="boolean" ></aura:Attribute>
+    <aura:attribute name="contact" type="Object" ></aura:attribute>
+    <aura:attribute name="FirstName" type="String"></aura:attribute>
+    <aura:attribute name="LastName" type="String"></aura:attribute>
+    
+    <aura:attribute name="selectedUploadType" type="String" />
+    <aura:attribute name="displayAttachments" type="String" />
+    
+    <aura:method name="callChild1Init" action="{!c.doInit}" access="public">
+       <aura:attribute name="recId" type="String"></aura:attribute>
+    
+    </aura:method>
+    
+    
+    
+    <lightning:card>  
+       <div class="slds-m-around-large">
+       <aura:if isTrue="{!v.displayCvPsyModal}">
+      
+         <!--###### MODAL BOX Start From Here ######--> 
+   	  <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+       	<div class="slds-modal__container">
+          <!-- ###### MODAL BOX HEADER Part Start From Here ######-->
+         <div class="slds-modal__header">
+           	<button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+           	X
+             <span class="slds-assistive-text">Close</span>
+             </button>
+             <h2 id="header99" class="slds-text-heading--medium">Add Files</h2>
+               </div>
+         	<!--###### MODAL BOX BODY Part Start From Here ######-->
+          <div class="slds-modal__content slds-p-around--medium">
+                         <!-- <p><b>The goal of this blog is to provide tips and tricks/workarounds for salesforce developer and admins.
+                          Many of us face the same issues and have the same questions when using and implementing Salesforce.
+                          As a community of users and developers, it is important for us to share our experiences.
+                          I try to reach out to other users and help the Salesforce community in general.
+                          Much of this blog will focus on Lightning(code &amp; config.) but I will also
+                          cover some of the more basic topics in salesforce.
+                          </b>
+                        </p> -->
+         	
+              <lightning:select aura:id="selectUploadType" name="selectUploadType" label="Select File Type" onchange="{!c.handleSelectUploadType}" required="true" value="Notes and Attachments">
+                    <option value="Notes and Attachments">Notes and Attachments</option>
+                    <option value="Files">Files</option>
+                   
+              </lightning:select> 
+              
+            <aura:if isTrue="{!v.displayAttachments}" > 
+                
+               <c:addAttachmentComponent recordId="{!v.recordId}" FirstName ="{!v.FirstName}" LastName="{!v.LastName}" ></c:addAttachmentComponent>
+             
+             <aura:set attribute="else">
+                 
+                <c:addFileComponent recordId="{!v.recordId}" FirstName ="{!v.FirstName}" LastName="{!v.LastName}" />
+           
+              </aura:set> 
+            </aura:if>   
+          </div>
+              
+            
+            
+            
+            
+          <!--###### MODAL BOX FOOTER Part Start From Here ######-->
+      <!--    <div class="slds-modal__footer">
+            <button class="slds-button slds-button_neutral" onclick="{!c.closeModel}" >Cancel</button>
+            <button class="slds-button slds-button_brand" onclick="{!c.likenClose}">Save</button>
+          </div>-->
+        </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop--open"></div> 
+      <!--###### MODAL BOX Part END Here ######-->
+    
+ </aura:if>
+  </div>
+</lightning:card>      
+</aura:component>

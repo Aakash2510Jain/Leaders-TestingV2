@@ -1,0 +1,5 @@
+<aura:event type="APPLICATION" description="Event template">
+
+    <aura:attribute name="mandate_RecId" type="String" />
+
+</aura:event>

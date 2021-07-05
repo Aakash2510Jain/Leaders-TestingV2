@@ -1,0 +1,142 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" Controller="peoplePageButtonsController" >
+    <aura:attribute name="recordId" type="string" />
+    <aura:attribute name="showNotesAndAttachment" type="Boolean" default="false" />
+    <aura:attribute name="OnePagerId" type="String"/>
+    <aura:attribute name="recordError" type="string" access="private" />
+    <aura:attribute name="displayOPComp" type="boolean" default="false" />
+    <aura:attribute name="displaySendEmail" type="boolean" default="false" />
+    <aura:attribute name = "emailId" type = "String[]" />
+    <aura:attribute name = "allCandidateList" type = "String[]" />
+    <aura:attribute name = "allAppList" type = "String[]" />
+    <aura:attribute name="displayAddCandidateToOtherAssignment" type="boolean" default="false" />
+    <aura:attribute name="displaySendEmailAdvanced" type="Boolean" />
+    <aura:attribute name="displayUpdateBio" type="boolean" default="false" ></aura:attribute>
+    <aura:attribute name="displayCandidateSelfAssessment" type="boolean" default="false" ></aura:attribute>
+    <aura:attribute name="displayUpdateBioNew" type="boolean" default="false" ></aura:attribute>
+    <aura:attribute name="showFileUpload" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="checkSpinner" type="boolean" default="false"/> 
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <!-- Newly Added -->
+    
+    <aura:if isTrue="{!v.checkSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </div>
+    </aura:if>
+    
+    <aura:attribute name="displayCV" default="false" type="Boolean"/>
+    <aura:attribute name="FromOnePager" default="false" type="Boolean"/>
+    <aura:attribute name="modalHeader" type="String"/>
+    <aura:attribute name="conIdList" type="String[]"/>
+    <aura:attribute name="attachmentId" type= "String" default=""/>
+    <aura:attribute name="attUrl" type= "Object" default=""/>
+    <aura:attribute name="contactRec" type= "Contact" default=""/>
+    <aura:attribute name="mandateId" type= "String" default=""/>
+    <aura:attribute name="loader" type="boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <lightning:navigation aura:id="navService" />
+    <force:recordData aura:id="recordHandler"
+                      recordId="{!v.recordId}"
+                      fields="Id"
+                      targetError="{!v.recordError}"
+                      recordUpdated="{!c.handleRecordUpdated}" />
+    
+    <Lightning:card class="slds-m-around_xx-small slds-m-top_none slds-m-bottom_none slds-card__body transform">
+        <aura:if isTrue="{!v.loader}">
+            <div aura:id="spinnerId" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </aura:if>
+        <div class="slds-grid slds-gutters ">
+            <!-- <div class="slds-col slds-size_1-of-3 slds-m-left_xx-large">
+                <span>
+                  <iframe src="{! $Site.CurrentSiteUrl+'/apex/ContactMessage?Id='+V.recordId}" width="100%" height="80px;" frameBorder="0" ></iframe>
+                </span>
+              </div> -->
+            <div class="slds-col ">
+                <span> 
+                    
+                    <!-- 	<lightning:button class="slds-m-around_xxx-small" variant="brand" label="Edit" onclick="{!c.editPeople}" />
+                    <Lightning:button class="slds-m-around_xxx-small" variant="brand" label="Delete" onclick="{!c.handleDeleteRecord}" /> -->
+                    <Lightning:button class="slds-m-around_xxx-small"  variant="brand" label="Back To Human Capital Study" onclick="{!c.goBack}" ></Lightning:button>
+                    <!--lightning:buttonIcon iconName="utility:back" variant="brand" onclick="{! c.goBack }" alternativeText="Back to Human Capital Study" >Human Capital Study<lightning:buttonIcon-->
+                    
+                    <Lightning:button class="slds-m-around_xxx-small" variant="brand" label="Add to Other Assignment" onclick="{!c.openAdd2Assign}" />
+                    <Lightning:button class="slds-m-around_xxx-small" variant="brand" label="Upload Files" onclick="{!c.openCvPsyModal}" />
+                    <lightning:button variant="brand" label="Files" Name="Files" Title="Files" onclick="{!c.showNotesAndAttachment}" />
+                    
+                    <!-- Newly Added -->
+                    <Lightning:button class="slds-m-around_xxx-small colorPurple" variant="brand" label="Update Bio &#38; Assessment" onclick="{!c.openUpdateBioNew}"/>
+                    
+                    <Lightning:button class="slds-m-around_xxx-small colorPurple" variant="brand" label="View Bio" onclick="{!c.openAttachment}" />
+                    <!--{!c.createOnePagerOrBio}-->
+                    <!--Lightning:button class="slds-m-around_xxx-small colorPurple" variant="brand" label="Create Bio" onclick="{!c.createOnePagerOrBio}" /-->
+                    
+                    <!--Lightning:button class="slds-m-around_xxx-small colorLightBlue" variant="brand" label="View One Pager" onclick="{!c.openAttachment}" /-->
+                    <!--Lightning:button class="slds-m-around_xxx-small colorLightBlue" variant="brand" label="View/Update One Pager" onclick="{!c.OpenPagerModal}" /-->
+                    <!--Lightning:button class="slds-m-around_xxx-small colorLightBlue" variant="brand" label="Create One Pager" onclick="{!c.createOnePagerOrBio}" /-->
+                    
+                    <Lightning:button class="slds-m-around_xxx-small colorLightBlue" variant="brand" label="View/Update One Pager" onclick="{!c.openOP}" />
+                    
+                    <!--Lightning:button class="slds-m-around_xxx-small colorLightGreen" variant="brand" label="View Self Assessment" onclick="{!c.openAttachment}" />
+                    <Lightning:button class="slds-m-around_xxx-small colorLightGreen" variant="brand" label="View Self Assessment1" onclick="{!c.openSelfAss}" /-->
+                    <!--Lightning:button class="slds-m-around_xxx-small colorLightGreen" variant="brand" label="Update Long Assessment" onclick="{!c.devMode}" /-->
+                    <!--Lightning:button class="slds-m-around_xxx-small colorLightGreen" variant="brand" label="Send Assessment Link" onclick="{!c.sendAssessmentLink}" /-->
+                    
+                    <lightning:button label="Send Candidate File to Others" title="Send Email Advanced" variant="brand"  onclick="{!c.sendEmailAdvanced}" ></lightning:button>
+                    <Lightning:button class="slds-m-around_xxx-small colorLightGreen" variant="brand" label="Send Email to Candidate" onclick="{!c.sendEmail}" />
+                    <!--   <Lightning:button class="slds-m-around_xxx-small" variant="brand" label="View CV" /> -->
+                    
+                    <!--{!Check Templates}-->
+                    <!--Lightning:button class="slds-m-around_xxx-small colorRed" variant="brand" label="Check Templates" onclick="{!c.openAttachment}" /-->
+                    <!--Lightning:button class="slds-m-around_xxx-small colorPurple" variant="brand" label="Create Bio" onclick="{!c.createOnePagerOrBio}" /-->
+                    
+                    <aura:if isTrue="{!v.displayOPComp}">
+                        <c:DisplayCVComp  FromOnePager = "True" displayOPComp="{!v.displayOPComp}" displayCVComp="False" recordId="{!v.recordId}"  />
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.displayAddCandidateToOtherAssignment}">
+                        <c:AddCandidatesToOtherAssignment isAssignmentResearch="false" contactRecId="{!v.conIdList}" displayAddCandidateToOtherAssignment="{!v.displayAddCandidateToOtherAssignment}"></c:AddCandidatesToOtherAssignment>
+                    </aura:if >
+                    
+                    <aura:if isTrue="{!v.displayUpdateBio}">
+                        <c:updateBiography recordId="{!v.recordId}" displayUpdateBio="{!v.displayUpdateBio}" ></c:updateBiography>
+                    </aura:if>
+                    <aura:if isTrue="{!v.displayUpdateBioNew}">
+                        <c:updateBiographyNew recordId="{!v.recordId}" displayUpdateBioNew="{!v.displayUpdateBioNew}" ></c:updateBiographyNew>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.showFileUpload}">
+                        <c:FileUpload_v2 recordId="{!v.recordId}" operationType="contact" showFileUpload="{!v.showFileUpload}" optionList="['Candidate Introduction Letter','CV','Board CV','Self Assessment','Psychometric Test','References','Onboarding','Others']" />
+                    </aura:if>
+                    <aura:if isTrue="{!v.displaySendEmail}">
+                        <c:SendEmailComponent aura:id="sendEmail"  isFromPeoplePage="true" mandateRecId="{!v.mandateId}" displaySendEmail="{!v.displaySendEmail}" candidatesList="{!v.allCandidateList}" emailId="{!v.emailId}"></c:SendEmailComponent>
+                    </aura:if>
+                    <aura:if isTrue="{!v.displayCandidateSelfAssessment}">
+                        <c:ViewCandidateAssessment   displayCandidateSelfAssessment="{!v.displayCandidateSelfAssessment}" recordId="{!v.recordId}"></c:ViewCandidateAssessment>
+                    </aura:if>
+                </span>
+            </div>
+        </div>
+      
+        <aura:if isTrue="{!v.displayCV}">
+            <c:ViewCV displayCV="{!v.displayCV}" contactId="{!v.recordId}" attId="{!v.attachmentId}" modalHeader="{!v.modalHeader}" />
+        </aura:if>
+        <aura:if isTrue="{!v.showNotesAndAttachment}">
+            <c:RelatedFilesComp  FromContact = "true" mandateId="{!v.recordId}" allCandidateList="{!v.allAppList}" showThisModal="{!v.showNotesAndAttachment}"></c:RelatedFilesComp>
+        </aura:if>
+    </Lightning:card>   
+    <aura:if isTrue="{!v.isOpen}">
+        <c:ViewPagerModalComp recordId="{!v.recordId}" OnePagerId="{!v.OnePagerId}" isOpen="{!v.isOpen}" />
+    </aura:if>
+     <aura:if isTrue="{!v.displaySendEmailAdvanced}" >
+        <c:SendEmailAdvancedcomp recordId="{!v.recordId}"  mandateRecId="{!v.mandateId}" displaySendEmail="{!v.displaySendEmailAdvanced}"  ></c:SendEmailAdvancedcomp>
+    </aura:if>
+
+    
+</aura:component>

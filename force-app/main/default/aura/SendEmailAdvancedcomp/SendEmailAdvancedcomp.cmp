@@ -1,0 +1,163 @@
+<aura:component description="SendEmailComponent" controller="AddApplicationToAssignmentLightning">
+    
+    <aura:attribute name="displaySendEmail" type="Boolean"/>
+    <aura:attribute name="mandateRecId" type="String"/>
+    <aura:attribute name="recordId" type="string" />
+    <aura:attribute name="jobDescription" Type="boolean" />
+    <aura:attribute name="References" Type="boolean"/>
+    <aura:attribute name="OnBoard" Type="boolean"/>
+    <aura:attribute name="BoardCv" Type="boolean"/>
+    <aura:attribute name="Attachemnts" Type="Object"/>
+    <aura:attribute name="CV" Type="boolean"/>
+    <aura:attribute name="Bio" Type="boolean"/>
+    <aura:attribute name="isselfAssAvailable" Type="boolean"/>
+    <aura:attribute name="isCvAvailable" Type="boolean"/>
+    <aura:attribute name="isBoardCvAvailable" Type="boolean"/>
+    <aura:attribute name="isOPAvailable" Type="boolean"/>
+    <aura:attribute name="isILAvailable" Type="boolean"/>
+    <aura:attribute name="isPSYAvailable" Type="boolean"/>
+    <aura:attribute name="isRefAvailable" Type="boolean"/>
+    <aura:attribute name="isBioAvailable" Type="boolean"/>
+    <aura:attribute name="isOnBoardAvailable" Type="boolean"/>
+    <aura:attribute name="onePager" Type="boolean" />
+    <aura:attribute name="PsyTest" Type="boolean" />
+    <aura:attribute name="CandIntr" Type="boolean" />
+    <aura:attribute name="mailStatus" Type="boolean" />
+    <aura:attribute name="SelfAss" Type="boolean" />
+    <aura:attribute name = "SelfAssId" type = "String" />
+    <aura:attribute name = "CVID" type = "String" />
+    <aura:attribute name = "RefId" type = "String" />
+    <aura:attribute name = "BoardCvId" type = "String" />
+    <aura:attribute name = "PsyId" type = "String" />
+    <aura:attribute name = "OpId" type = "String" />
+     <aura:attribute name="OnBoardId" Type="String"/>
+    <aura:attribute name = "ILId" type = "String" />
+    <aura:attribute name = "BioId" type = "String" />
+    <aura:attribute name = "emailId" type = "String"/>
+    <aura:attribute name = "SelectedAtt" type = "String[]"/>
+    <aura:attribute name = "emailSubject" type = "String"/>
+    <aura:attribute name = "emailBody" type = "String"/>
+    <aura:attribute name = "selectedCount" type = "integer" default = "0"/>
+    <aura:attribute name="loader" type="boolean" default="false"/>
+    <aura:handler event="aura:waiting" action="{!c.showLoader}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideLoader}"/>
+    <aura:handler name="init" value="this" action="{!c.doInit}"/>
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    
+    <aura:if isTrue="{!v.loader}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+
+        <div class="slds-modal__container">
+            
+            <!-- ###### MODAL BOX HEADER Start ######-->
+            <header class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close"
+                                      onclick="{! c.closeModal }"
+                                      alternativeText="close"
+                                      variant="bare-inverse"
+                                      class="slds-modal__close"/>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Send Email With Attachement</h2>
+                
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <aura:if isTrue="{!v.mailStatus}">
+                    <div role="alertdialog" tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal--prompt">
+                        <div class="slds-modal__container">
+                            <div class="slds-modal__header slds-theme--error slds-theme--alert-texture">
+                                <h2 class="slds-text-heading--medium" id="prompt-heading-id">Mail Status</h2>
+                            </div>
+                            <div class="slds-modal__content slds-p-around--medium">
+                                <div>
+                                    <p>Email Sent successfully !!!</p>
+                                </div>
+                            </div>
+                            <div class="slds-modal__footer slds-theme--default">
+                                <button class="slds-button slds-button--brand" onclick="{!c.closeMessage}">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-backdrop slds-backdrop--open"></div>
+                </aura:if>
+                
+                <div class="slds-m-around--medium">
+                    <div class="slds-container--medium">
+                        <div class="slds-form--stacked">
+                            
+                            <br/>
+                            
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="CC">E-mail</label>
+                                <div class="slds-form-element__control">
+                                    <ui:inputText class="slds-input" aura:id="emailSubject"  value="{!v.emailId}" placeholder="E-Mail"/>
+                                </div>
+                            </div>
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="CC">Subject</label>
+                                <div class="slds-form-element__control">
+                                    <ui:inputText class="slds-input" aura:id="emailSubject"  value="{!v.emailSubject}" placeholder="Subject"/>
+                                </div>
+                            </div>
+                            <!-- Email Body -->
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="textareaSample2">Mail Body</label>
+                                <div class="slds-form-element__control">
+                                    <lightning:inputRichText aura:id="emailBody" value="{!v.emailBody}" />
+                                </div>
+                            </div>
+                            
+                            <br/>
+                            <aura:if isTrue="true">
+                                <label class="slds-form-element__label" for="textareaSample2">Select the documents</label>
+                                <br/>
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col">
+                                        One Pager   <aura:if isTrue="{!v.isOPAvailable}">-<div style="color:red;display: inline;"> (Not Available)</div> </aura:if>
+                                        <ui:inputCheckbox aura:id="CIL" class="myCheckbox"  change="{!c.selectOP}" value="{!v.onePager}" ></ui:inputCheckbox>
+                                        Biography   <aura:if isTrue="{!v.isBioAvailable}">-<div style="color:red;display: inline;"> (Not Available)</div> </aura:if>
+                                        <ui:inputCheckbox aura:id="BIOGRAPHY" class="myCheckbox"  change="{!c.selectBio}" value="{!v.Bio}" ></ui:inputCheckbox>
+                                        Candidate Intro Letter   <aura:if isTrue="{!v.isILAvailable}">-<div style="color:red;display: inline;"> (Not Available)</div> </aura:if>
+                                        <ui:inputCheckbox aura:id="CIL" class="myCheckbox"  change="{!c.selectIL}" value="{!v.CandIntr}" ></ui:inputCheckbox>
+                                        CV   <aura:if isTrue="{!v.isCvAvailable}">-<div style="color:red;display: inline;"> (Not Available)</div> </aura:if>
+                                        <ui:inputCheckbox aura:id="CV" class="myCheckbox"  change="{!c.selectCV}" value="{!v.CV}" ></ui:inputCheckbox>
+                                        Board CV   <aura:if isTrue="{!v.isBoardCvAvailable}">-<div style="color:red;display: inline;"> (Not Available)</div> </aura:if>
+                                        <ui:inputCheckbox aura:id="Cv Board" class="myCheckbox"  change="{!c.selectBoardCV}" value="{!v.BoardCv}" ></ui:inputCheckbox>
+                                        
+                                        <!-- Job-Description   <aura:if isTrue="{!v.isJDAvailable}">-<div style="color:red;display: inline;"> (Not Available)</div> </aura:if>
+                                        <ui:inputCheckbox aura:id="Ref" class="myCheckbox"  change="{!c.selectJD}" value="{!v.References}"></ui:inputCheckbox-->
+                                        
+                                    </div>
+                                    <div class="slds-col">
+                                        Self Assessment   <aura:if isTrue="{!v.isselfAssAvailable}">-<div style="color:red;display: inline;"> (Not Available)</div> </aura:if>
+                                        <ui:inputCheckbox aura:id="SelfAss" class="myCheckbox"  change="{!c.selectSelfAss}" value="{!v.SelfAss}"></ui:inputCheckbox>
+                                        Psychometric Test   <aura:if isTrue="{!v.isPSYAvailable}">-<div style="color:red;display: inline;"> (Not Available)</div> </aura:if>
+                                        <ui:inputCheckbox aura:id="PsyTest" class="myCheckbox"  change="{!c.selectPsyTest}" value="{!v.PsyTest}"></ui:inputCheckbox>
+                                        References   <aura:if isTrue="{!v.isRefAvailable}">-<div style="color:red;display: inline;"> (Not Available)</div> </aura:if>
+                                        <ui:inputCheckbox aura:id="OP" class="myCheckbox"  change="{!c.selectRef}" value="{!v.References}" ></ui:inputCheckbox>
+                                        On-Boarding   <aura:if isTrue="{!v.isOnBoardAvailable}">-<div style="color:red;display: inline;"> (Not Available)</div> </aura:if>
+                                        <ui:inputCheckbox aura:id="Bio" class="myCheckbox"  change="{!c.selectOnBoard}" value="{!v.OnBoard}" ></ui:inputCheckbox>
+                                    </div>                
+                                </div>
+                            </aura:if>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="slds-modal__footer">
+                <div class="slds-form-element" style="margin-left:50%">
+                    <button class="slds-button slds-button--brand" onclick="{!c.SendEmail}">Send Email</button>
+                    <button class="slds-button slds-button--brand" onclick="{!c.closeModal}">cancel</button>
+                </div>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</aura:component>

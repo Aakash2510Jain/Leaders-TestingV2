@@ -1,0 +1,61 @@
+<apex:page standardController="Contact" extensions="ContactCandidatesCtrl" lightningStylesheets="True">
+
+    <apex:form >
+    
+        <apex:pageBlock >   
+            <apex:PageMessages id="msgId"/>
+         
+            <!--<apex:pageBlockButtons location="top">
+                <apex:commandLink value="New Candidate" action="/a02/e?" styleClass="btn" style="text-decoration:none;padding:4px;" target="_blank"/> 
+            </apex:pageBlockButtons>-->
+                    
+            <apex:pageblocktable value="{!candidates}" var="a"  rendered="{!(candidates.size != 0)}">
+            
+                <apex:column >
+                   <apex:facet name="header">
+                      <apex:outputText value="Candidate Assigned"/>               
+                   </apex:facet>
+                   <apex:outputLink value="/{!a.Id}" target="_top">{!a.Name}</apex:outputLink>
+                 </apex:column>
+                 
+                 <apex:column >
+                   <apex:facet name="header">
+                      <apex:outputText value="Assignment"/>               
+                   </apex:facet>
+                   <apex:outputLink value="/apex/AssignmentCandidates?id={!a.Mandate__c}" target="_top">{!a.Mandate__r.Name}</apex:outputLink>
+                 </apex:column>
+                 
+                 <apex:column >
+                   <apex:facet name="header">
+                      <apex:outputText value="Client Company"/>               
+                   </apex:facet>
+                   <apex:outputText value="{!a.Client_Company__c}" />
+                 </apex:column>
+                 
+                 <apex:column >
+                   <apex:facet name="header">
+                      <apex:outputText value="Status Summary Line"/>               
+                   </apex:facet>
+                   <apex:outputText value="{!a.Status_Summary_Line__c}" />
+                 </apex:column>
+                 
+                 <apex:column width="200px">
+                      <apex:facet name="header">  
+                            <apex:outputText value="Leaders Report Notes"/>
+                      </apex:facet>
+                      
+                      <apex:commandLink action="{!createReportNote}" value="New" styleClass="btn" style="text-decoration:none;padding:4px; color:green; border-bottom-color:green;" target="_blank">
+                        <apex:param value="{!a.Id}" name="candidateId" assignTo="{!candidateId}" ></apex:param>
+                      </apex:commandLink>
+                      <apex:commandLink action="{!editReportNote}" value="Edit" styleClass="btn" style="text-decoration:none;padding:4px;" target="_blank">
+                        <apex:param value="{!a.Id}" name="candidateId" assignTo="{!candidateId}" ></apex:param>
+                      </apex:commandLink>
+                      
+                </apex:column>
+                 
+            </apex:pageblocktable>
+        </apex:pageBlock>
+        
+    </apex:form>
+
+</apex:page>

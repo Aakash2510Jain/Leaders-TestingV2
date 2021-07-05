@@ -1,0 +1,8 @@
+<aura:component >
+        <aura:attribute name="obj" type="sObject"/>
+        <aura:attribute name="apiName" type="String"/>
+        <aura:attribute name="fieldValue" type="String"/>
+	    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+        <aura:registerEvent name="CheckBoxValue" type="c:CheckBoxValue"/>
+    	{!v.fieldValue} 
+</aura:component>

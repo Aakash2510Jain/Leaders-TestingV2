@@ -1,0 +1,95 @@
+<aura:component >
+    <aura:attribute name="MultipleoptnId" type="object" />
+    
+    <aura:attribute name="options_" type="String[]" />
+    
+    <aura:attribute name="labeltext" type="String" default="Your Question Please ?" />
+    
+    <aura:attribute name="selectedItems" type="String[]" />
+    
+    <aura:attribute name="infoText" type="String" default="Select an option..." />
+    
+    <aura:attribute name="width" type="String" default="245px;" />
+    
+    <aura:attribute name="dropdownLength" type="Integer" default="4" />
+    
+    <aura:attribute name="num" type="Integer" default="1" />
+    
+    <aura:method name="reInit" action="{!c.init}" description="Allows the lookup to be reinitalized"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    
+    <aura:attribute name="dropdownOver" type="Boolean" default="false" />
+    <div class="slds-form-element nowrap">
+        <label class="slds-form-element__label" style="line-height: 30px"> <span class="number">{!v.num}</span>{!v.labeltext}<abbr class="slds-required" title="required">* </abbr></label> 
+        <lightning:icon iconName="standard:task2" aura:id="wfsSurvey.Top_1_to_3_Categories__c" alternativeText="task" class="displayNone " style ="position: absolute;left: 0;top: 3px;border-radius: 50%;" />
+        <br/>
+        <div class="slds-form-element__control tooltip expand" title="Please Select the items from multiselect picklist">
+            <div class="slds-combobox_container slds-size_small" style="width: 300px;margin-top: 15px;margin-left: 45px;">
+                <div aura:id="main-div" class=" slds-picklist slds-dropdown-trigger slds-dropdown-trigger--click ">
+                    
+                    <button class="slds-button slds-button--neutral slds-picklist__label" style="{!'width:' + v.width }" aria-haspopup="true" onclick="{!c.handleClick}" onmouseleave="{!c.handleMouseOutButton}">
+                        
+                        <span class="slds-truncate" title="{!v.infoText}">{!v.infoText}</span>
+                        
+                        <lightning:icon iconName="utility:down" size="small" class="slds-icon" />
+                        
+                    </button>
+                    
+                    <div class="slds-dropdown slds-dropdown--left" onmouseenter="{!c.handleMouseEnter}" onmouseleave="{!c.handleMouseLeave}">
+                        
+                        <div id="listbox-unique-id" role="listbox" class="slds-dropdown slds-dropdown_fluid" style="max-height: 250px; overflow-y: scroll;">
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <aura:iteration items="{!v.options_}" var="option">
+                                    
+                                    <div class="{!'slds-dropdown__item ' + (option.selected ? 'slds-is-selected' : '')}" role="presentation" onclick="{!c.handleSelection}" data-value="{!option.Name}" data-selected="{!option.selected}">
+                                        
+                                        <a href="javascript:void(0);" role="menuitemcheckbox" aria-checked="true" tabindex="0">
+                                            
+                                            <span class="slds-truncate">
+                                                
+                                                <lightning:icon iconName="utility:check" size="x-small" class="slds-icon slds-icon--selected slds-icon--x-small slds-icon-text-default slds-m-right--x-small" />
+                                                {!option.Name}
+                                            </span>
+                                            
+                                        </a>
+                                        
+                                    </div>
+                                    
+                                </aura:iteration>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                    <!-- This Code is to show Selected values-->
+                    <aura:if isTrue="{!v.selectedItems.length > 0}">
+                        <aura:If isTrue="{! and($Browser.formFactor == 'DESKTOP')}">
+                            <div style="padding:10px; width: max-content; padding-left: 44px;">
+                                <aura:iteration items="{!v.selectedItems}" var="eachVal" indexVar="i">
+                                    <span class="slds-pill slds-pill_link">
+                                        <a href="javascript:void(0);" >
+                                            <span class="slds-pill__label">{!eachVal}</span>
+                                        </a>    
+                                    </span>
+                                </aura:iteration>	
+                            </div> 
+                            <aura:set attribute="else">
+                                <div style="padding:10px; width: fit-content; padding-left: 44px;">
+                                    <aura:iteration items="{!v.selectedItems}" var="eachVal" indexVar="i">
+                                        <span class="slds-pill slds-pill_link">
+                                            <a href="javascript:void(0);" >
+                                                <span class="slds-pill__label">{!eachVal}</span>
+                                            </a>    
+                                        </span>
+                                    </aura:iteration>	
+                                </div> 
+                            </aura:set> 
+                        </aura:If> 
+                    </aura:if>
+            </div>
+                    <!-- Code for selecting Selected values-->
+                    
+                </div>
+            </div>
+        </aura:component>

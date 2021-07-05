@@ -1,0 +1,251 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="showPeopleModal" type="Boolean" default="false"></aura:attribute>
+    <aura:attribute name="showCompanyModal" type="Boolean" default="false"></aura:attribute>
+    <aura:attribute name="searchPeople" type="string" ></aura:attribute>
+    <aura:attribute name="searchCompany" type="string"></aura:attribute>
+    <aura:attribute name="searchBD" type="string"></aura:attribute>
+    <aura:attribute name="openSearchModal" type="boolean" default="false" ></aura:attribute>
+    <aura:attribute name="openSearchCompanyModal" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="openSearchBDModal" type="boolean" default="false"></aura:attribute>                  
+    <!--  <aura:attribute name="Contact" type="Contact" default="{'sobjectType':'Contact',
+                                                           'FirstName':''
+                                                           'LastName':''
+                                                           }" /> -->
+    <div class="slds-app-launcher__tile-body" style="height:240px">
+        <!--   <lightning:button variant="brand" label="New People" title="New People" onclick="{!c.opencontact}" ></lightning:button>  
+           
+             <lightning:button variant="brand" label="New Company" title="New Company" onclick="{!c.createCompany}" ></lightning:button>
+           
+             <lightning:button variant="brand" label="New Assignment" title="New Assignment" onclick="{!c.createMandate}" ></lightning:button> 
+        
+             <lightning:button variant="brand" label="New Business development" title="New Business Development" onclick="{!c.createBD}" ></lightning:button> -->
+        
+        
+        
+        <ul class="slds-grid slds-grid_pull-padded slds-wrap" style="padding: 4%">
+            <li class="slds-p-horizontal_xx-small slds-size_1-of-1 slds-medium-size_1-of-4">
+                <article class="slds-card" style="padding:2%">
+                    <lightning:input value="{!v.searchPeople}" placeholder="Candidate Name" type="text" label="" name="People" aura:id="searchPeople"  ></lightning:input>
+                    <lightning:button class="slds-m-around_x-small" onclick="{!c.openSearch}" variant="brand" label="Create People" iconName="utility:search"></lightning:button>
+                </article>
+                
+            </li>
+            
+            <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-4">
+                <article class="slds-card" style="padding:2%">
+                    <lightning:input placeholder="Company Name" value="{!v.searchCompany}" required="false" type="text" label="" name="Company" aura:id="searchCompany" ></lightning:input>
+                    <lightning:button class="slds-m-around_x-small" onclick="{!c.openSearchCompany}" variant="brand" label="Create Company" iconName="utility:search"></lightning:button>  
+                </article>
+            </li>
+            
+            <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-4" style="display:inline !important">
+                <article class="slds-card" style="padding:9%">
+                    <lightning:button class="slds-m-around_x-small" variant="brand" label="Data Mining" title="Data Mining" onclick="{!c.openDM}" ></lightning:button> 
+                </article>
+            </li>
+            
+            <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-4" style="display:inline !important">
+                <article class="slds-card" style="padding:9%">
+                    <lightning:button label="New Business Development" 
+                                      variant="brand" 
+                                      class="slds-m-around_x-small"
+                                      name="NewBD" 
+                                      onclick="{!c.addBD}"></lightning:button>
+                    
+                </article>
+            </li>
+            
+            
+            
+            
+            
+        </ul>
+        
+        
+        
+        
+        
+        
+        <!--  <c:newPeopleComp  >
+            </c:newPeopleComp> --> 
+        
+        <!-- ******************* NEW PEOPLE POPUP MODAL ************************ -->
+        
+        
+        <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="Modalbox" class="slds-modal slds-modal_large">
+            <div class="slds-modal__container" style="width: 65%;">
+                <div class="slds-modal__header">
+                    New People
+                </div>
+                <div class="slds-modal__content slds-p-around--medium">
+                    <!--FIRSTSECTION
+                    <div class="slds-p-left_xx-large slds-p-right_xx-large">
+                        <div class="slds-page-header" style="padding-top: 9px; padding-bottom: 9px;, padding-right: 9px;, padding-left: 10px;">
+                            <h3 style="font-size: 1rem;" title="">People Information</h3>
+                        </div> 
+                    </div>    
+                     <div class="slds-grid slds-p-top_medium">
+                        <div class="slds-size_6-of-12 slds-p-left_xx-large slds-p-horizontal_x-large " >
+                            <lightning:input label="First Name" name="FirstName"  /> 
+                        </div>
+                        <div class="slds-size_5-of-12 slds-p-left_xx-small slds-p-horizontal_x-large " >
+                            <lightning:input label="Last Name" name="LastName" /> 
+                        </div>
+                 </div>
+                    <div class="slds-grid slds-p-top_x-small">
+                        <div class="slds-size_6-of-12 slds-p-left_xx-large slds-p-horizontal_x-large " >
+                            <lightning:input label="Title" name="Title"  /> 
+                        </div>
+                        <div class="slds-size_5-of-12 slds-p-left_xx-small slds-p-horizontal_x-large " >
+                            <lightning:input label="Title (2nd Language)" name="Title (2nd Language)" /> 
+                        </div>
+                 </div>
+                    <div class="slds-grid slds-p-top_x-small">
+                        <div class="slds-size_6-of-12 slds-p-left_xx-large slds-p-horizontal_x-large " >
+                            <lightning:input label="Functional Area1" name="FA1"  /> 
+                        </div>
+                        <div class="slds-size_5-of-12 slds-p-left_xx-small slds-p-horizontal_x-large " >
+                            <lightning:input label="Company Name" name="Company Name" /> 
+                        </div>
+                 </div>
+                    <div class="slds-grid slds-p-top_x-small">
+                        <div class="slds-size_6-of-12 slds-p-left_xx-large slds-p-horizontal_x-large " >
+                            <lightning:input label="Mailing Country" name="Country"  /> 
+                        </div>
+                        <div class="slds-size_5-of-12 slds-p-left_xx-small slds-p-horizontal_x-large " >
+                            <lightning:input label="Mailing State" name="State" /> 
+                        </div>
+                 </div>
+                    <div class="slds-grid slds-p-top_x-small">
+                        <div class="slds-size_6-of-12 slds-p-left_xx-large slds-p-horizontal_x-large " >
+                            <lightning:input label="Mailing City" name="City"  /> 
+                        </div>
+                 </div> -->
+                    
+                    <iframe src="{! $Site.CurrentSiteUrl+'/apex/NewPeople'}" width="100%" height="835px;" frameBorder="0" />
+                    
+                    
+                </div>
+                
+                <!-- <div class="slds-modal__footer">
+                    <lightning:button label="Save" variant="brand" name="Save" ></lightning:button>
+                    <ui:button label="Cancel" press="{!c.closeModal}"  />
+                </div> -->
+            </div>
+        </div>
+        <div class="slds-backdrop " aura:id="Modalbackdrop"></div>     
+        
+        
+        <!-- *************** New Contact Popup Modal Ends **************** -->
+        
+        <!-- Data Mining Popup Starts -->
+        
+        <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="Modalbox1" class="slds-modal slds-modal_large">
+            <div class="slds-modal__container" style="width: 40%;">
+                <div class="slds-modal__header">
+                    Data Mining
+                </div>
+                <div class="slds-modal__content slds-p-around--medium">
+                    
+                    <ul class="slds-grid slds-grid_pull-padded slds-wrap">
+                        
+                        <!-- SEARCH PEOPLE STARTS -->
+                        <li class="slds-p-horizontal_xx-small slds-size_1-of-1 slds-medium-size_1-of-3">
+                            <a aria-describedby="drag-instructions"   class="slds-app-launcher__tile slds-text-link_reset slds-is-draggable">
+                                <div class="slds-app-launcher__tile-figure">
+                                    <span class="slds-icon_container slds-icon-standard-search" title="Description of icon when needed">
+                                        <lightning:icon class="slds-icon_container slds-icon-standard-search" variant="inverse" iconName="standard:search" size="large" onclick="{!c.gotoContact}"/>
+                                    </span>  
+                                    
+                                    <span class="slds-icon_container" title="Drag item to a new location"></span>
+                                </div>
+                                <div class="slds-app-launcher__tile-body">
+                                    <!--   <span class="slds-text-link slds-text-heading_large slds-text-align_center" onclick="{!c.opencontact}"><b><h1>People</h1></b></span> -->
+                                    <lightning:button class="slds-m-around_x-small" variant="brand" label="Search People" title="New People" onclick="{!c.gotoSearchPeople}" ></lightning:button>  
+                                    
+                                    
+                                </div>
+                            </a>
+                        </li>
+                        <!-- SEARCH PEOPLE ENDS -->
+                        
+                        <!-- SEARCH COMPANY STARTS -->
+                        
+                        <li class="slds-p-horizontal_xx-small slds-size_1-of-1 slds-medium-size_1-of-3">
+                            <a aria-describedby="drag-instructions"   class="slds-app-launcher__tile slds-text-link_reset slds-is-draggable">
+                                <div class="slds-app-launcher__tile-figure">
+                                    <span class="slds-icon_container slds-icon-standard-search" title="Description of icon when needed">
+                                        <lightning:icon class="slds-icon_container slds-icon-standard-search" variant="inverse" iconName="standard:search" size="large" onclick="{!c.gotoContact}"/>
+                                    </span>  
+                                    
+                                    <span class="slds-icon_container" title="Drag item to a new location"></span>
+                                </div>
+                                <div class="slds-app-launcher__tile-body">
+                                    <!--   <span class="slds-text-link slds-text-heading_large slds-text-align_center" onclick="{!c.opencontact}"><b><h1>People</h1></b></span> -->
+                                    <lightning:button class="slds-m-around_x-small" variant="brand" label="Search Company" title="New People" onclick="{!c.gotoSearchCompany}" ></lightning:button>  
+                                    
+                                    
+                                </div>
+                            </a>
+                        </li> 
+                        
+                        
+                        <!-- SEARCH ASSIGNMENT STARTS -->
+                        
+                        <!-- SEARCH ASSIGNMENT ENDS -->  
+                        
+                        <li class="slds-p-horizontal_xx-small slds-size_1-of-1 slds-medium-size_1-of-3">
+                            <a aria-describedby="drag-instructions"   class="slds-app-launcher__tile slds-text-link_reset slds-is-draggable">
+                                <div class="slds-app-launcher__tile-figure">
+                                    <span class="slds-icon_container slds-icon-standard-search" title="Description of icon when needed">
+                                        <lightning:icon class="slds-icon_container slds-icon-standard-search" variant="inverse" iconName="standard:search" size="large" onclick="{!c.gotoContact}"/>
+                                    </span>  
+                                    
+                                    <span class="slds-icon_container" title="Drag item to a new location"></span>
+                                </div>
+                                <div class="slds-app-launcher__tile-body">
+                                    <!--   <span class="slds-text-link slds-text-heading_large slds-text-align_center" onclick="{!c.opencontact}"><b><h1>People</h1></b></span> -->
+                                    <lightning:button class="slds-m-around_x-small" variant="brand" label="Search Assignments" title="New People" onclick="{!c.gotoSearchAssignment}" ></lightning:button>  
+                                    
+                                    
+                                </div>
+                            </a>
+                        </li>
+                        
+                        <!-- SEARCH COMPANY ENDS -->   
+                    </ul>        
+                    
+                    
+                    
+                </div>
+                
+                <div class="slds-modal__footer">
+                    
+                    <ui:button label="Close" press="{!c.closeDM}"  />
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop " aura:id="Modalbackdrop1"></div>    
+        
+        
+        
+        <!--  Data Mining Popup Modal Ends-->
+        
+        <aura:if isTrue="{!v.openSearchModal}">
+            <c:searchPeopleComp searchPeople="{!v.searchPeople}" openSearchModal ="{!v.openSearchModal}" ></c:searchPeopleComp> 
+        </aura:if> 
+        
+        
+        <aura:if isTrue="{!v.openSearchCompanyModal}">
+            <c:searchCompanyComp searchCompany="{!v.searchCompany}" openSearchCompanyModal="{!v.openSearchCompanyModal}"></c:searchCompanyComp>
+        </aura:if> 
+        
+        <aura:if isTrue="{!v.openSearchBDModal}">
+            <c:SearchBDComp searchBD="{!v.searchBD}" openSearchBDModal="{!v.openSearchBDModal}"></c:SearchBDComp>
+        </aura:if> 
+        
+        
+        
+    </div>     
+</aura:component>

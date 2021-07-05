@@ -1,0 +1,8 @@
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="peopleId" type="Id" />
+    <aura:attribute name="peopleName" type="String" />
+    <aura:attribute name="mandateId" type="Id"/>
+    <aura:attribute name="mandateName" type="String" />
+
+
+</aura:event>

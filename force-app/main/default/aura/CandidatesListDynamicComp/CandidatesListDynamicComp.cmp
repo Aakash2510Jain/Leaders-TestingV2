@@ -1,0 +1,53 @@
+<aura:component >
+
+	<aura:attribute name="recordList" type="List" required="true"/>
+    <aura:attribute name="isSelectAll" type="Boolean" default="true"/>
+	<div class="slds-m-around_xx-large">
+        <h1 class="slds-text-heading--medium">Candidates</h1>
+        <br/>
+        <!--Contact List Table-->
+        <table class="slds-table slds-table--bordered slds-table--cell-buffer" role="grid">
+            <thead>
+            <tr class="slds-text-title--caps">
+                <th>
+                    <label class="slds-checkbox">
+                        <ui:inputCheckbox value="{!v.isSelectAll}" change="{!c.selectAll}" aura:id="selectAll"/>
+                        <span class="slds-checkbox--faux" />
+                        <span class="slds-form-element__label"></span>
+                    </label>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Candidate Assigned">Candidate Assigned</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Name">Name</div>
+                </th>
+                <!--<th scope="col">
+                    <div class="slds-truncate" title="Account">Others</div>
+
+                </th>-->
+            </tr>
+            </thead>
+            <tbody>
+            <aura:if isTrue="{!!empty(v.recordList)}">
+                <aura:iteration var="appRec" items="{!v.recordList}" >
+                    <tr>
+                        <td>
+                            <label class="slds-checkbox">
+                                <ui:inputCheckbox aura:id="checkContact" value="{!appRec.isSelected}" />
+                                <span class="slds-checkbox&#45;&#45;faux" />
+                                <span class="slds-form-element__label"></span>
+                            </label>
+                        </td>
+	                        <td><ui:outputText value="{!appRec.Name}"/></td>
+                            <td><ui:outputText value="{!appRec.Contact__r.Name}"/></td>
+                            
+	                    </tr>
+	                </aura:iteration>
+	            </aura:if>
+
+	            </tbody>
+	        </table>
+	</div>
+	
+</aura:component>

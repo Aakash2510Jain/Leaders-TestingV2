@@ -1,0 +1,210 @@
+<aura:component >
+    <aura:attribute name="ShowPeopleinfoPage" type="boolean"/>
+    <aura:attribute name="AssDetails" type="Application__c" />
+    <aura:attribute name="MandDetails" type="Mandate__c[]"/>
+    <aura:attribute name="CompanyName" type="String" />
+    <aura:attribute name="PeopleDetails" type="contact[]"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:attribute name="TotalPeople" type="String" />
+    <lightning:navigation aura:id="navService" />
+    <aura:attribute name="ShowCompPage" type="boolean"/>
+    <aura:attribute name="ManCompPage" type="boolean"/>
+    
+    <aura:if isTrue="{!v.ShowPeopleinfoPage}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_large slds-hyphenate">Assignment Details</h2>
+                </header>
+                <div class="slds-scrollable--y" >
+                    <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title_caps">
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Assignment">NAME</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Assignment">Company</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Date</div>
+                                </th>     
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">STATUS</div>
+                                </th>   
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.AssDetails}" var="cc" >
+                                <tr class="slds-hint-parent">
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r}">
+                                            <a href="" onclick="{!c.handleClickForAss}" data-record="{!cc.Mandate__c}" >{!cc.Mandate__r.Name}</a>
+                                        </div>
+                                        
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.CompanyName}">{!cc.Mandate__r.Company_Name_French__c}</div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.CompanyName}">{!cc.Mandate__r.Mandate_Start_Date__c }</div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                            {!cc.Mandate__r.Assignment_Status__c}
+                                        </div>
+                                    </td>
+                                    
+                                </tr>
+                            </aura:iteration>   
+                        </tbody>
+                    </table>
+                    <footer class="slds-modal__footer border" >
+                        <lightning:button class="slds-button slds-button_brand" name='CLOSE,' label='CLOSE' onclick='{!c.closeModel}'/>
+                    </footer>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.ShowCompPage}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_large slds-hyphenate">{!v.CompanyName} - {!v.TotalPeople }</h2>
+                </header>
+                
+                
+                <div class="slds-scrollable--y">
+                    <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title_caps">
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Assignment">Name</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">Title</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Phone</div>
+                                </th>     
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">Email</div>
+                                </th>   
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.PeopleDetails}" var="cc" >
+                                <tr class="slds-hint-parent">
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Id}">
+                                            <a href="" onclick="{!c.handleClickForPeople}" data-record="{!cc.Id}" >{!cc.Name}</a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Id}">
+                                            {!cc.Title }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Phone}">
+                                            {!cc.Phone}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Email}">{!cc.Email}</div>
+                                    </td>
+                                </tr>
+                            </aura:iteration>   
+                        </tbody>
+                    </table>
+                </div>
+                <footer class="slds-modal__footer border" >
+                    <br/>
+                    <lightning:button class="slds-button slds-button_brand" name='CLOSE,' label='CLOSE' onclick='{!c.closeModel}'/>
+                </footer>
+            </div>
+            
+            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.ManCompPage}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_large slds-hyphenate">Assignment Details</h2>
+                </header>
+                <div class="slds-scrollable--y" >
+                    <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title_caps">
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Assignment">NAME</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Assignment">Company</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Date</div>
+                                </th>     
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">STATUS</div>
+                                </th>   
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.MandDetails}" var="cc" >
+                                <tr class="slds-hint-parent">
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r}">
+                                            <a href="" onclick="{!c.handleClickForAss}" data-record="{!cc.Id}" >{!cc.Name}</a>
+                                        </div>
+                                        
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.CompanyName}">{!cc.Company_Name_French__c}</div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.CompanyName}">{!cc.Mandate_Start_Date__c }</div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                            {!cc.Assignment_Status__c}
+                                        </div>
+                                    </td>
+                                    
+                                </tr>
+                            </aura:iteration>   
+                        </tbody>
+                    </table>
+                    <footer class="slds-modal__footer border" >
+                        <lightning:button class="slds-button slds-button_brand" name='CLOSE,' label='CLOSE' onclick='{!c.closeModel}'/>
+                    </footer>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    
+</aura:component>

@@ -1,0 +1,43 @@
+<apex:page standardController="Mandate__c" extensions="Nubik_HumanCapitalStudyController">
+	<apex:includeScript value="//code.jquery.com/jquery-2.1.1.js"/>
+	<script type="text/javascript">
+		var j$ = jQuery.noConflict();
+		function openConga() {
+			
+			if (j$("[id$='startDateId']").val() == '' || j$("[id$='endDateId']").val() == '') {
+				alert('Please insert valid values for the Start and End dates');
+			}
+			else{
+				doNext();
+			}
+		}
+	</script>
+	<apex:PageMessages />
+	<apex:form >
+        <apex:actionFunction name="doNext" action="{!next}" rerender="theBlock" status="resultStatus"/>
+		<apex:pageBlock id="tehBlock" title="Human Capital Study">
+			<apex:pageBlockButtons location="bottom">
+      			<apex:actionStatus id="resultStatus" >
+			     	<apex:facet name="start">
+			     		<img class="waitingImage" src="/img/loading.gif"/>
+			     		Generating PDF, please wait...
+			     	</apex:facet>
+			     	<apex:facet name="stop">	
+			     		<apex:commandButton value="Continue" status="resultStatus" onClick="openConga();" rerender="theBlock"/>
+			     	</apex:facet>
+			  	</apex:actionStatus>
+	       	</apex:pageBlockButtons>
+	      	<apex:pageBlockSection title="Filters to generete the report." columns="1">
+	      		<apex:pageBlockSectionItem >
+	      			<apex:outputLabel value="Date Debut"/>
+	      			<apex:inputText value="{!dateDebut}" onfocus="DatePicker.pickDate(false, this, false);" id="startDateId"/> 
+	      		</apex:pageBlockSectionItem>
+        		<apex:pageBlockSectionItem >
+	      			<apex:outputLabel value="Date Fin"/>
+	      			<apex:inputText value="{!dateFinish}" onfocus="DatePicker.pickDate(false, this, false);" id="endDateId"/>
+	      		</apex:pageBlockSectionItem>
+	     	</apex:pageBlockSection>	
+	     	
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

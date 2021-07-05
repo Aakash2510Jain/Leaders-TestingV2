@@ -1,0 +1,109 @@
+<aura:component controller="BiographyDataEntryLightning" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+	
+    <aura:attribute name="displayOPComp" type="boolean" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="contact" type="Object" description="The record object to be displayed" />
+    <aura:attribute name="contactRecord" type="Object" description=" A simplified view record object to be displayed" />
+    
+    <aura:attribute name="recordSaveError" type="String" description="An Error message bound to force:recordData" />
+    
+    <force:recordData aura:id="conRec"
+                      layoutType="FULL"
+                      recordId="{!v.recordId}"
+                      targetError="{!v.recordSaveError}"
+                      targetRecord="{!v.contact}"
+                      targetFields="{!v.contactRecord}"
+                      mode="EDIT"
+                      recordUpdated="{!c.recordUpdated}" />
+    <!-- add recordUpdated parameter in force:recordData -->
+    
+    <section aura:id="Modalbox" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Edit One Pager</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <!-- <p><b>The goal of this blog is to provide tips and tricks/workarounds for salesforce developer and admins.
+                            Many of us face the same issues and have the same questions when using and implementing Salesforce.
+                            As a community of users and developers, it is important for us to share our experiences.
+                            I try to reach out to other users and help the Salesforce community in general.
+                            Much of this blog will focus on Lightning(code &amp; config.) but I will also
+                            cover some of the more basic topics in salesforce.
+                            </b>
+                        </p> -->
+                        
+                        <div class="slds-grid slds-gutters">
+                                   <div class="slds-col slds-medium-size_1-of-3">
+                                   <span>
+                                      	<lightning:tabset selectedTabId="English" >
+                       					<lightning:tab label="English" id="English">
+                            			<h2 class="header">Profile</h2>
+                         				<lightning:inputRichText aura:id="profile" label="Profile" value="{!v.contactRecord.Profile__c}" />
+                         				<br></br>
+			                         	 <h2 class="header">Strengths</h2>
+                                        <lightning:inputRichText aura:id="Strength" label="Strengths" value="{!v.contactRecord.Strengths__c}" />
+                        				</lightning:tab>
+                                        <br></br>
+                            
+                                            <h2 class="header">Areas For Development</h2>
+                                        <lightning:inputRichText aura:id="AreasForDev" label="Areas For Development" value="{!v.contactRecord.Areas_for_Development__c}" />
+                                       
+                       				    <lightning:tab label="2nd Language" id="French">
+                            
+                                        <h2 class="header">Profile(2)</h2>
+                                        <lightning:inputRichText aura:id="profile" label="Profile" value="{!v.contactRecord.Profile_FR__c}" />
+                                        <br></br>
+                                        <h2 class="header">Strengths(2)</h2>
+                                        <lightning:inputRichText aura:id="Strength" label="Strengths" value="{!v.contactRecord.Points_forts__c}" />
+                                        <br></br>
+                            
+                                            <h2 class="header">Areas For Development(2)</h2>
+                                        <lightning:inputRichText aura:id="AreasForDev" label="Areas For Development" value="{!v.contactRecord.Points_de_developpement__c}" />
+                                        
+                                        </lightning:tab>    
+                                        </lightning:tabset> 
+                                       
+                                   </span>
+                                   </div>
+                                   <div class="slds-col slds-medium-size_2-of-3">
+                                   <span>
+                                    
+                                     <!--  <iframe src="{! 'https://leadersinternational_search_c.cs79.visual.force.com/apex/ViewCV?id='+v.recordId}" width="100%" height="800px;" frameBorder="0" /> -->
+                                       <iframe src="{! $Site.CurrentSiteUrl+'/apex/ViewCV?id='+v.recordId}" width="100%" height="800px;" frameBorder="0" />
+                                   </span>
+                                   </div>
+  
+                        </div>
+                        
+                        
+                        
+                        
+                         
+                        
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{!c.closeModel }"/>
+                        <lightning:button variant="brand" 
+                                          label="Save"
+                                          title="Save"
+                                          onclick="{!c.saveRecord }"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+              
+    
+    
+</aura:component>

@@ -1,0 +1,78 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" controller="MandateAndRelatedAssgnmentHelper" access="global" >
+    <aura:attribute name="application" type="object"/>
+    <aura:attribute name="paginationList" type="object"/>
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:attribute name="recordId" type="String" default="a011100000kZ8NkAAK"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="totalSize" type="Integer"/>
+    <aura:attribute name="start" type="Integer" default="0"/>
+    <aura:attribute name="end" type="Integer"/>
+    
+    <lightning:card>
+        <lightning:layout>
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped">
+                <thead>
+                    <tr>
+                        <th>
+                            First Name
+                        </th>
+                        <th>
+                            Last Name
+                        </th>
+                        <th>
+                            Email
+                        </th>
+                        <th>
+                            Mobile
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Language
+                        </th>
+                        <th>
+                            Company
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.paginationList}" var="x" >
+                        <tr>
+                            <td>
+                                {!x.First_Name__c}
+                            </td>
+                            <td>
+                                {!x.Last_Name__c}
+                            </td>
+                            <td>                       
+                                {!x.Email__c}
+                            </td>
+                            <td>                     
+                                {!x.Phone__c}
+                            </td>
+                            <td>                        
+                                {!x.Status_Summary_Line__c}
+                            </td>
+                            <td>                        
+                                {!x.Language__c}
+                            </td>
+                            <td>                        
+                                {!x.mandate_company_name__c}
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table><br/>
+            
+        </lightning:layout><br/>
+        <lightning:button label="First" disabled="{!v.start == 0}"  onclick="{!c.first}" />
+        
+        <lightning:button label="Previous" disabled="{!v.start == 0}"  onclick="{!c.previous}" />
+        
+        <lightning:button label="Next" class="slds-float_right" disabled="{!v.end >= v.totalSize}" onclick="{!c.next}" />
+        
+        <lightning:button label="Last" class="slds-float_right" disabled="{!v.end >= v.totalSize}" onclick="{!c.last}" />
+    </lightning:card>
+    
+</aura:component>

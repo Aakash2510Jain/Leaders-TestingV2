@@ -1,0 +1,150 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="SelfAssessmentClass" >
+    
+    <aura:attribute name="recordId" type="String"  />
+    <aura:attribute name="self_Ass_Values" type= "Self_Assesment__c[]" default=""/>
+    <aura:attribute name="self_Ass_Values_1" type= "Object" default=""/>
+    <aura:attribute name="self_Ass_Sel_Values" type= "String[]" default=""/>
+    <aura:attribute name="deleteList" type= "String[]" />
+    <aura:attribute name="Self_Ass_Created" type="String" />
+    <aura:attribute name="ButtonClassForSelf" type="String" />
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <aura:attribute name="displaySelfAssesment" type="Boolean" />
+    <aura:attribute name="Is_English" type="Boolean" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:attribute name="checkSpinner" type="boolean" default="false"/>
+    
+    <aura:attribute name="tabId" type="String" default="2"/>
+    
+    <aura:if isTrue="{!v.checkSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </div>
+    </aura:if>
+    
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>   
+    
+    <aura:if isTrue="{!v.displaySelfAssesment}">
+            <section aura:id="Modalbox" role="dialog" class="slds-modal slds-fade-in-open slds-modal_medium">
+                <div class="slds-scrollable_y" style="height:100%;">
+                    
+                    <div class="slds-modal__container">
+                        <!-- ###### MODAL BOX HEADER Start ######-->
+                        
+                        <header class="slds-modal__header">
+                            <lightning:buttonIcon iconName="utility:close"
+                                                  onclick="{!c.closeModel }"
+                                                  alternativeText="close"
+                                                  variant="bare-inverse"
+                                                  class="slds-modal__close"/>
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b><span class="blueText">Self-Assessment</span></b></h2>
+                        </header>
+                        
+                        <div style="max-height: 860px" class="slds-modal__content slds-p-around_medium">
+                            <aura:if isTrue="{!v.displaySelfAssesment}">
+                                <div class="slds-scrollable_y" style="height:100%;">
+                                    <lightning:tabset selectedTabId="{!v.tabId}" aura:id="tabs" >
+                                        <div style="margin-left:2%">
+                                            <lightning:tab label="English" id="1">
+                                                <aura:iteration items="{!v.self_Ass_Values}" var="al" indexVar="i" >
+                                                    <div class="slds-dl_inline">
+                                                        
+                                                        <td  class="leftmarbody">
+                                                            <lightning:textarea maxlength="1000" value="{!al.English__c}"/>
+                                                        </td>
+                                                        <td>
+                                                            <button class=" slds-button slds-button_brand topmarbody leftMargin5Per" name="{!al.Id}" data-row-index="{!i}" onclick="{!c.remove}">
+                                                                Remove
+                                                            </button>
+                                                        </td>
+                                                    </div>
+                                                    <br/>
+                                                    
+                                                </aura:iteration>
+                                            </lightning:tab>
+                                            
+                                            <lightning:tab label="2nd Language"  id="2">
+                                                
+                                                <aura:iteration items="{!v.self_Ass_Values}" var="al" indexVar="i" >
+                                                    <tr>
+                                                        <td class="leftmarbody">
+                                                            <lightning:textarea maxlength="1000" value="{!al.French__c}"/>
+                                                        </td>
+                                                        <td>
+                                                            <button class="slds-button slds-button_brand topmarbody leftMargin5Per" name="{!al.Id}" data-row-index="{!i}" onclick="{!c.remove}">
+                                                                Remove
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <br/>
+                                                    
+                                                </aura:iteration>
+                                                
+                                            </lightning:tab>   
+                                        </div>
+                                    </lightning:tabset> 
+                                    
+                                    <aura:set attribute="else">
+                                        
+                                        <lightning:tabset selectedTabId="English" >
+                                            <div style="margin-left:2%">
+                                                <lightning:tab label="English" id="English">
+                                                    <aura:iteration items="{!v.self_Ass_Values}" var="al" indexVar="i" >
+                                                        <tr>
+                                                            <td  class="leftmarbody">
+                                                                <lightning:input type="text"   value="{!al.English__c}" disabled=""/>
+                                                            </td>
+                                                            <td>
+                                                                <button class="slds-button slds-button_brand topmarbody leftMargin5Per" name="{!al.Id}" data-row-index="{!i}" onclick="{!c.remove}">
+                                                                    Remove
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        <br/>
+                                                        
+                                                    </aura:iteration>
+                                                </lightning:tab>
+                                                
+                                                <lightning:tab label="2nd Language" id="French">
+                                                    <aura:iteration items="{!v.self_Ass_Values}" var="al" indexVar="i" >
+                                                        <tr>
+                                                            <td  class="leftmarbody">
+                                                                <lightning:input type="text"    value="{!al.French__c}" disabled=""/>
+                                                            </td>
+                                                            <td  >
+                                                                <button class="slds-button slds-button_brand topmarbody leftMargin5Per" data-row-index="{!i}" onclick="{!c.remove}">
+                                                                    Remove
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        <br/>
+                                                        
+                                                    </aura:iteration>
+                                                </lightning:tab>   
+                                            </div>
+                                        </lightning:tabset> 
+                                        
+                                    </aura:set>
+                                </div>
+                            </aura:if>
+                            
+                        </div>
+                        
+                        <!--###### MODAL BOX FOOTER Part Start ######-->
+                        <footer class="slds-modal__footer">
+                            <div class="slds-col slds-size_2-of-3">
+                                <span>
+                                    <lightning:button variant="brand" label="Add Row" onclick="{!c.add}"/>
+                                    
+                                    <lightning:button variant="brand" onclick="{!c.save}" label="Save"></lightning:button>
+                                    <lightning:button variant="Neutral"  onclick="{!c.closeModel}" label="Cancel"></lightning:button>
+                                </span>
+                            </div>
+                        </footer>
+                         </div>
+                    </div>
+               
+            </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>

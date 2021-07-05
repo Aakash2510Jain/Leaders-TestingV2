@@ -1,0 +1,52 @@
+<aura:component controller="SearchAssignemntCtrl" >
+    <aura:attribute name="record" type="sObject" />
+    <aura:attribute name="fieldName" type="String"/>
+    <aura:attribute name="JobDescId" type="String"/>
+    <aura:attribute name="JDid" type="String"/>
+    <aura:attribute name="fieldValue" type="String"/>
+    <aura:attribute name="CompanyId" type="String"/>
+    <aura:attribute name="displayJD" type="Boolean"/>
+    <aura:attribute name="PeopleDetails" type="contact[]"/>
+    <aura:attribute name="recordId" type="string" default="{!v.record.Id}"/>
+    <aura:attribute type="Boolean" name="searchAss" default="false" />
+    <aura:attribute type="Boolean" name="ShowAssPage" default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:attribute name="ShowCompPage" type="boolean"/>
+    
+    <aura:if isTrue="{!v.searchAss}">
+        <aura:if isTrue="{!or(v.fieldName=='Name')}">
+            <a href="{! $Site.CurrentSiteUrl+'/lightning/cmp/c__AssignmentCandidatesPageComp?c__mandateId='+(v.recordId)}" target="_blank">{!v.fieldValue}</a>
+            <aura:set attribute="else">
+                <aura:if isTrue="{!or(v.fieldName=='Has_Job_Description__c')}">
+                    <aura:if isTrue="{!v.fieldValue}">
+                        <div style="margin-left: 30px;">
+                            <lightning:icon class="slds-icon_container slds-icon-action-approval " iconName="action:approval" size="xx-small" onclick="{!c.showJobDesc}" />
+                        </div>
+                        <aura:set attribute="else">
+                            <div style="margin-left: 30px;">
+                                <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                    <aura:set attribute="else">
+                        {!v.fieldValue}
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+        <aura:set attribute="else">
+            <aura:if isTrue="{!or(v.fieldName=='Name')}">
+                <a href="{! $Site.CurrentSiteUrl+'/'+(v.record.ParentId!= null?'servlet/servlet.FileDownload?file='+v.recordId:v.recordId)}" target="_blank">{!v.fieldValue}</a>
+                <aura:set attribute="else">
+                    {!v.fieldValue}
+                </aura:set>
+            </aura:if>
+            
+        </aura:set>
+    </aura:if>
+    
+    <!--aura:if isTrue="{!v.ShowAssPage}">
+        <c:AssignmentDetailsOnSearchPage ShowAssPage="{!v.ShowAssPage}"  />
+    </aura:if-->
+</aura:component>

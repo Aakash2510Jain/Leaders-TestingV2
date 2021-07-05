@@ -1,0 +1,7 @@
+<apex:page controller="AssignmentAttachmentCtrl">
+	
+	<apex:form >
+		<c:AttachmentComponent parentId="{!mId}"/>
+	</apex:form>
+
+</apex:page>

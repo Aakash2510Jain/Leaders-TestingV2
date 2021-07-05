@@ -1,0 +1,39 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+	<aura:attribute name="title" type="String" default="Title" access="global" />
+    <aura:attribute name="competencies" type="Map[]" default="[]" access="global" />
+     <aura:attribute name="countCompetencies" type="Map" default="{}" access="global" />
+    <aura:attribute name="competenciesSelected" type="Map" default="{}" access="global" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div class="form slds-p-bottom_small">
+        <lightning:card >
+            <aura:set attribute="title">
+               {!v.title}
+            </aura:set>
+            
+            <div class="c-container slds-p-horizontal_small">
+
+               
+
+                    <lightning:accordion activeSectionName="Droit">
+                        <aura:iteration items="{!v.competencies}" var="domain">
+                            <lightning:accordionSection name="{!domain.label}" label="{!domain.label+' ('+domain.countCompetenciesSelected+')'}">
+
+                                <div class="slds-grid slds-wrap">
+                                    <aura:iteration items="{!domain.items}" var="competency">
+                                      <div class="slds-size_1-of-1 slds-large-size_1-of-3 slds-medium-size_1-of-2 slds-small-size_1-of-1">
+                                         <lightning:input aura:id="cmpCheckbox" type="checkbox" label="{!competency}" name="{!domain.label+'__'+competency}" checked="false" value="{!domain.label+'__'+competency}" onchange="{!c.updateInput}" />
+                                      </div>
+                                    </aura:iteration>
+                              </div>
+                            </lightning:accordionSection>
+                         </aura:iteration>
+                    </lightning:accordion>
+               
+            </div>
+             
+         
+        </lightning:card>
+    </div>
+</aura:component>

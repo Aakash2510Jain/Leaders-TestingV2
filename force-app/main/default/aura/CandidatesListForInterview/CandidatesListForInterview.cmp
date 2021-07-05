@@ -1,0 +1,88 @@
+<aura:component >
+    
+    <aura:attribute name="recordList" type="List" required="true"/>
+    <aura:attribute name="isSelectAll" type="Boolean" default="true"/>
+    <aura:attribute name="addRow" type="Boolean" default="false"/>
+    <aura:attribute name="today" type="Date" default=""/>
+    <aura:attribute name="nonPotentialCandidatesList" type="List"  default="[]"/>
+    <aura:attribute name="potentialCandidatesList" type="List"  default="[]"/>
+    <aura:attribute name="totalCandidates" type="List"  default="[]"/>
+    <aura:attribute name="listOfSearchRecords" type="List" default="" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="colors" type="String[]" default="12:00 AM,12:30 AM,1:00 AM,1:30 AM,2:00 AM,2:30 AM,3:00 AM,3:30 AM,4:00 AM,4:30 AM,5:00 AM,5:30 AM,6:00 AM,6:30 AM,7:00 AM,7:30 AM,8:00 AM,8:30 AM,9:00 AM,9:30 AM,10:00 AM,10:30 AM,11:00 AM,11:30 AM,12:00 PM,12:30 PM,1:00 PM,1:30 PM,2:00 PM,2:30 PM,3:00 PM,3:30 PM,4:00 PM,4:30 PM,5:00 PM,5:30 PM,6:00 PM,6:30 PM,7:00 PM,7:30 PM,8:00 PM,8:30 PM,9:00 PM,9:30 PM,10:00 PM,10:30 PM,11:00 PM,11:30 PM,12:00 PM"/>
+    
+    <aura:attribute name="selectedtime" type="String" default=""/>
+    
+    <aura:method name="sampleMethod" action="{!c.addRow}" />
+    
+    <div class="slds-m-around_xx-large">
+        <h1 class="slds-text-heading--medium">Candidates</h1>
+        <br/>
+        <!--Contact List Table-->
+        <table class="slds-table slds-table--bordered slds-table--cell-buffer" role="grid">
+            <thead>
+                <tr class="slds-text-title--caps">
+                    <th scope="col">
+                        <div class="slds-truncate" title="Name">Candidate-Name</div>
+                    </th>
+                    
+                    <th scope="col">
+                        <div class="slds-truncate" title="Name">Name</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Name">SELECT DATE</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Name">SELECT TIME</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Name">CLEAR</div>
+                    </th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <aura:if isTrue="{!!empty(v.recordList)}">
+                    <aura:iteration var="appRec" items="{!v.recordList}" indexVar="i">
+                        <tr>
+                            
+                            <td><ui:outputText value="{!appRec.Name}"/></td>
+                            <td><ui:outputText value="{!appRec.Contact__r.Name}"/></td>
+                            <td>
+                                <ui:inputDate aura:id="expdate" value="{!appRec.Interview_Date__c }" class="field"  displayDatePicker="true" />
+                            </td>
+                            <td >
+                                <lightning:select name="select" class="slect" value="{!appRec.Schedule_Interview_Time__c }" >
+                                    <option value="">-- None --</option>
+                                    <aura:iteration items="{!v.colors}" var="color">
+                                        <option value="{!color}" text="{!color}"></option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </td>
+                            <td>
+                                <button class=" slds-button slds-button_brand topmarbody leftMargin5Per" name="{!appRec.Id}" data-row-index="{!i}" onclick="{!c.remove}">
+                                    Clear
+                                </button>
+                            </td>
+                        </tr>
+                        
+                    </aura:iteration>
+                </aura:if>
+                <aura:if isTrue="{!v.addRow}">
+                    <tr>
+                        <td>
+                            <ui:outputText />
+                        </td>
+                        
+                        <td>
+                            <ui:inputDateTime aura:id="today"   class="field"  displayDatePicker="true" />
+                        </td>
+                    </tr>
+                    
+                </aura:if>
+                
+            </tbody>
+        </table>
+    </div>
+    
+</aura:component>

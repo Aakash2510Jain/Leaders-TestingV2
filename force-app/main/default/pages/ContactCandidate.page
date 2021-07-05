@@ -1,0 +1,111 @@
+<apex:page controller="ContactCandidateCtrl" tabstyle="Contact">
+
+	<apex:form >
+	
+		<apex:pageBlock title="Contact Edit">
+		
+			<apex:pageBlockButtons >
+                 <apex:commandButton value="Save" action="{!save}"/>
+                 <apex:commandButton value="Cancel" action="{!cancel}" immediate="true"/>
+             </apex:pageBlockButtons>
+		
+			 <apex:pageBlockSection columns="2" title="Contact Information">
+			     
+			     <apex:pageBlockSectionItem >
+			 	 	<apex:outputPanel >
+                        <label >{!$ObjectType.Contact.fields.FirstName.label}</label>
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="block">
+                        <apex:inputField value="{!contact.Salutation}" /> 
+			 	 		<apex:inputField value="{!contact.FirstName}" />
+                    </apex:outputPanel> 
+			 	 </apex:pageBlockSectionItem> 
+			 	 
+			 	 <!-- Contact Owner  -->     
+			     <apex:pageBlockSectionItem >
+			 	 	<apex:outputPanel >
+                        <label >Owner Name</label>
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="block">
+                        <apex:outputText value="{!userName}" /> 
+                    </apex:outputPanel> 
+			 	 </apex:pageBlockSectionItem> 
+			     			 	 
+			 	 <apex:inputField value="{!contact.LastName}" required="true"/>  
+			 	 <apex:inputField value="{!contact.Phone}" /> 
+			 	 
+			 	 <apex:inputField value="{!contact.Language__c}" required="true"/>  
+			 	 <apex:inputField value="{!contact.MobilePhone}" />  
+			 	 
+			 	 <apex:inputField value="{!contact.Functional_Area_1__c}" required="true"/>  
+			 	 <apex:inputField value="{!contact.HomePhone}" />
+			 	  
+			 	 <apex:pageBlockSectionItem /> 
+			 	 <apex:inputField value="{!contact.Email}" />	
+			 	 
+			 	 <apex:pageBlockSectionItem /> 
+			 	 <apex:inputField value="{!contact.Secondary_Email__c}" />
+			 	 
+			 	 <apex:pageBlockSectionItem /> 
+			 	 <apex:inputField value="{!contact.ReportsToId}" />  				 	 
+			 
+			 </apex:pageBlockSection>
+		
+			 <apex:pageBlockSection columns="2" title="Diversity elements">
+			 
+			 	 <apex:inputField value="{!contact.Gender__c}" />  
+			 	 <apex:inputField value="{!contact.Education__c}" />
+			 	 
+			 	 <apex:inputField value="{!contact.Years_Of_Experience__c}" /> 
+			 	 <apex:inputField value="{!contact.City__c}" />
+			 	 
+			 	 <apex:inputCheckbox value="{!contact.Speaks_English__c}" />  
+			 	 <apex:inputField value="{!contact.Region__c}" />
+			 	 
+			 	 <apex:inputCheckbox value="{!contact.Speaks_French__c}" />  
+			 	 <apex:inputField value="{!contact.Province__c}" />
+			 	 
+			 	 <apex:inputField value="{!contact.Other_Language_Specify__c}" />  
+			 	 <apex:inputField value="{!contact.Country__c}" />
+			 	 			 	 
+			 </apex:pageBlockSection>
+			 
+			 <apex:pageBlockSection columns="2" title="Current Experience">
+			 
+			 	 <apex:inputField value="{!contact.AccountId}" required="true"/> 
+			 	 <apex:inputField value="{!contact.Title_FR__c}" />
+			 	 
+			 	 <apex:inputField value="{!contact.Title__c}" required="true"/>
+			 	 <apex:pageBlockSectionItem /> 
+			 
+			 </apex:pageBlockSection>
+			 
+			  <apex:pageBlockSection columns="1" title="Compensation">
+			 
+			 	 <apex:inputField value="{!contact.Base_Salary__c}" /> 
+			 	 <apex:inputField value="{!contact.Bonus__c}" />
+			 	 <apex:inputField value="{!contact.Allowance__c}" />
+			 	 <apex:inputField value="{!contact.Other__c}" />
+			 	 <apex:inputField value="{!contact.Compensation_additional_info__c}" />
+			 
+			 </apex:pageBlockSection>
+			 
+			 <apex:pageBlockSection columns="2" title="One-Pager">
+			 
+			 	 <apex:inputField value="{!contact.Profile__c}" /> 
+			 	 <apex:inputField value="{!contact.Profile_FR__c}" />
+			 	 
+			 	 <apex:inputField value="{!contact.Strengths__c}" /> 
+			 	 <apex:inputField value="{!contact.Points_forts__c}" />
+			 	 
+			 	 <apex:inputField value="{!contact.Areas_for_Development__c}" /> 
+			 	 <apex:inputField value="{!contact.Points_de_developpement__c}" /> 
+			 
+			 </apex:pageBlockSection>
+		
+		</apex:pageBlock>
+	
+	
+	</apex:form>
+
+</apex:page>

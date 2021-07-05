@@ -1,0 +1,272 @@
+<aura:component implements="force:appHostable,force:hasRecordId,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" 
+                access="global" controller="AssignCandiLightningController" >
+    <aura:attribute name="mandateRecId" type="String"/>
+    <aura:attribute name="mandateRec" type="Map" default="{}"/>
+    <aura:attribute name="selectedCount" type="Integer" />
+    <aura:attribute name="selectedcandidateIds" type="set" default="[]" />
+    <aura:attribute name="allPotCandidatesBySSL" type="Map" />
+    <aura:attribute name="allCandidatesBySSL" type="Map" />
+    <aura:attribute name="NumberOfCandidate" type="integer"/>
+    <aura:attribute name="potentialCandidateIds" type="List"/>
+    <aura:attribute name="CandidatePage" type="String" />
+    <aura:attribute name="ButtonClassForSelf" type="String" />
+    <aura:attribute name="ButtonClassForOP" type="String" />
+    <aura:attribute name="ButtonClassForRR" type="String" />
+    <aura:attribute name="ButtonClassForHCSL" type="String" />
+    <aura:attribute name="ButtonClassForSL" type="String" />
+    <aura:attribute name="ButtonClassForCL" type="String" />
+    <aura:attribute name="ButtonClassRL" type="String" />
+    <aura:attribute name="ShowToolTip" type="Boolean" />
+    <aura:attribute name="PageType" type="String" default="CandidateListPage" />
+    <aura:attribute name="displayCandidateList" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="displaySelfAssesment" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="displayOnePager" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="displayAgenda" type="Boolean" default="false" />
+    <aura:attribute name="displayRadar" type="Boolean" default="false" />
+    <aura:attribute name="Is_English" type="Boolean" />
+    <aura:attribute name="Self_Ass_Created" type="Boolean" default="false"/>
+    <aura:attribute name="Radar_Rat_Created" type="Boolean" />
+    <aura:attribute name="OP_Created" type="Boolean" default="false"/>
+    <aura:attribute name="spinner" type="boolean" default="false" />
+     <aura:attribute name="InternalLength" type="integer"  />
+    <aura:attribute name="ClientLength" type="integer"  />
+    
+    <aura:attribute name="displayExec_Summ" type="Boolean" default="false" />
+    <aura:attribute name="displaySchdIntr" type="Boolean" default="false" />
+    <aura:attribute name="displayClientList" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="displaySourceList" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="displayRawList" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="displayNewRelAssign" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="showFileUpload" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="displayLeadersReportModal" type="boolean" default ="false" ></aura:attribute>
+    <aura:attribute name="displaySendEmail" type="boolean" default ="false" ></aura:attribute>
+    <aura:attribute name="displayChangeSSLOriginModal" type="boolean" default = "false"/>
+    <aura:attribute name="displayAddCandidateToOtherAssignment" type="boolean" default = "false"/>
+    <aura:attribute name="displayNewCandidate" type="boolean" default = "false"/>
+    <aura:attribute name="displayManReview" type="boolean" default = "false"/>
+    <aura:attribute name="confirmPopUp" type="boolean" default = "false"/>
+    <aura:attribute name="nonPotentialCandidatesList" type="List"  default="[]"/>
+    <aura:attribute name="potentialCandidatesList" type="List"  default="[]"/>
+    
+    <aura:attribute name="candidatesMap" type="String" access="global" default=""/>
+    <aura:attribute name="candidateRecordList" type="List" default="[]"/>
+    <aura:attribute name="emailIdList" type="List" default="[]"/>
+    <aura:attribute name="selectedApplication" type="Application__c[]"/>
+    <aura:attribute name="candidateLength" type="Integer" default="0"/>
+    <aura:attribute name="showNotesAndAttachment" type="Boolean" default="false" />
+    <aura:attribute name="showConfirmDialog" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.reInit}" /> 
+    
+    <aura:handler event="c:newRelatedAssignmentEvent" action="{!c.handleNewRelAssignmentEvent}" />
+    <aura:handler event="c:AssignmentCandidatesCompEvent" action="{!c.handleAssignmentCandidatesCompEvent}" />
+    <aura:registerEvent name="selectPotentialEvent" type="c:selectPotentialEvt"/>
+    
+    <lightning:card title="" >
+        <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>   
+        
+        <div style="margin:1%">
+            <lightning:layout>
+                <lightning:button label="Add Candidate" title=" Add Candidate"  variant="brand" onclick="{!c.addCandidate}"></lightning:button>
+                <lightning:button label="Add Candidate to another Assignment" title="Add Candidate to another Assignment" variant="brand" onclick="{!c.addCandidateToOtherAsignment}"/>
+                <lightning:button label="Change SSL Origin" title="Change SSL Origin" variant="brand" onclick="{!c.openChangeSSLModal}"></lightning:button>
+                <lightning:button label="Select all potential Candidates" title="Select all potential Candidates" variant="brand" onclick="{!c.selectPotential}"></lightning:button>
+                
+                <lightning:button label="Delete Candidates" title="Select all potential Candidates" variant="brand" onclick="{!c.deleteCandidates}"></lightning:button>
+                <!--Delete Warning-->    
+                <aura:if isTrue="{!v.showConfirmDialog}">
+                    <!--Modal Box Start-->
+                    <div role="dialog" class="slds-modal slds-fade-in-open ">
+                        <div class="slds-modal__container">
+                            <!--Modal Box Header Start-->
+                            <header class="slds-modal__header">
+                                <h1 class="slds-text-heading--medium">Confirmation</h1>
+                            </header>
+                            <!--Modal Box Header End-->
+                            
+                            <!--Modal Box Content Start-->
+                            <div class="slds-modal__content slds-p-around--medium">
+                                <center><b>Are you sure you want to delete this item?</b></center>
+                            </div>
+                            <!--Modal Box Content End-->
+                            
+                            <!--Modal Box Button Start-->
+                            <footer class="slds-modal__footer">
+                                <lightning:button name='No' label='No' onclick='{!c.handleConfirmDialogNo}'/>
+                                <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.handleConfirmDialogYes}'/>
+                            </footer>
+                            <!--Modal Box Button End-->
+                        </div>
+                    </div>
+                    <div class="slds-backdrop slds-backdrop--open"></div>            
+                </aura:if>
+                
+                <lightning:button label="Human Capital Study List" title="Human Capital Study List" class="{!v.ButtonClassForHCSL}" variant="brand" onclick="{!c.CandidateList}" ></lightning:button>
+                
+                <lightning:button label="Source List" title="Source List" variant="brand" class="{!v.ButtonClassForSL}"  onclick="{!c.SourceList}" ></lightning:button>
+                
+                <lightning:button label="Client List" title="Client List" variant="brand" class="{!v.ButtonClassForCL}" onclick="{!c.ClientList}" ></lightning:button>
+                
+                <lightning:button label="Raw List" title="Raw List" variant="brand" class="{!v.ButtonClassRL}" onclick="{!c.RawList}" ></lightning:button>
+                
+                <!--lightning:button  class="leftMargin" label="Back to montreal Review"  title="Back to montreal Review" variant="brand" onclick="{!c.BackToMontreal}"></lightning:button-->
+                
+            </lightning:layout>
+            
+            <lightning:layout >
+                <lightning:layoutItem padding="around-small">
+                    <div class="header-column">
+                        <b><p class="field-title blueBox" title="Field 1">Assignment Name</p></b>
+                        <p>{!v.mandateRec.Name}</p>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small">
+                    <div class="header-column">
+                        <b><p class="field-title blueBox" title="Field 1">Company</p></b>
+                        <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Account/'+v.mandateRec.Company__r.Id+'/view'}">{!v.mandateRec.Company__r.Name}</a>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small">
+                    <div class="header-column">
+                        <b><p class="field-title blueBox" title="Field 1">Number of days</p></b>
+                        <p class="centerText">{!v.mandateRec.number_of_days__c}</p>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small">
+                    <div class="header-column">
+                        <b><p class="field-title blueBox" title="Field 1" >Total Candidates </p></b>
+                        <p class="centerText">{!v.candidateLength}</p>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small">
+                    <div class="header-column">
+                        <b><p class="field-title blueBox" title="Field 1" >Internal Interviews</p></b>
+                        <p class="centerText">{!v.InternalLength}</p>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small">
+                    <div class="header-column">
+                        <b><p class="field-title blueBox" title="Field 1" >Client Interviews</p></b>
+                        <p class="centerText">{!v.ClientLength}</p>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small">
+                    <div class="header-column">
+                        <b><p class="field-title blueBox" title="Field 1" >Potential Candidates </p></b>
+                        <p class="centerText">{!v.mandateRec.Number_of_potential_candidates__c}</p>
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+            <lightning:layout>
+            </lightning:layout>
+            <lightning:layout>
+                <lightning:button label="Assignment Details" title="Assignment Details" variant="brand" onclick="{!c.handleAssignmentDetails}" ></lightning:button>
+                <lightning:button label="Upload Files" title="Upload Files" variant="brand" onclick="{!c.uploadFile}" ></lightning:button>
+                <lightning:button variant="brand" label="Files" Name="Files" Title="Files" onclick="{!c.showNotesAndAttachment}" />
+                <div style="margin-left:2px;margin-right:2px">
+                    <button class="slds-button slds-button_brand" aria-describedby="help" aria-disabled="true" onmouseover = "{!c.handlehover}" onmouseout="{!c.closeToolTip}" >Status Count</button>
+                    <aura:if isTrue="{!v.ShowToolTip}">
+                        <div class="slds-popover popoverWidth slds-nubbin_bottom-down" role="tooltip" style="position:absolute;top:4%;left:23%;color:white;">
+                            <div style="margin:5%">
+                                <aura:iteration items="{!v.allPotCandidatesBySSL}" var="al">
+                                    <span>{!al.SSLname}  : <b>{!al.Count}</b></span>
+                                    <br/>
+                                </aura:iteration>
+                                <br/>
+                                <aura:iteration items="{!v.allCandidatesBySSL}" var="al">
+                                    <span>{!al.SSLname}  : <b>{!al.Count}</b></span>
+                                    <br/>
+                                </aura:iteration>
+                                <br/>
+                                <div style="font-size: 15px;">
+                                    <b>
+                                        Total Candidates : {!v.NumberOfCandidate}
+                                    </b>
+                                </div>
+                            </div>
+                        </div>
+                    </aura:if>
+                </div>
+                
+                <lightning:button label="One-Pager" title="Create One Pager" class="{!v.ButtonClassForOP}" variant="brand" onclick="{!c.CreateOnePager}" ></lightning:button>
+                <lightning:button label="Radar-Rating" title="Radar" class="{!v.ButtonClassForRR}" variant="brand" onclick="{!c.OnePagerAlert}" ></lightning:button>
+                <lightning:button label="Self-Assessment" title="Create Self Assessment" class="{!v.ButtonClassForSelf}" variant="brand" onclick="{!c.CreateSelfAssesment}" ></lightning:button>
+                <!-- <lightning:button label="Agenda" title="Create Agenda" variant="brand" onclick="{!c.CreateAgenda}" ></lightning:button>
+                <lightning:button label="Executive Summary" title="Create EXECUTIVE SUMMARY LINE" variant="brand" onclick="{!c.CreateExecSumm}" ></lightning:button> -->
+                <lightning:button label="Schedule Interview" title="Schedule Interview" variant="brand" class="brand" onclick="{!c.handleScheduleInterview}" ></lightning:button>
+                
+                <lightning:button label="Leaders Report" title="Leaders Report" variant="brand" class="forestGreen" onclick="{!c.handleLeadersReport}" ></lightning:button>
+                <lightning:button label="Send Email" title="Send Email" variant="brand"  onclick="{!c.sendEmail}" ></lightning:button>
+            </lightning:layout>
+        </div>
+        
+        <Aura:if isTrue="{!v.displayCandidateList}">
+            <c:AssignmentCandidatesComp allCandidatesBySSL="{!v.allCandidatesBySSL}" InternalLength="{!v.InternalLength}" ClientLength="{!v.ClientLength}" nonPotentialCandidatesList="{!v.nonPotentialCandidatesList}" potentialCandidatesList = "{!v.potentialCandidatesList}" NumberOfCandidate="{!v.NumberOfCandidate}" allPotCandidatesBySSL="{!v.allPotCandidatesBySSL}"  mandateRecId="{!v.mandateRecId}" candidateLength="{!v.candidateLength}"    potentialCandidateIds="{!v.potentialCandidateIds}" PageType="{!v.PageType}" candidatesMap="{!v.candidatesMap}" mandateRec="{!v.mandateRec}"/>  
+        </Aura:if>   
+        
+        <Aura:if isTrue="{!v.displaySourceList}">
+            <c:AssignmentCandidatesComp allCandidatesBySSL="{!v.allCandidatesBySSL}" InternalLength="{!v.InternalLength}" ClientLength="{!v.ClientLength}" NumberOfCandidate="{!v.NumberOfCandidate}" allPotCandidatesBySSL="{!v.allPotCandidatesBySSL}" mandateRecId="{!v.mandateRecId}" potentialCandidateIds="{!v.potentialCandidateIds}" PageType="{!v.PageType}" candidatesMap="{!v.candidatesMap}" mandateRec="{!v.mandateRec}"/>  
+        </Aura:if>   
+        
+        <Aura:if isTrue="{!v.displayRawList}">
+            <c:AssignmentCandidatesComp allCandidatesBySSL="{!v.allCandidatesBySSL}" InternalLength="{!v.InternalLength}" ClientLength="{!v.ClientLength}" NumberOfCandidate="{!v.NumberOfCandidate}" allPotCandidatesBySSL="{!v.allPotCandidatesBySSL}" mandateRecId="{!v.mandateRecId}" potentialCandidateIds="{!v.potentialCandidateIds}" PageType="{!v.PageType}" candidatesMap="{!v.candidatesMap}" mandateRec="{!v.mandateRec}"/> 
+        </Aura:if>   
+        
+        <Aura:if isTrue="{!v.displayClientList}" >
+            <c:AssignmentCandidatesComp InternalLength="{!v.InternalLength}" ClientLength="{!v.ClientLength}" allCandidatesBySSL="{!v.allCandidatesBySSL}" NumberOfCandidate="{!v.NumberOfCandidate}" allPotCandidatesBySSL="{!v.allPotCandidatesBySSL}" mandateRecId="{!v.mandateRecId}" potentialCandidateIds="{!v.potentialCandidateIds}" PageType="{!v.PageType}" candidatesMap="{!v.candidatesMap}" mandateRec="{!v.mandateRec}"/> 
+        </Aura:if>  
+        
+        <Aura:if isTrue="{!v.displayNewRelAssign}"  >
+            <c:newRelatedAssignmentComp mandateRecId="{!v.mandateRecId}" displayNewRelAssign="{!displayNewRelAssign}"></c:newRelatedAssignmentComp>  
+        </Aura:if> 
+    </lightning:card> 
+    
+    <aura:if isTrue="{!v.displayLeadersReportModal}">
+        <c:LeadersReportComp aura:id="LeadersComp" displayLeadersReportModal="{!v.displayLeadersReportModal}" mandateRecId="{!v.mandateRecId}" selectedcandidateIds="{!v.selectedcandidateIds}" selectedCount="{!v.selectedCount}"  potentialCandidateIds="{!v.potentialCandidateIds}" spinner="{!v.spinner}"></c:LeadersReportComp>
+    </aura:if>
+    
+    <!-- Change origin SSL model -->
+    <aura:if isTrue="{!v.displayChangeSSLOriginModal}">
+        <c:ChangeSSLOriginComp aura:id="changeSSLOrigin" displayChangeSSLOriginModal="{!v.displayChangeSSLOriginModal}" mandateRecId="{!v.mandateRecId}" selectedcandidateIds="{!v.selectedcandidateIds}" selectedCount="{!v.selectedCount}"  potentialCandidateIds="{!v.potentialCandidateIds}" recordList="{!v.candidateRecordList}"></c:ChangeSSLOriginComp>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayAddCandidateToOtherAssignment}">
+        <c:AddCandidatesToOtherAssignment recordList="{!v.candidateRecordList}" ObjectApi="Mandate__c" displayAddCandidateToOtherAssignment="{!v.displayAddCandidateToOtherAssignment}"></c:AddCandidatesToOtherAssignment>
+    </aura:if>
+    <aura:if isTrue="{!v.displayNewCandidate}" >
+        <c:AddNewCandidate  mandate="{!v.mandateRec}" mandateRecId="{!v.mandateRecId}" ObjectApi="Contact" LookupLabel="Search Candidate" displayNewCandidate="{!v.displayNewCandidate}"></c:AddNewCandidate>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displaySendEmail}" >
+        <c:SendEmailComponent mandateRecId="{!v.mandateRecId}" Self_Ass_Created="{!v.Self_Ass_Created}" displaySendEmail="{!v.displaySendEmail}" candidatesList="{!v.selectedcandidateIds}"  emailId="{!v.emailIdList}" aura:id="sendMail"></c:SendEmailComponent>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayManReview}" >
+        <c:AssignmentListComp  />
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showNotesAndAttachment}">
+        <c:RelatedFilesComp mandateId="{!v.mandateRecId}" showThisModal="{!v.showNotesAndAttachment}"></c:RelatedFilesComp>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showFileUpload}">
+        <c:FileUpload_v2 recordId="{!v.mandateRecId}" optionList="['Research Strategy','Signed Contract','Corporate Presentation','Job Description','Executive Summary','Interview Questionnaire','Others']"  showFileUpload="{!v.showFileUpload}"></c:FileUpload_v2>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displaySelfAssesment}">
+        <c:SelfAssesment recordId="{!v.mandateRecId}" ButtonClassForSelf="{!v.ButtonClassForSelf}" Is_English="{!v.Is_English}" Self_Ass_Created="{!v.Self_Ass_Created}"  displaySelfAssesment="{!v.displaySelfAssesment}"></c:SelfAssesment>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayRadar}">
+        <c:RadarRating recordId="{!v.mandateRecId}" ButtonClassForRR="{!v.ButtonClassForRR}" Is_English="{!v.Is_English}" Radar_Rat_Created="{!v.Radar_Rat_Created}"  displayRadar="{!v.displayRadar}"></c:RadarRating>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayOnePager}">
+        <c:OnePager recordId="{!v.mandateRecId}" ButtonClassForOP="{!v.ButtonClassForOP}" Is_English="{!v.Is_English}" OP_Created="{!v.OP_Created}"  displayOnePager="{!v.displayOnePager}"></c:OnePager>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displaySchdIntr}">
+        <c:ScheduleInterview recordId="{!v.mandateRecId}"   displaySchdIntr="{!v.displaySchdIntr}" recordList="{!v.candidateRecordList}"  nonPotentialCandidatesList="{!v.nonPotentialCandidatesList}" potentialCandidatesList = "{!v.potentialCandidatesList}" ></c:ScheduleInterview>
+    </aura:if>
+</aura:component>

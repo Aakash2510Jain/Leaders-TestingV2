@@ -1,0 +1,51 @@
+<apex:component controller="NotesComponentsCtrl" allowDML="true"  >
+    <apex:attribute name="parentId" description="Id of the parent record" type="String" required="true" assignTo="{!contactId}" ></apex:attribute>
+    
+    <apex:pageBlock title="Notes">
+     	
+     
+     
+     	<apex:outputPanel id="list">		
+      	<apex:variable value="{!0}" var="eNum"/>  
+      	<apex:outputText value="No records to display" rendered="{!(noteList.size == 0)}" />
+      	<apex:pageblocktable value="{!noteList}" var="n"  rendered="{!(noteList.size != 0)}" >
+      	
+    <!--  		<apex:column headerValue="Action">
+      		<!--	 <apex:outputLink value="/{!a.Id}/e" target="_blank" style="color:#015ba7">Edit</apex:outputLink>
+      			 <apex:outputText value=" | " /> -->
+      		<!--	 <apex:outputLink value="/servlet/servlet.FileDownload?file={!a.Id}" target="_blank" style="color:#015ba7">View</apex:outputLink>
+      		<!--	 <apex:outputText value=" | " />
+	         <apex:commandLink value="Del" style="color:#015ba7" action="{!removeRowToAttachmentList}" rerender="list" immediate="true" >
+	             <apex:param value="{!eNum}" name="rowToRemove" assignTo="{!rowToRemove}"/>
+	         </apex:commandLink>
+	         <apex:variable var="eNum" value="{!eNum + 1}"/> 
+	    </apex:column> -->
+	    
+	    <apex:column headerValue="Type">
+              	<apex:outputText value="Note" />
+    			</apex:column>
+    			
+    			<apex:column headerValue="Title">
+	        <apex:outputLink value="/{!n.Id}" target="_blank">{!n.Title}</apex:outputLink>
+	    </apex:column>
+         
+         <apex:column headerValue="Detail Note">
+             <apex:outputField Value="{!n.Body}" />
+	    </apex:column>               
+	    
+	    <apex:column headerValue="Last Modified">
+	        <apex:outputField value="{!n.LastModifiedDate}" />
+	    </apex:column>
+	    
+	    <apex:column headerValue="Created By">
+	        <apex:outputField value="{!n.CreatedBy.Name}" />
+	    </apex:column>
+      	 
+      	</apex:pageblocktable>
+     	</apex:outputPanel>
+     </apex:pageBlock>
+        
+    
+    
+    
+</apex:component>

@@ -1,0 +1,107 @@
+<apex:page standardController="Meeting_Note__c" extensions="LeadersReportNoteEditController">
+    
+    
+   
+    
+    
+    <apex:sectionHeader title="Leaders Report Notes Edit" subtitle="New Leaders Report Notes" />
+    <apex:messages id="myMessages" />   
+    
+    <apex:form id="form">
+        <apex:pageBlock title="" mode="Edit">
+            
+            
+                               
+            <!-- INFORMATIONS -->
+            <apex:pageBlockSection title="Information" columns="2" rendered="{!closepopup}" > 
+                
+                <apex:inputField value="{!leaderNote.Contact__c }"/>
+                <apex:inputField value="{!leaderNote.Candidate_Assigned__c  }"/>
+                
+             </apex:pageBlockSection>
+            
+             <apex:pageBlockSection title="Origin" columns="1" rendered="{!openpopup}"> 
+                     <apex:inputField value="{!leaderNote.Candidate_Assigned__r.Origin__c}"/>
+            </apex:pageBlockSection> 
+                     <apex:pageBlockButtons rendered="{!openpopup}">
+                     <apex:commandButton action="{!editOrigin}" value="Save" />
+                     <apex:commandButton action="{!cancelOrigin}" value="Cancel" />    
+                     </apex:pageBlockButtons>
+            
+            
+            
+            
+            <!-- DESCRIPTION -->
+            <apex:pageBlockSection title="Description" columns="1" rendered="{!closepopup}" > 
+                <apex:inputField value="{!leaderNote.Status_Summary_Line__c  }"/>
+          
+                <apex:inputField value="{!leaderNote.Description__c   }"/>  
+                
+            
+            </apex:pageBlockSection>
+            
+            <!-- COMPETENCIES --> 
+            <apex:pageBlockSection title="Competencies" columns="2" rendered="{!closepopup}"> 
+            
+                <apex:repeat value="{!competencies}" var="competency">
+                    
+                    <apex:outputPanel rendered="{!competency.Other__c==''}"><strong>{!competency.Competencies__c}</strong></apex:outputPanel>
+                    <apex:outputPanel rendered="{!competency.Other__c!=''}"><strong>{!competency.Other__c}</strong></apex:outputPanel>
+                     
+                    <apex:outputPanel />
+                       
+
+                    <apex:selectList rendered="{!competencyHashPicklistValue[competency.Id]}" value="{!leaderNotecompetencyMapByCompetencyId[competency.Id].Picklist_values_2__c  }" multiselect="false" size="1">
+                        <apex:selectOptions value="{!competencyPicklistValueMapByCompetencyId[competency.Id]}"/>  
+                    </apex:selectList>
+                    
+                    <apex:selectList label="Multi-picklist value" rendered="{!competencyHashMultiPicklistValue[competency.Id]}" value="{!competencyMultilPicklistValueMapByCompetencyId[competency.Id]}" multiselect="true" size="5">
+                        <apex:selectOptions value="{!competencyPicklistValueMapByCompetencyId[competency.Id]}"/>  
+                    </apex:selectList>
+                    
+                    <apex:outputPanel rendered="{!OR(competencyHashPicklistValue[competency.Id],competencyHashMultiPicklistValue[competency.Id])}"/>
+                   
+                   <apex:inputField style="width:300px;height:75px;" value="{!leaderNotecompetencyMapByCompetencyId[competency.Id].Text_value__c }"/>
+                   <apex:inputField value="{!leaderNotecompetencyMapByCompetencyId[competency.Id].Numerical_value__c  }"/>
+                    <div style="width:50%; float:right;">
+                   <apex:inputField value="{!leaderNotecompetencyMapByCompetencyId[competency.Id].Evaluation__c  }"/>
+                   <apex:outputPanel ></apex:outputPanel>
+                     </div>
+                </apex:repeat> 
+            </apex:pageBlockSection>
+
+            <!-- BUTTONS -->
+            <apex:pageBlockButtons rendered="{!closepopup}" >
+                <apex:commandButton action="{!save}" value="Save" onclick="this.onclick=function(){return false;}" />
+                <apex:commandButton onclick="window.open('/{!leaderNote.Candidate_Assigned__r.Mandate__c}');" value="Go to Assignment"/>
+                
+                <apex:commandButton action="{!cancel}" value="Cancel" immediate="true"/> 
+                <apex:commandButton action="{!openOriginPopup}" value="Edit Origin" /> 
+
+            </apex:pageBlockButtons>
+              
+        
+        </apex:pageBlock>
+
+    </apex:form>
+   <!-- Modal Popup for Origin -->
+    
+    <!--   <div class="Modal" id="editorigin" >
+        <apex:form id="modalForm">
+             <Apex:outputPanel >
+            <apex:pageBlock >            
+             <apex:pageBlockSection title="Origin" columns="1" rendered="{!not(isTeam3Profile)}">               
+                     <apex:inputField value="{!leaderNote.Candidate_Assigned__r.Origin__c}"/>
+                     <apex:commandButton action="{!editOrigin}" value="Save" rendered="{!not(isTeam3Profile)}" />
+            </apex:pageBlockSection>            
+             </apex:pageBlock>          
+            
+            </Apex:outputPanel> 
+        
+        </apex:form>
+        
+    </div> -->
+         
+       
+    
+</apex:page>

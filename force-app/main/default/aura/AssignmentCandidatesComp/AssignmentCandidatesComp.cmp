@@ -1,0 +1,484 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="AssignCandiLightningController">
+    <!-- Attributes and Handlers -->
+    <!-- Attibutes Related to Pagination-->
+    <aura:attribute type="Integer"      name="pageNumber"		default="1" />
+    <aura:attribute type="Integer"      name="maxPage"			default="1" />
+    <aura:attribute type="List"    name="currentList" default="[]" />
+    
+    <aura:handler name="change"			value="{!v.pageNumber}"	action="{!c.renderPage}" />
+    <!-- Attibutes Related to Pagination Ends Here-->
+    <aura:attribute name="attachmentId" type="string" />
+    <aura:attribute name="displayCV" type="Boolean" default="false" />
+    <aura:attribute name="displaySA" type="Boolean" default="false" />
+    <aura:attribute name="displayOP" type="Boolean" default="false" />
+    <aura:attribute name="displayPSY" type="Boolean" default="false" />
+    <aura:attribute name="displayBiography" type="Boolean" default="false" />
+    <aura:attribute name="candidates" type="List" default="[]" />
+    <aura:attribute name="candidateLength" type="Integer" />
+    <aura:attribute name="PotCan" type="Map" />
+    
+    <aura:attribute name="allCandidatesBySSL" type="List" />
+    
+    <aura:attribute name="allPotCandidatesBySSL" type="List" />
+    <aura:attribute name="selectedIds" Type="set" />
+    <aura:attribute name="canId" type="String" />
+    <aura:attribute name="mandateRecId" type="String" />
+    <aura:attribute name="mandateRec" type="Map" default="{}" />
+    <aura:attribute name="mId" type="String" />
+    <aura:attribute name="cvId" type="String" />
+    <Aura:attribute name="PotCandidates" type="boolean" default="false" />
+    <aura:attribute name="selectedAll" type="boolean" />
+    <aura:attribute name="candidateIsSelected" type="boolean" />
+    <aura:attribute name="candidateIdSelected" type="List[]" />
+    <aura:attribute name="selectedCount" type="integer" default="0" />
+    <aura:attribute name="PageType" type="String" />
+    <aura:attribute name="deleteCan" type="String" />
+    <aura:attribute name="TotalNumberOfRecord" type="integer" default="0" description="use for display Number of records in the Current List" />
+    <aura:attribute name="InternalLength" type="integer"  />
+    <aura:attribute name="ClientLength" type="integer"  />
+    <aura:attribute name="NumberOfCandidate" type="integer"  />
+    <aura:attribute name="openLRNComp" type="boolean" default="false" />
+    <aura:attribute name="openEditLRNComp" type="boolean" default="false" />
+    <aura:attribute name="potentialCandidateIds" type="set" />
+    <aura:attribute name="displayCVComp" type="boolean" default="false" />
+    <aura:attribute name="selectedCVId" type="String" />
+    <aura:attribute name="selectedPSYId" type="String" />
+    <aura:attribute name="applicationId" type="String" />
+    <aura:attribute name="selectedOPId" type="String" />
+    <aura:attribute name="selectedBioId" type="String" />
+    <aura:attribute name="selectedConId" type="String" />
+    <aura:attribute name="candidatesMap" type="String" access="global" />
+    
+    <aura:attribute name="spinner" type="boolean" default="false" />
+    <!--aura:handler event="aura:waiting" action="{!c.showSpinner}" />
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}" /-->
+    
+    <aura:attribute type="String" name="sortField" />
+    <aura:attribute type="Boolean" name="sortAsc" default="true" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:handler event="c:mandateId" name="mandateId" action="{!c.doInit}" />
+    <aura:handler name="change" value="{!v.mandateRecId}" action="{!c.reInit}" />
+    <!--aura:handler name="change" value="{!v.PageType}" action="{!c.reInit}" /-->
+    <aura:attribute name="showNotesAndAttachment" type="Boolean" default="false" />
+    
+    <aura:attribute name="nonPotentialCandidatesList" type="List"  default="[]"/>
+    <aura:attribute name="potentialCandidatesList" type="List"  default="[]"/>
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <!-- Adding LDS for sort -->
+    <aura:attribute name="record" type="Object" />
+    <aura:attribute name="simpleRecord" type="Object" />
+    <aura:attribute name="recordError" type="String" />
+    <force:recordData aura:id="recordEditor"
+                      layoutType="FULL"
+                      recordId="{!v.mandateRecId}"
+                      targetError="{!v.recordError}"
+                      fields="sortDirection__c,sortExpression__c"
+                      targetRecord="{!v.record}"
+                      targetFields ="{!v.simpleRecord}"
+                      mode="EDIT" />
+    
+    <aura:if isTrue="{!v.spinner}">
+        <div class="slds-spinner_container">
+            <lightning:spinner aura:id="spinnerId" alternativeText="Loading" size="medium"/>
+        </div>
+    </aura:if>
+    {!v.allCandidatesBySSL}
+    <aura:method name="potentialCandidates" action="{!c.selectPotentialCandidates}">
+        <aura:attribute name="selectPotCandidates" Type="boolean" default="false"/>
+    </aura:method>
+    <aura:registerEvent name="newLRNCompEvent" type="c:NewLRNCompEvent" />
+    <aura:registerEvent name="AssignmentCandidatesCompEvent" type="c:AssignmentCandidatesCompEvent" />
+    <aura:handler event="c:selectPotentialEvt" action="{!c.handleActionEvent}"/><!-- newly added by DeaGle -->
+    
+    <div  style="height:700px;">
+        <div class="slds-scrollable " style="height:90%;">
+            <table class="slds-table tableFixHead  slds-table_bordered FixedHead">
+                <thead>
+                        <tr >
+                            <th scope="col">
+                                <div title="Select All">Select<Br></Br>
+                                    <div class="center">
+                                        <ui:inputCheckbox aura:id="selectAll" change="{!c.selectAllCB}" value="{!v.selectedAll}"></ui:inputCheckbox>
+                                    </div>
+                                </div>
+                            </th>
+                            <!--   <th scope="col">
+                        <div title="Company Off-Limit">Company <Br></Br> Off-Limit</div>
+                    </th>
+                    <th scope="col">
+                        <div title="Contact Off-Limit">Contact <br></br> Off-Limit</div>
+                    </th>  -->
+                            <th scope="col">
+                                <!--<div  title="First Name">First Name</div>-->
+                                <div data-sortAttType="FirstName" onclick="{!c.sortByName}" class="slds-truncate" title="First Name">
+                                    First Name
+                                    <span>
+                                        <aura:if isTrue="{!v.sortAsc}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <!--<div  title="Last Name">Last Name</div>-->
+                                <div data-sortAttType="LastName" onclick="{!c.sortByName}" class="slds-truncate" title="Last Name">
+                                    Last Name
+                                    <span>
+                                        <aura:if isTrue="{!v.sortAsc}">
+                                            <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <!--<div  title="Current Company">Current Company</div>-->
+                                <div data-sortAttType="Current_Company_EN__c" onclick="{!c.sortByName}" class="slds-truncate" title="Current Company">
+                                    Current Company
+                                    <span>
+                                        <aura:if isTrue="{!v.sortAsc}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <!--<div class="slds-truncate slds-cell-wrap"  title="Current Title">Current Title</div>-->
+                                <div data-sortAttType="Current_Title__c" onclick="{!c.sortByName}" class="slds-truncate" title="Current Title">
+                                    Current Title
+                                    <span>
+                                        <aura:if isTrue="{!v.sortAsc}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <!--<div  title="Status Summary Line">Status Summary Line</div>-->
+                                <div data-sortAttType="Status_Summary_Line__c" onclick="{!c.sortByName}" class="slds-truncate" title="Status Summary Line">
+                                    Status Summary Line
+                                    <span>
+                                        <aura:if isTrue="{!v.sortAsc}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">Leaders Reports Notes</div>
+                            </th>
+                            <th scope="col">
+                                <div title="Location">CV</div>
+                            </th>
+                            
+                            
+                            <th scope="col">
+                                <div title="LinkedIn">LinkedIn</div>
+                            </th>
+                            <th scope="col">
+                                <div title="Location">BIO</div>
+                            </th>
+                            <th scope="col">
+                                <div title="Location"><span style="margin-left:10%">One-</span><br/>Pager</div>
+                            </th>
+                            <th scope="col">
+                                <div title="Location"><span style="margin-left:25%">Self-</span><br/>Assess</div>
+                            </th>
+                            <th scope="col">
+                                <div title="Location"><span style="margin-left:25%">Psy</span><br/>Test</div>
+                            </th>
+                            <th scope="col">
+                                <div title="Mobile">Mobile</div>
+                            </th>
+                            <th scope="col">
+                                <div title="Company Phone">Company Phone</div>
+                            </th>
+                            <th scope="col">
+                                <div title="Contact Phone">Phone</div>
+                            </th>
+                            <th scope="col">
+                                <div data-sortAttType="Email" onclick="{!c.sortByName}" class="slds-truncate" title="Email">
+                                    Email
+                                    <span>
+                                        <aura:if isTrue="{!v.sortAsc}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div data-sortAttType="Origin__c" onclick="{!c.sortByName}" class="slds-truncate" title="Origin">
+                                    Origin
+                                    <span>
+                                        <aura:if isTrue="{!v.sortAsc}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                
+                                <div data-sortAttType="Location_City__c" onclick="{!c.sortByName}" class="slds-truncate" title="Location">
+                                    Location
+                                    <span>
+                                        <aura:if isTrue="{!v.sortAsc}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                
+                                <div data-sortAttType="LastModifiedDate" onclick="{!c.sortByName}" class="slds-truncate" title="Location">
+                                    Last Modified Date
+                                    <span>
+                                        <aura:if isTrue="{!v.sortAsc}">
+                                            <lightning:icon iconName="utility:up" alternativeText="Up" size="x-small" />
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:down" alternativeText="Down" size="x-small" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </div>
+                                
+                            </th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.currentList}" var="al">
+                            <tr class="slds-hint-parent">
+                                
+                                <td   data-internaltopstatus="{!al.candidate.InternalTopStatus__c}">
+                                    <div class="center">
+                                        <ui:inputCheckbox aura:id="boxPack" text="{!al.candidate.Id}" change="{!c.selectCB}"></ui:inputCheckbox>
+                                    </div>
+                                </td>
+                                <!-- <aura:if isTrue="{!al.candidate.Contact__r.Off_Limit_Auto__c}">
+                            <td>
+                                <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                            </td>
+                            <aura:set attribute="else">
+                                <td>
+                                    <lightning:icon class="slds-icon_container slds-icon-action-approval " iconName="action:approval" size="xx-small" />
+                                </td>
+                            </aura:set>
+                        </aura:if>
+                        <aura:if isTrue="{!al.candidate.Contact__r.Contact_Off_Limit__c}">
+                            <td>
+                                <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                            </td>
+                            <aura:set attribute="else">
+                                <td>
+                                    <lightning:icon class="slds-icon_container slds-icon-action-approval " iconName="action:approval" size="xx-small" />
+                                </td>
+                            </aura:set>
+                        </aura:if> -->
+                                <td>
+                                    <div title="{!al.candidate.Contact__r.FirstNamec}">
+                                        <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Contact/'+al.candidate.Contact__r.Id+'/view'}" class="{! al.candidate.Contact__r.Contact_Off_Limit__c ?'slds-text-color_error slds-text-title_bold slds-truncate slds-cell-wrap':'slds-truncate slds-cell-wrap greenText'}">{!al.candidate.Contact__r.FirstName}</a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div title="{!al.candidate.Contact__r.LastName}">
+                                        <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Contact/'+al.candidate.Contact__r.Id+'/view'}" class="{! al.candidate.Contact__r.Contact_Off_Limit__c ?'slds-text-color_error slds-text-title_bold slds-truncate slds-cell-wrap':'slds-truncate slds-cell-wrap greenText'}">{!al.candidate.Contact__r.LastName}</a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div title="{!al.candidate.Current_Company_EN__c}">
+                                        <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Account/'+al.candidate.CompanyId__c+'/view'}" class="{! al.candidate.Contact__r.Off_Limit_Auto__c ?'slds-text-color_error slds-text-title_bold slds-truncate slds-cell-wrap':'slds-truncate slds-cell-wrap greenText'}">{!al.candidate.Current_Company_EN__c}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate slds-cell-wrap" title="{!al.Current_Title__c}">{!al.candidate.Current_Title__c}</div>
+                                </td>
+                                <td>
+                                    <Aura:if isTrue="{!al.candidate.InternalTopStatus__c}">
+                                        <div class="slds-text-color_error slds-text-title_bold slds-truncate slds-cell-wrap" title="{!al.Status_Summary_Line__c}">{!al.candidate.Status_Summary_Line__c}</div>
+                                        <aura:set attribute="else">
+                                            <div title="{!al.Status_Summary_Line__c}" class="slds-truncate slds-cell-wrap">{!al.candidate.Status_Summary_Line__c}</div>
+                                        </aura:set>
+                                    </Aura:if>
+                                </td>
+                                <td>
+                                    <lightning:button variant="brand" label="New" title="New" onclick="{!c.openNewLRN}" value="{!al.candidate.Id}"></lightning:button>
+                                    <lightning:button variant="brand" label="Edit" title="Edit" onclick="{!c.openEditNewLRN}" value="{!al.candidate.Id}"></lightning:button><!-- value="{!al.candidate.Id}" -->
+                                </td>
+                                
+                                <td style="text-align: center;">
+                                    <aura:if isTrue="{!al.candidate.Contact__r.hasCV__c}">
+                                        <div  id="{!al.cvId}" title="{!al.candidate.Id}"  data-canid="{!al.candidate.Contact__r.Id}" data-bioid="{!al.bioId}" style="display:inline-block" onclick="{!c.openCV}">
+                                            <lightning:icon class="slds-icon_container slds-icon-action-approval " iconName="action:approval" size="xx-small" />
+                                        </div>
+                                        
+                                        <aura:set attribute="else">
+                                            <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                        </aura:set>
+                                    </aura:if>
+                                </td>
+                                
+                                
+                                <td style="text-align: center;">
+                                    <aura:if isTrue="{!	empty(al.candidate.Contact__r.LinkedIn_URL__c)}">
+                                        <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                    </aura:if>
+                                    <aura:if isTrue="{! al.candidate.Contact__r.LinkedIn_URL__c != null}">
+                                        <a href="{!al.candidate.Contact__r.LinkedIn_URL__c}" target="_blank" class="btn btn-default">                                    
+                                            <lightning:icon class="slds-icon_container slds-icon-action-approval " iconName="action:approval" size="xx-small" />
+                                        </a>
+                                    </aura:if>
+                                </td>
+                                
+                                <td>
+                                    <aura:if isTrue="{!al.candidate.Contact__r.Has_Bio__c}">
+                                        <div id="{!al.cvId}" title="{!al.candidate.Contact__r.Id}" data-onepagerid="{!al.opId}" data-canid="{!al.candidate.Contact__r.Id}" data-bioid="{!al.bioId}" style="display:inline-block" onclick="{!c.openBIO}">
+                                            <lightning:icon class="slds-icon_container slds-icon-action-approval " iconName="action:approval" size="xx-small" />
+                                        </div>
+                                        
+                                        <aura:set attribute="else">
+                                            <div  id="{!al.cvId}" title="{!al.candidate.Id}" data-onepagerid="{!al.opId}" data-canid="{!al.candidate.Contact__r.Id}" data-bioid="{!al.bioId}" style="display:inline-block" onclick="{!c.openBIO}">
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                            </div>
+                                        </aura:set>
+                                    </aura:if>
+                                </td>
+                                
+                                
+                                
+                                <td style="text-align: center;">
+                                    <aura:if isTrue="{!al.candidate.Has_One_Pager__c}">
+                                        <div  id="{!al.cvId}" title="{!al.candidate.Id}" data-onepagerid="{!al.opId}" data-canid="{!al.candidate.Contact__r.Id}" data-bioid="{!al.bioId}" style="display:inline-block" onclick="{!c.openOP}">
+                                            <lightning:icon class="slds-icon_container slds-icon-action-approval " iconName="action:approval" size="xx-small" />
+                                        </div>
+                                        
+                                        <aura:set attribute="else">
+                                            <div  id="{!al.cvId}" title="{!al.candidate.Id}" data-onepagerid="{!al.opId}" data-canid="{!al.candidate.Contact__r.Id}" data-bioid="{!al.bioId}" style="display:inline-block" onclick="{!c.openOP}">
+                                                <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                            </div>
+                                        </aura:set>
+                                    </aura:if>
+                                </td>
+                                <!-- BIOGRAPGY UPDATE -->
+                                
+                                
+                                
+                                <td style="text-align: center;">
+                                    <aura:if isTrue="{!al.candidate.Self_Assesment_Status__c == null}">
+                                        <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                    </aura:if>
+                                    <aura:if isTrue="{!	al.candidate.Self_Assesment_Status__c == 'Sent'}">
+                                        <lightning:icon class="slds-icon_container slds-icon-action-email" iconName="action:email" size="xx-small" />
+                                    </aura:if>
+                                    <aura:if isTrue="{! al.candidate.Self_Assesment_Status__c == 'Submitted'}">
+                                        <div title="{!al.candidate.Contact__r.Id}"  id="{!al.candidate.Id}"  style="display:inline-block" onclick="{!c.generateSelfAss}">
+                                            <lightning:icon class="slds-icon_container slds-icon-action-priority" variant="inverse" iconName="action:priority" size="xx-small" />
+                                        </div>
+                                    </aura:if>
+                                    <aura:if isTrue="{! al.candidate.Self_Assesment_Status__c == 'Template Generated'}">
+                                        <div title="{!al.candidate.Contact__r.Id}"  id="{!al.candidate.Id}"  style="display:inline-block" onclick="{!c.openViewAssessment}">
+                                            <lightning:icon class="slds-icon_container slds-icon-action-approval " iconName="action:approval" size="xx-small" />
+                                        </div>
+                                    </aura:if> 
+                                    
+                                </td>
+                                
+                                <td style="text-align: center;">
+                                    <aura:if isTrue="{!al.candidate.Contact__r.Has_Psy__c}">
+                                        <div  id="{!al.psyId}" title="{!al.candidate.Id}"  data-canid="{!al.candidate.Contact__r.Id}" data-bioid="{!al.bioId}" style="display:inline-block" onclick="{!c.openPSY}">
+                                            <lightning:icon class="slds-icon_container slds-icon-action-approval " iconName="action:approval" size="xx-small" />
+                                        </div>
+                                        
+                                        <aura:set attribute="else">
+                                            <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                        </aura:set>
+                                    </aura:if>
+                                </td>
+                                
+                                <td>
+                                    <div title="{!al.Contact__r.MobilePhone}">{!al.candidate.Contact__r.MobilePhone}</div>
+                                </td>
+                                <td>
+                                    <div title="{!al.Contact__r.Account.Phone}">{!al.candidate.Contact__r.Account.Phone}</div>
+                                </td>
+                                <td>
+                                    <div title="{!al.Contact__r.Phone}">{!al.candidate.Contact__r.Phone}</div>
+                                </td>
+                                
+                                <td>
+                                    <div title="{!al.Contact__r.Email}">{!al.candidate.Contact__r.Email}</div>
+                                </td>
+                                <td>
+                                    <div title="{!al.candidate.Origin__c}">{!al.candidate.Origin__c}</div>
+                                </td>
+                                <td>
+                                    <div title="{!al.Location__c}">{!al.candidate.Location_State__c}<br></br>{!al.candidate.Location_City__c}</div>
+                                </td>
+                                <td>
+                                    <div title="{!al.LastModifiedDate}"><lightning:formattedDateTime value="{!al.candidate.LastModifiedDate}" year="numeric" day="2-digit" month="long" hour="2-digit" minute="2-digit"/></div>
+                                </td>
+                                
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+         <c:pagination currentPageNumber="{!v.pageNumber}"
+                  maxPageNumber="{!v.maxPage}" />
+        </div>
+   
+   
+    <aura:if isTrue="{!v.openLRNComp}">
+        <c:newLRNComp aura:id="newLRN" openLRNComp="{!v.openLRNComp}" mandateRecId="{!v.mandateRecId}"  candidateId="{!v.canId}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.openEditLRNComp}">
+        <c:newLRNComp aura:id="editLRN" openEditLRNComp="{!v.openEditLRNComp}" mandateRecId="{!v.mandateRecId}" />
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayCVComp}">
+        <c:DisplayCVComp applicationId="{!v.applicationId}" displayCVComp="{!v.displayCVComp}" mandateRecId="{!v.mandateRecId}" cvContactId="{!v.selectedCVId}" selectedConId="{!v.selectedConId}" recordId = "{!v.selectedConId}" selectedopId="{!v.selectedOPId}" selectedbioId="{!v.selectedBioId}" />
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayCV}">
+        <c:ViewCV displayCV="{!v.displayCV}" attId="{!v.selectedCVId}" modalHeader="CV" />
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displaySA}">
+        <c:ViewCV displayCV="{!v.displaySA}"  SelfAssId="{!v.attachmentId}" contactId="{!v.selectedConId}" modalHeader="Self-Assessment" isSelfAss="true"/>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayPSY}">
+        <c:ViewCV displayPSY="{!v.displayPSY}"  attId="{!v.selectedPSYId}" modalHeader="PSY TEST" />
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayBiography}">
+        <c:UpdateBioComp recordId="{!v.selectedConId}" selectedBioId="{!v.selectedBioId}" selectedCVId="{!v.selectedCVId}"  displayBiography="{!v.displayBiography}" ></c:UpdateBioComp>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showNotesAndAttachment}">
+        <c:RelatedFilesComp mandateId="{!v.mandateRecId}" showThisModal="{!v.showNotesAndAttachment}"></c:RelatedFilesComp>
+    </aura:if>
+</aura:component>

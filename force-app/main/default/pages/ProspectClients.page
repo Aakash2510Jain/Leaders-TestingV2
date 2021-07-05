@@ -1,0 +1,10 @@
+<apex:page controller="ProspectClients" tabStyle="Case">
+    <apex:pageBlock >  
+        <apex:outputText value="No records to display" rendered="{!(assignment.size == 0)}"></apex:outputText>      
+        <apex:pageBlockTable value="{!assignment}" var="c" rendered="{!(assignment.size != 0)}"  >   
+            <apex:column value="{!c.Name}"/>
+            <apex:column value="{!c.Company__r.Name}"/>
+            <apex:column value="{!c.Status__c }"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>

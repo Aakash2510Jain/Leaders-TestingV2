@@ -1,0 +1,20 @@
+.THIS.slds-spinner_container {
+  z-index: 10000;
+  position: fixed;
+}
+.THIS .colorPurple{
+    background-color:#8007bf;
+    border-color:#8007bf;
+}
+.THIS .colorLightBlue{
+    background-color:#1ea4d0;
+    border-color:#1ea4d0;
+}
+.THIS .colorLightGreen{
+    background-color:#3bab9a;
+    border-color:#3bab9a;
+}
+.THIS .transform{
+    transform: scale(0.8);
+
+}

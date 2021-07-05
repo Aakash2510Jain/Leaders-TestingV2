@@ -1,0 +1,232 @@
+<aura:component controller="SearchCompanyCtrl" >
+    <aura:attribute name="contactBooleanByAccountId" 		type="Object[]"/>
+    <aura:attribute name="allRecord" type="List"/>
+    <!--  <aura:attribute name="fieldsAPIList" type="List"/-->
+    <aura:attribute name="fieldList" type="Map"/>
+    <!--<aura:attribute name="fieldsLabelList" type="List"/-->
+    <aura:attribute name="allData" type="List"/>
+    <aura:attribute name="checkSpinner" 			type="boolean" 		default="false"/> 
+    <aura:attribute name="currentPageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="50"/>
+    <aura:attribute name="totalPages" type="Integer" default="0"/>
+    <aura:attribute name="pageList" type="List"/>
+    <aura:attribute name="ShowCompPage" type="boolean"/>
+    <aura:attribute name="BooleanValuePeople" type="boolean"/>
+    <aura:attribute name="BooleanValueAss" type="boolean"/>
+    <aura:attribute name="ShowAssPage" type="boolean"/>
+    <aura:attribute name="checkedSearch" type="boolean"/>
+    <aura:attribute name="data" type="List"/>
+    <aura:attribute name="fieldMap" type="Map" />
+    <aura:attribute name="sortAsc" type="boolean" default="true"/>
+    <aura:attribute name="StateValue" type="String" default="State"/>
+    <aura:attribute name="CompanyName" type="String" />
+    <aura:attribute name="CountryValue" type="String" default="Country"/>
+    <aura:attribute name="SelectedCompanyId" type="String" />
+    <aura:attribute name="TotalPeople" type="String" />
+    <aura:attribute name="PeopleObject" type="Object" />
+    <aura:attribute name="AssObject" type="Object" />
+    <aura:attribute name="clickedViewAll" type="boolean"/>
+    <aura:attribute name="selectedRecord" type="List"/>    
+    <aura:attribute name="isDelete" type="boolean"/>
+    <aura:attribute name="PeopleDetails" type="Contact[]" />
+    <aura:attribute name="AssDetails" type="Mandate__c[]"/>
+    <aura:handler event="c:passBooleanEvt" action="{!c.handleViewAllEvent}"/>
+    <aura:handler name="init" value="{!this}"  action="{!c.doInit}"/>
+    <aura:if isTrue="{!v.checkSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </div>
+    </aura:if>
+    
+    <div class="slds-m-around_xx-large">
+        <div class="slds-grid slds-wrap">
+            <lightning:layout horizontalAlign="center" multipleRows="true">
+                
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_3-of-4">
+                    <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer" > 
+                        <thead>
+                            <tr class="slds-text-title_caps">
+                                <td style="width:40px"></td>
+                                <aura:iteration items="{!v.fieldMap}" var="field" indexVar="key" >                          
+                                    <th class="" scope="col" name="{!field}" onclick="{!c.sortByField}">
+                                        {!field.key}  
+                                        <span style="margin-left:1%">
+                                            <aura:if isTrue="{!field.sortAsc==true}">
+                                                <lightning:icon iconName="utility:chevrondown" alternativeText="Event" title="Event" size="xx-small" />
+                                                <aura:set attribute="else">
+                                                    <lightning:icon iconName="utility:chevronup" alternativeText="Event" title="Event" size="xx-small"/>
+                                                </aura:set>
+                                            </aura:if> 
+                                        </span>
+                                    </th>
+                                </aura:iteration> 
+                                <th class="" scope="col" name="{!v.PeopleObject}" onclick="{!c.sortByField}">
+                                    People
+                                    <aura:if isTrue="{!v.BooleanValuePeople == true}">
+                                        <lightning:icon iconName="utility:chevrondown" alternativeText="Event" title="Event" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <lightning:icon iconName="utility:chevronup" alternativeText="Event" title="Event" size="xx-small"/>
+                                        </aura:set>
+                                    </aura:if>
+                                </th>
+                                <th class="" scope="col" name="{!v.AssObject}" onclick="{!c.sortByField}">
+                                    Assignments
+                                    <aura:if isTrue="{!v.BooleanValueAss == true}">
+                                        <lightning:icon iconName="utility:chevrondown" alternativeText="Event" title="Event" size="xx-small" />
+                                        <aura:set attribute="else">
+                                            <lightning:icon iconName="utility:chevronup" alternativeText="Event" title="Event" size="xx-small"/>
+                                        </aura:set>
+                                    </aura:if>
+                                </th>
+                            </tr>                                            
+                        </thead>
+                        <tbody>
+                            <aura:if isTrue="{!v.clickedViewAll==true}">
+                                <aura:iteration items="{!v.allRecord}" var="rec">
+                                    <tr class="slds-hint-parent">
+                                        <td> 
+                                            <ui:inputCheckbox   value="" text="{!rec}" change="{!c.onCheck}"/>  
+                                        </td>      
+                                        <aura:iteration items="{!v.fieldMap}" var="fieldNm">
+                                            <th data-label="Opportunity Name" scope="row">
+                                                <div class="slds-truncate" title="Cloudhub">
+                                                    <c:SearchCompanyDisplayValue PeopleDetails = "{!v.PeopleDetails}" record="{!rec}" fieldName="{!fieldNm.value}" ShowCompPage="{!v.ShowCompPage}"/>
+                                                </div>  
+                                            </th>
+                                        </aura:iteration>    
+                                        <th class="" scope="col">
+                                            <aura:if isTrue="{!rec.Is_Contact_Available__c}" >
+                                                <!--div id="demo" style="margin-left: 30px;" data-value="{!rec.Id}">
+                                                    <lightning:icon title="{!rec.Id}" alternativeText="People" class="slds-icon_container slds-icon-action-approval"  iconName="action:approval" size="xx-small" onclick="{!c.showPeopleDetails}" />
+                                                </div-->
+                                                <div id="People"  title="{!rec.Id}"  style="margin-left: 30px" onclick="{!c.showPeopleDetails}" data-value="{!rec.Id}">
+                                                    <span class="slds-badge" style="background:#1db89b">
+                                                        <em style="color:white">{!rec.Total_Contacts__c}</em>
+                                                    </span>
+                                                </div>
+                                                <aura:set attribute="else">
+                                                    <div style="margin-left: 30px;">
+                                                        <lightning:icon alternativeText="People" class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                                    </div>
+                                                </aura:set>
+                                            </aura:if>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <aura:if isTrue="{!rec.Is_Ass_Available__c}" >
+                                                <div id="Ass" title="{!rec.Id}"  style="margin-left: 30px" onclick="{!c.showPeopleDetails}" data-value="{!rec.Id}">
+                                                    <span class="slds-badge" style="background:#1db89b">
+                                                        <em style="color:white">{!rec.Total_Ass__c}</em>
+                                                    </span>
+                                                </div>
+                                                <!--div id="demo" style="margin-left: 30px;" data-value="{!rec.Id}">
+                                                    <lightning:icon title="{!rec.Id}" alternativeText="Ass" class="slds-icon_container slds-icon-action-approval"  iconName="action:approval" size="xx-small" onclick="{!c.showPeopleDetails}" />
+                                                </div-->
+                                                <aura:set attribute="else">
+                                                    <div style="margin-left: 30px;">
+                                                        <lightning:icon variant="Ass" class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                                    </div>
+                                                </aura:set>
+                                            </aura:if>
+                                        </th>
+                                    </tr>
+                                </aura:iteration>              
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!not(v.clickedViewAll==true)}">
+                                <aura:iteration items="{!v.data}" var="rec">
+                                    <tr class="slds-hint-parent">
+                                        <td> <ui:inputCheckbox   value="" text="{!rec }" change="{!c.onCheck}"/>  
+                                        </td>      
+                                        <aura:iteration items="{!v.fieldMap}" var="fieldNm">
+                                            <td data-label="Opportunity Name" scope="row">
+                                                <div class="slds-truncate" title="Cloudhub">
+                                                    <c:SearchCompanyDisplayValue PeopleDetails = "{!v.PeopleDetails}" record="{!rec}" fieldName="{!fieldNm.value}" ShowCompPage="{!v.ShowCompPage}"/>
+                                                </div>    
+                                            </td>
+                                        </aura:iteration>      
+                                        <th class="" scope="col">
+                                            <aura:if isTrue="{!rec.Is_Contact_Available__c}" >
+                                                <!--div id="demo" style="margin-left: 30px;" >
+                                                    <lightning:icon title="{!rec.Id}" alternativeText="People" class="slds-icon_container slds-icon-action-approval"  iconName="action:approval" size="xx-small" onclick="{!c.showPeopleDetails}" />
+                                                </div-->
+                                                <div  id="People" title="{!rec.Id}"  style="margin-left: 30px" onclick="{!c.showPeopleDetails}" data-value="{!rec.Id}">
+                                                    <span class="slds-badge" style="background:#1db89b">
+                                                        <em style="color:white">{!rec.Total_Contacts__c}</em>
+                                                    </span>
+                                                </div>
+                                                <aura:set attribute="else">
+                                                    <div style="margin-left: 30px;">
+                                                        <lightning:icon variant="People" class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                                    </div>
+                                                </aura:set>
+                                            </aura:if>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <aura:if isTrue="{!rec.Is_Ass_Available__c}" >
+                                                <div id="Ass" title="{!rec.Id}"  style="margin-left: 30px" onclick="{!c.showPeopleDetails}" data-value="{!rec.Id}">
+                                                    <span class="slds-badge" style="background:#1db89b">
+                                                        <em style="color:white">{!rec.Total_Ass__c}</em>
+                                                    </span>
+                                                </div>
+                                                
+                                                <aura:set attribute="else">
+                                                    <div style="margin-left: 30px;">
+                                                        <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                                    </div>
+                                                </aura:set>
+                                            </aura:if>
+                                        </th>
+                                    </tr>
+                                </aura:iteration>              
+                            </aura:if>
+                        </tbody>
+                    </table>
+                    <aura:if isTrue="{!not(v.clickedViewAll==true)}">
+                        <aura:if isTrue="{!v.checkedSearch}">
+                            <!--This Code for Pagination-->
+                            <lightning:layout multipleRows="true" horizontalAlign="center">
+                                <lightning:layoutItem padding="around-small" flexibility="auto">
+                                    <lightning:button label="First" iconName="utility:left" iconPosition="left"
+                                                      onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/>
+                                    <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                                                      onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/>
+                                    <span class="slds-p-horizontal_x-small">
+                                        <a onclick="{!c.processMe}" name="1" 
+                                           class="{! (v.currentPageNumber == 1) ? 'selected' : ''}">1</a>
+                                    </span>
+                                    <span class="slds-p-horizontal_xxx-small">
+                                        <a>...</a>
+                                    </span>
+                                    <aura:iteration items="{!v.pageList}" var="item">
+                                        <span class="slds-p-horizontal_x-small">
+                                            <a onclick="{!c.processMe}" name="{!item}"
+                                               class="{! (v.currentPageNumber == item) ? 'selected' : ''}">{!item}</a>
+                                        </span>
+                                    </aura:iteration>
+                                    
+                                    <span class="slds-p-horizontal_xxx-small">
+                                        <a>...</a>
+                                    </span>
+                                    <span class="slds-p-horizontal_x-small">
+                                        <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                                           class="{! (v.currentPageNumber == v.totalPages) ? 'selected' : ''}">{!v.totalPages}</a>
+                                    </span>
+                                    <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                                                      disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/>
+                                    <lightning:button label="Last" iconName="utility:right" iconPosition="right" 
+                                                      disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onLast}"/>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                        </aura:if>
+                    </aura:if>                 
+                </div>
+            </lightning:layout>
+        </div>
+    </div>
+    <aura:if isTrue="{!v.ShowCompPage}">
+        <c:AssignmentDetailsOnSearchPage ShowCompPage="{!v.ShowCompPage}" CompanyName="{!v.CompanyName}" TotalPeople="{!v.TotalPeople}" PeopleDetails="{!v.PeopleDetails}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.ShowAssPage}">
+        <c:AssignmentDetailsOnSearchPage ManCompPage="{!v.ShowAssPage}"  MandDetails="{!v.AssDetails}"/>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,91 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="ContactCandidatesLightningCtrl" >
+    
+    <aura:attribute name="mydata" type="Object"/>
+    <aura:attribute name="recordId" type="Id"/> 
+    <aura:attribute name="openLRNComp" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="isOpen" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="displayCV" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="selectedValue" type="String" />
+    <aura:attribute name="isView" type="boolean" default="false"/>
+    <aura:attribute name="attachmentId" type="String" ></aura:attribute>
+    <aura:attribute name="canId" type="String" ></aura:attribute>
+    <aura:attribute name="showOnePagerFromContact" type="boolean" default="false"/>
+    <aura:attribute name="showOnePager" type="boolean" default="false"/>
+    <aura:attribute name="openEditLRNComp" type="boolean" default="false"/>
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="OnePagerId" type="String"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    
+    <aura:attribute name="showConfirmDialog" type="boolean" default="false"/>
+    
+    <lightning:navigation aura:id="navService" />
+    <aura:if isTrue="{!v.showOnePagerFromContact}">
+        <div class="slds-card__body">
+            <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="Assignment">Assignment</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Assignment Status</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="Client Company">Company</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Status</div>
+                        </th>     
+                        <th scope="col">
+                            <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">View One Pager</div>
+                        </th>   
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.mydata}" var="cc" >
+                        <tr class="slds-hint-parent">
+                            <td>
+                                <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                    <a href="" onclick="{!c.handleClick}" data-record="{!cc.AssId}" >{!cc.AssName}</a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                    {!cc.Ass_Status}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate slds-cell-wrap" title="{!cc.CompanyName}">{!cc.CompanyName}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate slds-cell-wrap" title="{!cc.Status}">{!cc.Status}</div>
+                            </td>
+                            <td>
+                                <lightning:button variant="brand" label="View" title="View" onclick="{!c.DisplayCV}" value="{!cc.AppId}"></lightning:button> 
+                            </td>
+                        </tr>
+                    </aura:iteration>   
+                </tbody>
+            </table>
+            
+            <aura:if isTrue="{!v.selectedValue == 'Final candidate, has accepted the offer of employment.'}">
+                <lightning:input type="date" aura:id="canSD" name="input1" label="Enter Candidate Emloyment Date" value="{!v.leaderNote.Candidate_Offer_Date__c}" messageWhenValueMissing="Please put candidate start date." required = "{!v.selectedValue == 'Final candidate, has accepted the offer of employment.'}"/>
+            </aura:if>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showOnePager}">
+        <iframe src="{! $Site.CurrentSiteUrl+'/servlet/servlet.FileDownload?file='+v.attachmentId}" width="100%" height="1000px;" frameBorder="0" />
+    </aura:if>
+    
+    <aura:if isTrue="{!v.openLRNComp}">
+        <c:newLRNContactCandidates aura:id="newLRN" openLRNComp="{!v.openLRNComp}" />
+    </aura:if>
+    <aura:if isTrue="{!v.openEditLRNComp}">
+        <c:newLRNContactCandidates aura:id="editLRN" openEditLRNComp="{!v.openEditLRNComp}" />
+    </aura:if>  
+    <aura:if isTrue="{!v.displayCV}">
+        <c:ViewCV displayCV="{!v.displayCV}"  attId="{!v.attachmentId}" modalHeader="Attachements" width="160%" OP="true"/>
+    </aura:if>
+    
+</aura:component>

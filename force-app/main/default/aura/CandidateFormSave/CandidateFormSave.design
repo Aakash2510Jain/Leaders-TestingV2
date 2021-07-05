@@ -1,0 +1,7 @@
+<design:component >
+	 
+	 <design:attribute name="originFieldName" label="Origin Field Name" description="Title of the section" />  
+	 <design:attribute name="originValue" label="Origin Value" description="Title of the section" />   
+	 <design:attribute name="ownerId" label="Owner Id" description="Title of the section" />   
+	  <design:attribute name="defaultAccountId" label="Default Account Id" description="Title of the section" />   
+</design:component>

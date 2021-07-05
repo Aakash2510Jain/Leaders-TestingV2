@@ -1,0 +1,6 @@
+<apex:page standardController="Contact" tabStyle="Contact"
+    extensions="Nubik_ContactHoganReportCtrl">
+  	<apex:sectionHeader title="Contact" subtitle="Add Psy Test"/>
+	 <c:UploadFile fileName="{!reportName}" parentId="{!parentId}" isCV="false" />
+  
+</apex:page>

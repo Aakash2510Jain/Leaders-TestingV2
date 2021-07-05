@@ -1,0 +1,229 @@
+<apex:page controller="BiographyDataEntryCtrl" cache="false" LightningStylesheets="True">
+
+    <apex:form id="theForm">
+        <apex:pageblock id="thePB" title="New Biography of {!contactInfo.Name}" tabStyle="Work_Experience__c">
+        
+            <apex:pageblockButtons >
+                <apex:commandButton value="Save" action="{!saveBiography}" onclick="this.onclick=function(){return false;}" />
+                <apex:commandButton value="Cancel" action="{!cancel}" immediate="true"/>
+            </apex:pageblockButtons>
+            
+            <apex:ActionRegion >
+                <apex:outputPanel id="experience">          
+                    <apex:variable value="{!0}" var="eNum"/>  
+                    <apex:pageBlockSection title="Experience" collapsible="False"> 
+                    
+                        <apex:pageBlockTable value="{!eBiographyList}" var="e"> 
+                        
+                            <apex:column >
+                                <apex:commandLink value="Del" style="color:#015ba7" action="{!removeExperienceFromList}"  rerender="experience"  >
+                                     <apex:param value="{!eNum}" name="rowToRemove" assignTo="{!rowToRemove}"/>
+                                 </apex:commandLink>
+                                 <apex:variable var="eNum" value="{!eNum + 1}"/>
+                            </apex:column>
+                        
+                            <apex:column headerValue="Company">
+                                <apex:inputField value="{!e.Company__c}" />
+                            </apex:column>
+                            
+                            <apex:column headerValue="Title" >
+                                <apex:inputField value="{!e.Title__c}" style="width:250px"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Title 2nd language" rendered="{!NOT($Profile.Name=='Force.com Leaders Coleman' || $Profile.Name=='Force.com Leaders Coleman + BusDev')}">
+                                <apex:inputField value="{!e.Title_FR__c}" style="width:250px"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Location" rendered="{!$Profile.Name=='Force.com Leaders Coleman' || $Profile.Name=='Force.com Leaders Coleman + BusDev'}">
+                                <apex:inputField value="{!e.Location__c }"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Start Year">
+                                <apex:inputField value="{!e.Start_Year__c}" />
+                            </apex:column>
+                            
+                            <apex:column headerValue="End Year">
+                                <apex:inputField value="{!e.End_Year__c}" />
+                            </apex:column>
+                        
+                            <apex:column headerValue="Current">
+                                <apex:inputField value="{!e.Current_del__c}"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Add company description" rendered="{!$Profile.Name=='Force.com Leaders Coleman' || $Profile.Name=='Force.com Leaders Coleman + BusDev'}">
+                                <apex:inputField value="{!e.Add_company_description__c }"/>
+                            </apex:column>
+                            
+                        </apex:pageBlockTable>
+                    
+                    </apex:pageBlockSection>
+                    
+                    <div style="padding-left:8px">
+                        <apex:commandButton value="Add Row" action="{!addNewExperienceToList}" rerender="experience" Status="status" />
+                    </div>              
+                
+                </apex:outputPanel>
+            </apex:ActionRegion>
+            
+            <br/>
+            <apex:ActionRegion >
+                <apex:outputPanel id="education">           
+                    <apex:variable value="{!0}" var="eduNum"/>  
+                    <apex:pageBlockSection title="Education" collapsible="False"> 
+                    
+                        <apex:pageBlockTable value="{!eduBiographyList}" var="edu">
+                        
+                            <apex:column >
+                                <apex:commandLink value="Del" style="color:#015ba7" action="{!removeEducationFromList}" rerender="education"  >
+                                     <apex:param value="{!eduNum}" name="rowToRemove" assignTo="{!rowToRemove}"/>
+                                 </apex:commandLink>
+                                 <apex:variable var="eduNum" value="{!eduNum + 1}"/>
+                            </apex:column> 
+                        
+                            <apex:column headerValue="Institution">
+                                <apex:inputField value="{!edu.Company__c}" />
+                            </apex:column>
+                            
+                            <apex:column headerValue="Diploma">
+                                <apex:inputField value="{!edu.Title__c}" style="width:250px"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Diploma 2nd language" rendered="{!NOT($Profile.Name=='Force.com Leaders Coleman' || $Profile.Name=='Force.com Leaders Coleman + BusDev')}">
+                                <apex:inputField value="{!edu.Title_FR__c}" style="width:250px"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Start Year">
+                                <apex:inputField value="{!edu.Start_Year__c}" />
+                            </apex:column>
+                            
+                            <apex:column headerValue="End Year">
+                                <apex:inputField value="{!edu.End_Year__c}" />
+                            </apex:column>
+                            
+                            <apex:column headerValue="Verified">
+                                <apex:inputField value="{!edu.Verified__c}"/>
+                            </apex:column>
+                                                
+                        </apex:pageBlockTable>
+                    
+                    </apex:pageBlockSection>
+                    
+                    <div style="padding-left:8px">
+                        <apex:commandButton value="Add Row" action="{!addNewEducationToList}" rerender="education" Status="status" />
+                    </div>
+                </apex:outputPanel>
+            </apex:ActionRegion>
+            
+            <br/>
+            
+            <apex:ActionRegion >  
+                <apex:outputPanel id="professionalA">           
+                    <apex:variable value="{!0}" var="pNum"/>  
+                    <apex:pageBlockSection title="Professional Association" collapsible="False"> 
+                    
+                        <apex:pageBlockTable value="{!pBiographyList}" var="e"> 
+                        
+                            <apex:column >
+                                <apex:commandLink value="Del" style="color:#015ba7" action="{!removeProfessionalAFromList}" rerender="professionalA"  >
+                                     <apex:param value="{!pNum}" name="rowToRemove" assignTo="{!rowToRemove}"/>
+                                 </apex:commandLink>
+                                 <apex:variable var="pNum" value="{!pNum + 1}"/>
+                            </apex:column> 
+                        
+                            <apex:column headerValue="Company">
+                                <apex:inputField value="{!e.Company__c}" />
+                            </apex:column>
+                            
+                            <apex:column headerValue="Title">
+                                <apex:inputField value="{!e.Title__c}" style="width:250px"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Title 2nd language" rendered="{!NOT($Profile.Name=='Force.com Leaders Coleman' || $Profile.Name=='Force.com Leaders Coleman + BusDev')}">
+                                <apex:inputField value="{!e.Title_FR__c}" style="width:250px"/>
+                            </apex:column>
+                            
+                             <apex:column headerValue="Start Year">
+                                <apex:inputField value="{!e.Start_Year__c}" />
+                            </apex:column>
+                            
+                            <apex:column headerValue="End Year">
+                                <apex:inputField value="{!e.End_Year__c}"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Current">
+                                <apex:inputField value="{!e.Current_del__c}"/>
+                            </apex:column>
+                            
+                                <apex:column headerValue="Add company description" rendered="{!$Profile.Name=='Force.com Leaders Coleman' || $Profile.Name=='Force.com Leaders Coleman + BusDev'}">
+                                <apex:inputField value="{!e.Add_company_description__c }"/>
+                            </apex:column>
+                                                
+                        </apex:pageBlockTable>
+                    
+                    </apex:pageBlockSection>
+                    
+                    <div style="padding-left:8px">
+                        <apex:commandButton value="Add Row" action="{!addNewProfessionalAToList}" rerender="professionalA" Status="status"  />
+                    </div>
+                </apex:outputPanel>
+            </apex:ActionRegion>
+            
+            <br/>
+
+            <apex:ActionRegion >  
+                <apex:outputPanel id="board">           
+                    <apex:variable value="{!0}" var="bNum"/>  
+                    <apex:pageBlockSection title="Board of directors" collapsible="False"> 
+                    
+                        <apex:pageBlockTable value="{!bBiographyList}" var="e"> 
+                        
+                            <apex:column >
+                                <apex:commandLink value="Del" style="color:#015ba7" action="{!removeBoardFromList}"  rerender="board"  >
+                                     <apex:param value="{!bNum}" name="rowToRemove" assignTo="{!rowToRemove}"/>
+                                 </apex:commandLink>
+                                 <apex:variable var="bNum" value="{!bNum + 1}"/>
+                            </apex:column> 
+                        
+                            <apex:column headerValue="Company">
+                                <apex:inputField value="{!e.Company__c}" />
+                            </apex:column>
+                            
+                            <apex:column headerValue="Title">
+                                <apex:inputField value="{!e.Title__c}" style="width:250px"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Title 2nd language" rendered="{!NOT($Profile.Name=='Force.com Leaders Coleman' || $Profile.Name=='Force.com Leaders Coleman + BusDev')}">
+                                <apex:inputField value="{!e.Title_FR__c}" style="width:250px"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="Start Year">
+                                <apex:inputField value="{!e.Start_Year__c}"/>
+                            </apex:column>
+                            
+                            <apex:column headerValue="End Year">
+                                <apex:inputField value="{!e.End_Year__c}"/>
+                            </apex:column>
+                            
+                                        <apex:column headerValue="Current">
+                                <apex:inputField value="{!e.Current_del__c}"/>
+                            </apex:column>
+                            
+                                <apex:column headerValue="Add company description" rendered="{!$Profile.Name=='Force.com Leaders Coleman' || $Profile.Name=='Force.com Leaders Coleman + BusDev'}">
+                                <apex:inputField value="{!e.Add_company_description__c }"/>
+                            </apex:column>
+                                                
+                        </apex:pageBlockTable>
+                    
+                    </apex:pageBlockSection>
+                    
+                    <div style="padding-left:8px">
+                        <apex:commandButton value="Add Row" action="{!addNewBoardToList}" rerender="board" Status="status"  />
+                    </div>
+              </apex:outputPanel>
+          </apex:ActionRegion>
+         
+          
+        </apex:pageblock>
+    </apex:form>
+
+</apex:page>

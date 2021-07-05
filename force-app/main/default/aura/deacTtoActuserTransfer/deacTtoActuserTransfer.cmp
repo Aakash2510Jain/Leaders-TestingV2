@@ -1,0 +1,98 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="deactToActUserTransferHelper" access="global" >
+    
+    <aura:attribute name="UserId" type="String"/>
+    <aura:attribute name="Options" type="String[]" />
+    <aura:attribute name="RecCounts" type="List" />
+    <aura:attribute Name="selItem" type="object"  access="public" /> 
+    <aura:attribute name="selectedValue" type="String"/>
+    
+    <article class="slds-card">
+   
+    
+    <br/><br/><br/><br/>
+    <br/><br/><br/><br/>
+    <br/><br/><br/><br/>
+    
+    <div class="slds-grid slds-gutters">
+        <div class="slds-col">
+            <span style="margin-left:50%;border: 1px solid black; margin-top:20%;">
+                Select The User
+            </span>
+        </div>
+        <div class="slds-col">
+            <span >
+                <c:lookup objectName="User" field_API_text="Name" field_API_val="Id" limit="5" field_API_search="Name" lookupIcon="standard:user" 
+                          selItem="{!v.selItem}" placeholder="Enter space after text to search User"   />  
+                
+            </span>
+        </div>
+        <div class="slds-col">
+        </div>
+    </div>
+    
+    <br/>
+    <br/>
+    <br/><br/>
+    <div class="slds-grid slds-gutters">
+        <div class="slds-col">
+            <span style="margin-left:47%;border: 1px solid black; margin-top:10%;width:125%;">
+                Select The Object
+            </span>
+        </div>
+        <div class="slds-col">
+            <span>
+                <div class="slds-form-element">
+                    <div class="slds-form-element__control">
+                        <div class="slds-select_container" >
+                            
+                            <lightning:select aura:id="object" name="Object" label="" onchange="{!c.getInfo}">
+                                <option value="None">None</option>
+                                <option value="Assignment">Assignment</option>
+                                <option value="Company">Company</option>
+                                <option value="People">People</option>
+                                
+                            </lightning:select>
+                            
+                        </div>
+                    </div>
+                </div>
+            </span>
+        </div>
+        <div class="slds-col">
+            <span>
+                
+            </span>
+        </div>
+    </div>
+    
+    <br/><br/>
+    <br/><br/>
+    
+    <div class="slds-grid slds-gutters">
+        <div class="slds-col">
+        </div>
+        <div class="slds-col" style="margin-left:10%;">
+            <span>
+                <li>
+                <aura:iteration items="{!v.RecCounts}" var="res">
+                    {!res.object}
+                    <span class="slds-badge" style="float:left">
+                        {!res.Count}
+                    </span>
+                    <br/><br/>
+                </aura:iteration>
+               </li> 
+                
+            </span>
+        </div>
+        <div class="slds-col" style="margin-left:20%;">
+            <br/>
+            <br/>
+            <lightning:button variant="brand" label="Transfer Records" title="Transfer Records" onclick="{!c.transRec}" ></lightning:button>   
+        </div>
+    </div>
+         <br/><br/><br/><br/>
+        <br/><br/><br/><br/>
+    </article>
+    
+</aura:component>

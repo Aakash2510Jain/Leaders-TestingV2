@@ -1,0 +1,36 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="disabled" type="Boolean" default="false" />
+    <aura:attribute name="saved" type="Boolean" default="false" />
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner />
+    </aura:if>
+ <!--   <aura:if isTrue="{!!v.saved}"> -->
+        <lightning:recordEditForm
+            aura:id="editnotesform"                      
+            onload="{!c.handleLoad}"
+            onsubmit="{!c.handleSubmit}"
+            onsuccess="{!c.handleSuccess}"
+            recordId="a051h000000czWrAAI"
+            objectApiName="Meeting_Note__c">
+            <!-- the messages component is for error messages -->
+            <lightning:messages />
+
+            <lightning:inputField fieldName="Contact__c" />
+            <lightning:inputField fieldName="Candidate_Assigned__c" />
+            <lightning:inputField fieldName="Status_Summary_Line__c" />
+            <lightning:inputField fieldName="Description__c" />
+            
+       <!--     <lightning:inputField fieldName="Weakness__c" />
+            <lightning:inputField fieldName="Birthday__c" />
+            <lightning:inputField fieldName="Email_Address__c" />
+            <lightning:inputField fieldName="Rich_Text_Field__c" /> -->
+            <div class="slds-m-top_medium">
+                <lightning:button variant="brand" type="submit" name="save" label="Save" />
+            </div>
+        </lightning:recordEditForm>
+     <!--   <aura:set attribute="else">
+            <p>Saved!</p>
+        </aura:set>
+    </aura:if> -->
+</aura:component>

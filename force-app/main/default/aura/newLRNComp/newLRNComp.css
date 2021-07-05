@@ -1,0 +1,58 @@
+.THIS .showModal{
+    display: block;
+}
+.THIS .modall {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.THIS .borderWarn {
+    border-style: inset;
+}
+/* Modal Content */
+.THIS .modall-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.THIS .close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.THIS .inline{
+	display:inline;
+    
+}
+.THIS .close:hover{
+	color: #000;
+  text-decoration: none;
+  cursor: pointer;    
+}
+.THIS .close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+.THIS .vl {
+  	border-top: 6px solid rgba(0, 112, 210, 1);
+    width: 100%;
+}
+.THIS .center {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}

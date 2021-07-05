@@ -1,0 +1,28 @@
+.THIS .blueBox{
+    color:rgb(40, 115, 168)
+}
+.THIS .centerText{
+   text-align: center;
+}
+.THIS .redText{
+    color:red;
+}
+.THIS .greenText{
+   /* color:#3bab9a;*/
+    color:var(--lwc-brandTextLink,rgb(0, 109, 204));
+}
+.THIS .center {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+.THIS .tableFixHead th { 
+position: sticky;
+top: 0;
+background: #f2f2f2; z-index: 2; 
+margin-left:1% !important;
+}
+.THIS .FixedHead {
+            position: static;
+            border-top: 0;
+}

@@ -1,0 +1,116 @@
+<apex:page controller="DataDisplayController" showHeader="false"  standardStylesheets="false" >
+    <style>
+        body, html { height: 90%; }
+    </style>
+    <apex:includeLightning />
+    
+    
+    <apex:form >
+        
+        <div id="lightning" />
+        
+        <apex:pageBlock >
+            <apex:actionFunction action="{!downloadPDF}" name="download" />
+            <apex:actionFunction action="{!testinput}" name="passToController" oncomplete="updateAccount()" reRender="abc">
+                <apex:param value="" name="question"/>
+                <apex:param value="" name="response"/>
+            </apex:actionFunction>
+            
+        </apex:pageBlock>
+        
+        <script>
+       
+       
+        var j=0;
+        var allData=[];
+        var isInternetexplorer = false;
+       
+        function browserName() {
+            
+            var browserType = navigator.sayswho = (function() {
+                var lang = "{!$CurrentPage.parameters.Language}";
+                var ua = navigator.userAgent,
+                    tem,
+                    M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+                
+                if (M[0].includes("Trident")) {
+                    debugger;
+                    isInternetexplorer = true;
+                    if(lang.includes("English") ){
+                        document.write("<p>This Self-Assessment is not supported by Microsoft Explorer, but by Microsoft Edge. You can also use other web browser such as Google Chrome Firefox, Safari or others.</p>");
+                    }
+                    else{
+                         document.write("<p>L'auto-évaluation n'est pas supportée par Microsoft Explorer, mais plutôt Microsoft Edge. Vous pouvez aussi utiliser un autre navigateur web dont Google Chrome, Firefox, Safari ou autres.</p>");
+                     }
+                }
+                
+            })();
+        }
+         
+       browserName();
+        
+        function loadComponents(){
+            debugger;
+            
+            var myUserContext = "{!$User.UITheme}";
+            var myRecordId = "{!$CurrentPage.parameters.Id}";
+            myRecordId=myRecordId.substring(0, 18);
+            $Lightning.use("c:SelfAssessmentApp", function() {
+                $Lightning.createComponent("c:SelfAssessmentCmp",{
+                    recordId : myRecordId,
+                    sendData : myScript
+                },"lightning",function(cmp) {});
+            });
+        }
+        
+        function checkBrowser(){
+            debugger;
+            var myUserContext = "{!$User.UITheme}";
+            var myRecordId = "{!$CurrentPage.parameters.Id}";
+            myRecordId=myRecordId.substring(0, 18);
+            $Lightning.use("c:SelfAssessmentApp", function() {
+                $Lightning.createComponent("c:SelfAssessmentCmp",{
+                    recordId : myRecordId,
+                    sendData : myScript
+                },"lightning",function(cmp) {});
+            });
+        }
+        
+        function checklanguage(){
+            debugger;
+            var myUserContext = "{!$User.UITheme}";
+            var myRecordId = "{!$CurrentPage.parameters.Id}";
+            myRecordId=myRecordId.substring(0, 18);
+            $Lightning.use("c:SelfAssessmentApp", function() {
+                $Lightning.createComponent("c:SelfAssessmentCmp",{
+                    recordId : myRecordId,
+                    sendData : myScript
+                },"lightning",function(cmp) {});
+            });
+        }
+        
+        if(isInternetexplorer == false){
+        loadComponents();
+        }
+        
+        function myScript(data){
+            j = 0;
+            debugger;
+            console.log(data.label);
+            allData=data.label;
+            passToController(allData[j].Question_name__c,allData[j].Response__c);
+        }
+        function updateAccount(){
+            debugger;
+            if(j==allData.length-1){
+                download();
+                // Code Added/Edited by Ajeet
+                window.reload();
+            }else{
+                j++;
+                passToController(allData[j].Question_name__c,allData[j].Response__c);
+            }
+        }
+        </script>
+    </apex:form>
+</apex:page>

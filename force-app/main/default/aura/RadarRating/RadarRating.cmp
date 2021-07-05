@@ -1,0 +1,92 @@
+<aura:component controller="RadarRatingHelper"  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="recordId" type="String"  />
+    <aura:attribute name="radar_Values" type= "Radar_Rating__c[]" default=""/>
+    <aura:attribute name="self_Ass_Values_1" type= "Object" default=""/>
+    <aura:attribute name="deleteList" type= "String[]" />
+    <aura:attribute name="Radar_Rat_Created" type="Boolean" />
+    <aura:attribute name="ButtonClassForRR" type="String" />
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <aura:attribute name="displayRadar" type="Boolean" />
+    <aura:attribute name="Is_English" type="Boolean" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:attribute name="checkSpinner" type="boolean" default="false"/>
+    <aura:attribute name="tabId" type="String" default="2"/>
+    
+    <aura:if isTrue="{!v.checkSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </div>
+    </aura:if>
+    
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>   
+    
+    <aura:if isTrue="{!v.displayRadar}">
+        <section aura:id="Modalbox" role="dialog" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-scrollable_y" style="height:100%;">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate "><b><span class="blueText">Radar-Rating</span></b></h2>
+                    </header>
+                    <div class="slds-card">
+                        <div style="max-height: 860px">
+                            <aura:if isTrue="{!v.displayRadar}">
+                                <div class="slds-scrollable_y" style="height:100%;">
+                                    <lightning:tabset selectedTabId="{!v.tabId}" aura:id="tabs" >
+                                        <div style="margin-left:2%">
+                                            <lightning:tab label="English" id="1">
+                                                <aura:iteration items="{!v.radar_Values}" var="al" indexVar="i" >
+                                                    
+                                                    <div style="width:100%">
+                                                        <div style="width:70%;display:inline">
+                                                            <lightning:input type="text" value="{!al.Radar_Rating_Ques__c}"  disabled="" class="width70"/>
+                                                        </div>
+                                                        <div style="width:30%;float:left">
+                                                            <lightning:button class="width30" variant="brand" label="Remove" title="{!i}" onclick="{!c.remove}" value="{!al.Id}"></lightning:button> 
+                                                        </div>
+                                                    </div>
+                                                </aura:iteration>
+                                            </lightning:tab>
+                                            <lightning:tab label="2nd Language"  id="2">
+                                                <aura:iteration items="{!v.radar_Values}" var="al" indexVar="i" >
+                                                    <div style="width:100%">
+                                                        <div style="width:70%;display:inline">
+                                                            <lightning:input type="text" value="{!al.Radar_Rating_Fr_Ques__c}"  disabled="" class="width70"/>
+                                                        </div>
+                                                        <div style="width:30%;float:left">
+                                                            <lightning:button class="width30" variant="brand" label="Remove" title="{!i}" onclick="{!c.remove}" value="{!al.Id}"></lightning:button> 
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </aura:iteration>
+                                                <br/>
+                                                <br/>
+                                            </lightning:tab>   
+                                        </div>
+                                    </lightning:tabset> 
+                                </div>
+                            </aura:if>
+                        </div>
+                        <br/><br/>
+                        <footer class="slds-modal__footer">
+                            <div class="slds-col slds-size_2-of-3">
+                                <span>
+                                    <lightning:button variant="brand" label="Add Row" onclick="{!c.add}"/>
+                                    
+                                    <lightning:button variant="brand" onclick="{!c.save}" label="Save"></lightning:button>
+                                    <lightning:button variant="Neutral"  onclick="{!c.closeModel}" label="Cancel"></lightning:button>
+                                </span>
+                            </div>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>

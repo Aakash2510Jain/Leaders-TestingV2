@@ -1,0 +1,45 @@
+<apex:page controller="ContactController"  sidebar="false" standardStylesheets="false" >
+     <!--   <apex:includeLightning />
+    <div id="vfDemo" /-->
+
+    <script>
+    debugger;
+     
+    window.addEventListener("conObject", function(event) {
+        alert('Hello!!!!!');
+        console.log(event.data);
+        
+        // Handle message
+    }, false);
+    
+    </script>
+    
+    
+    <apex:form >
+        <apex:pageBlock title="Hello {!$User.FirstName}!">	
+        </apex:pageBlock>
+        <apex:pageBlock title="Contacts">
+            <apex:pageBlockTable value="{!conRec}" var="con">
+                <apex:column value="{!conRec.Experience_Gaps__c}"/>
+            </apex:pageBlockTable>
+            <apex:pageBlockTable value="{!conRec}" var="con">
+                <apex:column value="{!conRec.Areas_for_Development__c}"/>
+            </apex:pageBlockTable>
+            <apex:pageBlockTable value="{!conRec}" var="con">
+                <apex:column value="{!conRec.Personality_and_Image__c}"/>
+            </apex:pageBlockTable>
+            <apex:pageBlockTable value="{!conRec}" var="con">
+                <apex:column value="{!conRec.Relevant_Experience__c}"/>
+            </apex:pageBlockTable>
+            <apex:pageBlockTable value="{!conRec}" var="con">
+                <apex:column value="{!conRec.Unique_Characteristics__c}"/>
+            </apex:pageBlockTable>
+            <apex:pageBlockTable value="{!conRec}" var="con">
+                <apex:column value="{!conRec.Candidate_Motivation__c}"/>
+            </apex:pageBlockTable>
+            <apex:pageBlockTable value="{!conRec}" var="con">
+                <apex:column value="{!conRec.Key_Accomplishments__c}"/>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
