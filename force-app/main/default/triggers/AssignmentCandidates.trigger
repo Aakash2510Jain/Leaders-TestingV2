@@ -11,7 +11,7 @@
 * - {DevName}, {MM/DD/YYYY} – {Description of changes made}
 *
 ************************************************************************** */
-trigger AssignmentCandidates on Application__c (before insert, before update,after update) 
+trigger AssignmentCandidates on Application__c (before insert, before update,after update,after insert) 
 {
     
     if(Trigger.isUpdate && Trigger.isAfter){
@@ -20,11 +20,13 @@ trigger AssignmentCandidates on Application__c (before insert, before update,aft
     }
     if(Trigger.isInsert && Trigger.isAfter){
         AssignmentCandidatesHelper.updatesslFrenchValues(Trigger.new);
+       
     }
     if(Trigger.isInsert && Trigger.isBefore){
         AssignmentCandidatesHelper.checkDuplicateContactsOnAssignment(Trigger.new,true,null);
     }
     if(Trigger.isUpdate && Trigger.isBefore){
+        AssignmentCandidatesHelper.AssigningDepartment(Trigger.new);
         AssignmentCandidatesHelper.checkDuplicateContactsOnAssignment(Trigger.new,false,trigger.oldMap);
         AssignmentCandidatesHelper.checkRemovalOfContactsFromAssignment(Trigger.new,trigger.oldMap);
     }

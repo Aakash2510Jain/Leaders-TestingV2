@@ -23,7 +23,7 @@
                     paginationList.push(response.getReturnValue()[i]);
                     
                 }
-                
+                cmp.set("v.totalNoOfAssignments", cmp.get("v.totalSize"));
                 cmp.set("v.paginationList", paginationList);
             }
         });
@@ -125,24 +125,24 @@
     first : function(component, event, helper)
     
     { debugger;
-        
-        var applist = component.get("v.application");
-        
-        var pageSize = component.get("v.pageSize");
-        
-        var paginationList = [];
-        
-        for(var i=0; i< pageSize; i++)
-            
-        {
-            
-            paginationList.push(applist[i]);
-            
-        }
-        
-        component.set("v.paginationList", paginationList);
-        component.set("v.start", 0);
-        component.set("v.end", 9);
+     
+     var applist = component.get("v.application");
+     
+     var pageSize = component.get("v.pageSize");
+     
+     var paginationList = [];
+     
+     for(var i=0; i< pageSize; i++)
+         
+     {
+         
+         paginationList.push(applist[i]);
+         
+     }
+     
+     component.set("v.paginationList", paginationList);
+     component.set("v.start", 0);
+     component.set("v.end", 9);
     },
     
     last : function(component, event, helper)
@@ -171,6 +171,53 @@
         component.set("v.end", totalSize+1);
         
     },
+    viewDetail: function(component, event, helper)
     
+    {
+        debugger;
+        component.set("v.showModal", true);
+        var id = event.target.id;
+        var applicationList = component.get("v.paginationList");
+        var modalData = component.get("v.modalList");
+        var data = [];
+        for(var i =0; i<applicationList.length;i++){
+            if(applicationList[i].Id == id){
+                data = applicationList[i];
+                //component.set(modalData, applicationList[i]); 
+            }
+        }
+        component.set("v.modalList", data); 
+        
+    },
+    
+    
+    hideModel: function(component, event, helper) {
+        component.set("v.showModal", false);
+        component.set("v.hasCV", false);
+    },
+    
+    saveDetails: function(component, event, helper) {
+        component.set("v.showModal", false);
+    },
+    
+    handleCVdisplay: function(component, event, helper) {
+        debugger;
+        var contactId = event.currentTarget.id;
+        var attachmentId = component.get("c.getAttahment");
+        attachmentId.setParams({
+            "conId" : contactId  
+        });
+        attachmentId.setCallback(this, function(response){
+            var state = response.getState();
+            if(state == 'SUCCESS'){
+                component.set("v.CVID", response.getReturnValue());
+                component.set("v.hasCV", true);
+            }
+        });
+        $A.enqueueAction(attachmentId);
+    },
+    CVabsent: function(component, event, helper) {
+        debugger;
+    },
     
 })

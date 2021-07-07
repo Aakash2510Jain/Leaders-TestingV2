@@ -158,4 +158,37 @@ update manRecToBeUpdated;
             }		
         }
     }
+    public static void AssigningDepartment(List<Application__c> appList){
+        
+        //Getting the Limits From the Custom Setting ::
+        List<Management_Dept_Limits__c> mdl = [SELECT Maximum_People__c,Name FROM Management_Dept_Limits__c];
+        Map<String,Decimal> ManagingDeptLimits = new Map<String,Decimal>();
+        for(Management_Dept_Limits__c md : mdl){
+            ManagingDeptLimits.put(md.Name,md.Maximum_People__c);
+        }
+        
+        //Getting the Number of Applications Which are present in every Department
+        List<Application__C> appslist = [SELECT Id,ManagingUser__r.Management_Department__c FROM Application__C WHERE ManagingUser__c != null];
+        map<String,Integer> applicationCountByDept = new map<String,Integer>();
+        for(Application__C app: appslist){
+            if(applicationCountByDept.containsKey(app.ManagingUser__r.Management_Department__c)){
+                applicationCountByDept.put(app.ManagingUser__r.Management_Department__c,applicationCountByDept.get(app.ManagingUser__r.Management_Department__c)+1);
+            }else{
+                applicationCountByDept.put(app.ManagingUser__r.Management_Department__c,1);
+            }
+        }
+        
+        //Getting the List Of User From Different Departments (List Of Different User) 
+        system.debug('applicationCountByDept'+applicationCountByDept);
+        List<User> UserWithOnBoardingDept = [SELECT Id FROM User WHERE Management_Department__c = 'On Boarding'];
+        List<User> UserWithQualificationDept = [SELECT Id FROM User WHERE Management_Department__c = 'Qulification'];
+        List<User> UserWithAssessmentDept = [SELECT Id FROM User WHERE Management_Department__c = 'Assessment'];
+        List<User> UserWithHRDept = [SELECT Id FROM User WHERE Management_Department__c = 'HR Team'];
+        List<User> UserWithInterviewDept = [SELECT Id FROM User WHERE Management_Department__c = 'Interview'];
+        
+        for (Application__c candidate : appList){
+            candidate.ManagingUser__c  = UserWithOnBoardingDept[0].Id;
+        }
+        
+    }
 }
