@@ -24,6 +24,7 @@ trigger AssignmentCandidates on Application__c (before insert, before update,aft
     }
     if(Trigger.isInsert && Trigger.isBefore){
         AssignmentCandidatesHelper.checkDuplicateContactsOnAssignment(Trigger.new,true,null);
+        //AssignmentCandidatesHelper.AssigningDepartment(Trigger.new);
     }
     if(Trigger.isUpdate && Trigger.isBefore){
         AssignmentCandidatesHelper.AssigningDepartment(Trigger.new);

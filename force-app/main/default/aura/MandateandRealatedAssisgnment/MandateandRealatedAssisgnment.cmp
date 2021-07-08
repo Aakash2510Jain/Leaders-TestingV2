@@ -13,6 +13,13 @@
     <aura:attribute name="ifmsrc" type="String"/>
     <aura:attribute name="hasCV" type="boolean" default="false"/>
     <aura:attribute name="CVID" type="String"/>
+<<<<<<< HEAD
+    <aura:attribute name="onePagerQuestionList" type="List"/>
+    <aura:attribute name="hasOnePager" type="boolean" default="false"/>
+    <aura:attribute name="applicationId" type="String" default=""/>
+    
+=======
+>>>>>>> ad9b07c5964cf2f1cd377ee469c8bb8c2c3c16a8
     
     <lightning:card>
         <lightning:layout>
@@ -46,6 +53,12 @@
                         <th>
                             CV
                         </th>
+<<<<<<< HEAD
+                         <th>
+                            One Pager
+                        </th>
+=======
+>>>>>>> ad9b07c5964cf2f1cd377ee469c8bb8c2c3c16a8
                     </tr>
                 </thead>
                 <tbody>
@@ -87,7 +100,23 @@
                                 </aura:if>
                             </td>
                             
+<<<<<<< HEAD
+                            <td style="text-align: center;">
+                                <aura:if isTrue="{!x.Has_One_Pager__c }">
+                                    <div id="{!x.Mandate__c}" title="{!x.Contact_ID__c}" style="display:inline-block" onclick="{!c.onePager}">
+                                        <lightning:icon class="slds-icon_container slds-icon-action-approval " iconName="action:approval" size="xx-small" />
+                                    </div>
+                                    <aura:set attribute="else">
+                                        <div id="{!x.Mandate__c}" title="{!x.Contact_ID__c}" style="display:inline-block" onclick="{!c.onePager}">
+                                            <lightning:icon class="slds-icon_container slds-icon-action-close" iconName="action:close" size="xx-small" />
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                            </td>
+                            
+=======
 
+>>>>>>> ad9b07c5964cf2f1cd377ee469c8bb8c2c3c16a8
                         </tr>
                     </aura:iteration>
                 </tbody>
@@ -193,6 +222,46 @@
                 <div class="slds-backdrop slds-backdrop_open"></div>
             </aura:if>
             
+<<<<<<< HEAD
+            <aura:if isTrue="{!v.hasOnePager}">
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" 
+                         aria-modal="true" aria-describedby="modal-content-id-1" 
+                         class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <lightning:buttonIcon iconName="utility:close"
+                                                  onclick="{! c.hideModel }"
+                                                  alternativeText="close"
+                                                  variant="bare-inverse"
+                                                  class="slds-modal__close"/>
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                                One Pager</h2>
+                        </header>
+                        <!--Modal/Popup Box Body Starts here-->
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <aura:iteration items="{!v.onePagerQuestionList}" var="x" >
+                                <p><b>{!x.Question_Eng__c}</b></p>
+                                <lightning:input name="input3" label="" placeholder="type here..." value="{!x.Response__c}"/>
+                            </aura:iteration>                    
+                        </div>
+                        <!--Modal/Popup Box Footer Starts here-->
+                        <footer class="slds-modal__footer">
+                            <lightning:button variant="neutral"
+                                              label="Close"
+                                              title="Cancel"
+                                              onclick="{!c.hideModel }"/>
+                            <lightning:button variant="neutral"
+                                              label="Save"
+                                              title=""
+                                              onclick="{!c.saveOnePagerResponse}"/>
+                            
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </aura:if>
+=======
+>>>>>>> ad9b07c5964cf2f1cd377ee469c8bb8c2c3c16a8
             
         </lightning:layout><br/>
         

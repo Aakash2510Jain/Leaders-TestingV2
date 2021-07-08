@@ -158,6 +158,33 @@ update manRecToBeUpdated;
             }		
         }
     }
+<<<<<<< HEAD
+    
+    public static void AssigningDepartment(List<Application__c> appList){
+        Map<String,List<Department_Member__c>> departmentMemberByDept = new  Map<String,List<Department_Member__c>>();
+        Map<String,Integer> numberOffAppsPerDeptMember = new Map<String,Integer>();
+        List<String> AppStatus = new List<String>();
+        for(Application__c app : appList){
+            AppStatus.add(app.Status_of_App__c );
+        }
+        system.debug('AppStatus'+AppStatus);
+        List<Application__C> appslist = [SELECT Department_Member__c,Status_of_App__c FROM Application__c WHERE Department_Member__c != null and Status_of_App__c in:AppStatus];
+        List<Department__c> deplist = [SELECT Application_Status__c,Id,(SELECT ID, User__c from Department_Members__r) FROM Department__c where Application_Status__c IN:AppStatus];
+       
+        //Creating a map of Dept and their Users
+        for(Department__c dept : deplist){
+            List<Department_Member__c> departmentMembers = new List<Department_Member__c> ();
+            for(Department_Member__c depMem:dept.Department_Members__r)
+            {
+                departmentMembers.add(depMem);
+            }
+            departmentMemberByDept.put(dept.Application_Status__c,departmentMembers);
+        }
+        system.debug('departmentMemberByDept'+departmentMemberByDept);
+        
+        // Creating a map for dept members with application -- for Load Balancing
+        
+=======
     public static void AssigningDepartment(List<Application__c> appList){
         
         //Getting the Limits From the Custom Setting ::
@@ -189,6 +216,7 @@ update manRecToBeUpdated;
         for (Application__c candidate : appList){
             candidate.ManagingUser__c  = UserWithOnBoardingDept[0].Id;
         }
+>>>>>>> ad9b07c5964cf2f1cd377ee469c8bb8c2c3c16a8
         
     }
 }
