@@ -448,8 +448,13 @@ public with sharing class AddApplicationToAssignmentLightning {
                         body = body.replace('Dear', 'Dear  '+FirstName+' '+LastName);
                     }
                     
+                    string app_ass_id = [SELECT Id FROM Application_Test_Association__c WHERE Applicant__c = :appnid].Id;
+                    
                     if(body.contains('SelfAssessment?Id=')){
-                        body = body.replace('SelfAssessment?Id=', 'CandidateSelfAssessment?Id='+appnid+'&Language='+mandate.Language__c);
+                        body = body.replace('SelfAssessment?Id=', 'CandidateSelfAssessment?Id='+app_ass_id+'&Language='+mandate.Language__c);
+                    }
+                    if(body.contains('QuestionPaperModule?Id=')){
+                        body = body.replace('QuestionPaperModule?Id=', 'QuestionPaperModule?Id='+app_ass_id+'&Language='+mandate.Language__c);
                     }
                     if(mandate.Company__c!=null){
                         body = body.replace('{!Mandate__c.Company__c}', mandate.Company__r.Name);

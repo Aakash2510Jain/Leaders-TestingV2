@@ -39,8 +39,15 @@
         
         var start = component.get("v.start");
         
-        var pageSize = component.get("v.pageSize");
-        
+        var abc  = applist.length -(end+1);
+        if(abc < start){
+            var pageSize = abc;
+        }
+        else{
+            var pageSize = component.get("v.pageSize");
+            
+        }
+       
         var paginationList = [];
         
         var counter = 0;
@@ -183,10 +190,6 @@
         for(var i =0; i<applicationList.length;i++){
             if(applicationList[i].Id == id){
                 data = applicationList[i];
-<<<<<<< HEAD
-=======
-                //component.set(modalData, applicationList[i]); 
->>>>>>> ad9b07c5964cf2f1cd377ee469c8bb8c2c3c16a8
             }
         }
         component.set("v.modalList", data); 
@@ -197,38 +200,12 @@
     hideModel: function(component, event, helper) {
         component.set("v.showModal", false);
         component.set("v.hasCV", false);
-<<<<<<< HEAD
         component.set("v.hasOnePager", false);
-=======
->>>>>>> ad9b07c5964cf2f1cd377ee469c8bb8c2c3c16a8
     },
     
     saveDetails: function(component, event, helper) {
         component.set("v.showModal", false);
     },
-<<<<<<< HEAD
-=======
-    
-    handleCVdisplay: function(component, event, helper) {
-        debugger;
-        var contactId = event.currentTarget.id;
-        var attachmentId = component.get("c.getAttahment");
-        attachmentId.setParams({
-            "conId" : contactId  
-        });
-        attachmentId.setCallback(this, function(response){
-            var state = response.getState();
-            if(state == 'SUCCESS'){
-                component.set("v.CVID", response.getReturnValue());
-                component.set("v.hasCV", true);
-            }
-        });
-        $A.enqueueAction(attachmentId);
-    },
-    CVabsent: function(component, event, helper) {
-        debugger;
-    },
->>>>>>> ad9b07c5964cf2f1cd377ee469c8bb8c2c3c16a8
     
     handleCVdisplay: function(component, event, helper) {
         debugger;

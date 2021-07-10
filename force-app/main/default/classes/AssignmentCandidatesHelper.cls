@@ -2,7 +2,7 @@ public class AssignmentCandidatesHelper {
     
     public static Map<Id,Id> mandateIdByContactId =  new Map<Id,Id>();
     public static Boolean RunOnce = false;
-    
+    public static Boolean RunOncebeforeupdate = false;
     //public static Integer triggerCount = 1;
     public static void generateSelfAssessment(List<Application__c> appList,Map<Id,Application__c> oldMap){
         for(Application__c apprec:appList){
@@ -158,11 +158,12 @@ update manRecToBeUpdated;
             }		
         }
     }
-<<<<<<< HEAD
     
     public static void AssigningDepartment(List<Application__c> appList){
-        Map<String,List<Department_Member__c>> departmentMemberByDept = new  Map<String,List<Department_Member__c>>();
+        RunOncebeforeupdate = true;
+        Map<String,List<ID>> departmentMemberByDept = new  Map<String,List<ID>>();
         Map<String,Integer> numberOffAppsPerDeptMember = new Map<String,Integer>();
+        Map<Integer,String> numberOffAppsPerDeptMemberReverse = new Map<Integer,String>();
         List<String> AppStatus = new List<String>();
         for(Application__c app : appList){
             AppStatus.add(app.Status_of_App__c );
@@ -170,13 +171,13 @@ update manRecToBeUpdated;
         system.debug('AppStatus'+AppStatus);
         List<Application__C> appslist = [SELECT Department_Member__c,Status_of_App__c FROM Application__c WHERE Department_Member__c != null and Status_of_App__c in:AppStatus];
         List<Department__c> deplist = [SELECT Application_Status__c,Id,(SELECT ID, User__c from Department_Members__r) FROM Department__c where Application_Status__c IN:AppStatus];
-       
+        
         //Creating a map of Dept and their Users
         for(Department__c dept : deplist){
-            List<Department_Member__c> departmentMembers = new List<Department_Member__c> ();
+            List<ID> departmentMembers = new List<ID> ();
             for(Department_Member__c depMem:dept.Department_Members__r)
             {
-                departmentMembers.add(depMem);
+                departmentMembers.add(depMem.Id);
             }
             departmentMemberByDept.put(dept.Application_Status__c,departmentMembers);
         }
@@ -184,39 +185,71 @@ update manRecToBeUpdated;
         
         // Creating a map for dept members with application -- for Load Balancing
         
-=======
-    public static void AssigningDepartment(List<Application__c> appList){
-        
-        //Getting the Limits From the Custom Setting ::
-        List<Management_Dept_Limits__c> mdl = [SELECT Maximum_People__c,Name FROM Management_Dept_Limits__c];
-        Map<String,Decimal> ManagingDeptLimits = new Map<String,Decimal>();
-        for(Management_Dept_Limits__c md : mdl){
-            ManagingDeptLimits.put(md.Name,md.Maximum_People__c);
-        }
-        
-        //Getting the Number of Applications Which are present in every Department
-        List<Application__C> appslist = [SELECT Id,ManagingUser__r.Management_Department__c FROM Application__C WHERE ManagingUser__c != null];
-        map<String,Integer> applicationCountByDept = new map<String,Integer>();
         for(Application__C app: appslist){
-            if(applicationCountByDept.containsKey(app.ManagingUser__r.Management_Department__c)){
-                applicationCountByDept.put(app.ManagingUser__r.Management_Department__c,applicationCountByDept.get(app.ManagingUser__r.Management_Department__c)+1);
+            if(numberOffAppsPerDeptMember.containsKey(app.Department_Member__c)){
+                numberOffAppsPerDeptMember.put(app.Department_Member__c,numberOffAppsPerDeptMember.get(app.Department_Member__c)+1);
             }else{
-                applicationCountByDept.put(app.ManagingUser__r.Management_Department__c,1);
+                numberOffAppsPerDeptMember.put(app.Department_Member__c,1);
             }
         }
-        
-        //Getting the List Of User From Different Departments (List Of Different User) 
-        system.debug('applicationCountByDept'+applicationCountByDept);
-        List<User> UserWithOnBoardingDept = [SELECT Id FROM User WHERE Management_Department__c = 'On Boarding'];
-        List<User> UserWithQualificationDept = [SELECT Id FROM User WHERE Management_Department__c = 'Qulification'];
-        List<User> UserWithAssessmentDept = [SELECT Id FROM User WHERE Management_Department__c = 'Assessment'];
-        List<User> UserWithHRDept = [SELECT Id FROM User WHERE Management_Department__c = 'HR Team'];
-        List<User> UserWithInterviewDept = [SELECT Id FROM User WHERE Management_Department__c = 'Interview'];
-        
-        for (Application__c candidate : appList){
-            candidate.ManagingUser__c  = UserWithOnBoardingDept[0].Id;
+        List<ID> MissingMembers = new List<ID>();
+        List<ID> TotalMissingMembers = new List<ID>();
+        for(String str : AppStatus){
+            MissingMembers = departmentMemberByDept.get(str);
         }
->>>>>>> ad9b07c5964cf2f1cd377ee469c8bb8c2c3c16a8
+        TotalMissingMembers.addAll(MissingMembers);
         
+        for(Id member:TotalMissingMembers){
+            if(!numberOffAppsPerDeptMember.containsKey(member)){
+                numberOffAppsPerDeptMember.put(member,0);
+            }
+        }
+       // List<ID> totalMissingMembers = departmentMemberByDept.get();
+        
+        system.debug('numberOffAppsPerDeptMember'+numberOffAppsPerDeptMember);
+        
+        
+        List<Id> sortedDeptMembers = new List<Id>();
+        
+        for(application__c app : appList)
+            for(String str : AppStatus){
+                List<Id> deptmember = departmentMemberByDept.get(str);
+                system.debug('deptmember'+deptmember+'deptmember.size()'+deptmember.size());
+                if(deptmember.size() == 1){
+                    app.Department_Member__c =  deptmember[0];
+                }
+                if(deptmember.size() == 2){
+                    for(integer i = 1 ; i < deptmember.size();i++){
+                        system.debug('sortedDeptMembers'+deptmember[i]);
+                        system.debug('deptmember[i]'+deptmember[i]+'count'+numberOffAppsPerDeptMember.get(deptmember[i]));
+                        system.debug('deptmember[i-1]'+deptmember[i-1]+'count'+numberOffAppsPerDeptMember.get(deptmember[i-1]));
+                        if(numberOffAppsPerDeptMember.get(deptmember[i-1]) > numberOffAppsPerDeptMember.get(deptmember[i])){
+                            sortedDeptMembers.add(deptmember[i]);
+                            system.debug('deptmember[i]'+deptmember[i]+'count'+numberOffAppsPerDeptMember.get(deptmember[i]));
+                        }else{
+                            sortedDeptMembers.add(deptmember[i-1]);
+                            system.debug('deptmember[i-1]'+deptmember[i-1]+'count'+numberOffAppsPerDeptMember.get(deptmember[i-1]));
+                        }
+                    }
+                    system.debug('sortedDeptMembers'+sortedDeptMembers);    
+                    app.Department_Member__c =  sortedDeptMembers[0];
+                }
+                else{
+                    for(integer i = 1 ; i < deptmember.size();i++){
+                        system.debug('sortedDeptMembers'+deptmember[i]);
+                        system.debug('deptmember[i]'+deptmember[i]+'count'+numberOffAppsPerDeptMember.get(deptmember[i]));
+                        system.debug('deptmember[i-1]'+deptmember[i-1]+'count'+numberOffAppsPerDeptMember.get(deptmember[i-1]));
+                        if(numberOffAppsPerDeptMember.get(deptmember[i-1]) > numberOffAppsPerDeptMember.get(deptmember[i])){
+                            sortedDeptMembers.add(deptmember[i]);
+                            system.debug('deptmember[i]'+deptmember[i]+'count'+numberOffAppsPerDeptMember.get(deptmember[i]));
+                        }else{
+                            sortedDeptMembers.add(deptmember[i-1]);
+                            system.debug('deptmember[i-1]'+deptmember[i-1]+'count'+numberOffAppsPerDeptMember.get(deptmember[i-1]));
+                        }
+                    }
+                    system.debug('sortedDeptMembers'+sortedDeptMembers);    
+                    app.Department_Member__c =  sortedDeptMembers[sortedDeptMembers.size() - 1];
+                }
+            }
     }
 }

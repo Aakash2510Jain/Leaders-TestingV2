@@ -1,0 +1,16 @@
+<apex:page showHeader="false"  standardStylesheets="false" > 
+    <apex:includeLightning />
+    <div id="LcDisplayId"></div>
+    <script>
+    debugger;
+    var myRecordId = "{!$CurrentPage.parameters.Id}";
+    $Lightning.use("c:QuestionsModuleApp", function() {
+        $Lightning.createComponent("c:QuestionsModule",{
+            recordId : myRecordId,
+        },"LcDisplayId",
+                                   function(component) {
+                                       
+                                   });
+    });
+    </script>
+</apex:page>

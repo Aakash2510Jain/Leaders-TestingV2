@@ -23,13 +23,17 @@ trigger AssignmentCandidates on Application__c (before insert, before update,aft
        
     }
     if(Trigger.isInsert && Trigger.isBefore){
+        system.debug('Before insert fired');
         AssignmentCandidatesHelper.checkDuplicateContactsOnAssignment(Trigger.new,true,null);
-        //AssignmentCandidatesHelper.AssigningDepartment(Trigger.new);
+        AssignmentCandidatesHelper.AssigningDepartment(Trigger.new);
     }
     if(Trigger.isUpdate && Trigger.isBefore){
-        AssignmentCandidatesHelper.AssigningDepartment(Trigger.new);
-        AssignmentCandidatesHelper.checkDuplicateContactsOnAssignment(Trigger.new,false,trigger.oldMap);
-        AssignmentCandidatesHelper.checkRemovalOfContactsFromAssignment(Trigger.new,trigger.oldMap);
+        if(AssignmentCandidatesHelper.RunOncebeforeupdate == false){
+            system.debug('Before update fired');
+            AssignmentCandidatesHelper.AssigningDepartment(Trigger.new);
+            AssignmentCandidatesHelper.checkDuplicateContactsOnAssignment(Trigger.new,false,trigger.oldMap);
+            AssignmentCandidatesHelper.checkRemovalOfContactsFromAssignment(Trigger.new,trigger.oldMap);
+        }
     }
     
 }
