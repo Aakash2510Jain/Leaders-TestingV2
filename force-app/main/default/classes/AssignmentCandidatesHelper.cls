@@ -159,14 +159,22 @@ update manRecToBeUpdated;
         }
     }
     
-    public static void AssigningDepartment(List<Application__c> appList){
+    public static void AssigningDepartment(List<Application__c> appList,Boolean IsInsert){
         RunOncebeforeupdate = true;
         Map<String,List<ID>> departmentMemberByDept = new  Map<String,List<ID>>();
         Map<String,Integer> numberOffAppsPerDeptMember = new Map<String,Integer>();
         Map<Integer,String> numberOffAppsPerDeptMemberReverse = new Map<Integer,String>();
         List<String> AppStatus = new List<String>();
-        for(Application__c app : appList){
-            AppStatus.add(app.Status_of_App__c );
+        
+        if(IsInsert == true){
+            AppStatus.add('On Boarded');
+            for(Application__c app : appList){
+                app.Status_of_App__c = 'On Boarded';
+            }    
+        }else{
+            for(Application__c app : appList){
+                AppStatus.add(app.Status_of_App__c );
+            }
         }
         system.debug('AppStatus'+AppStatus);
         List<Application__C> appslist = [SELECT Department_Member__c,Status_of_App__c FROM Application__c WHERE Department_Member__c != null and Status_of_App__c in:AppStatus];
@@ -204,14 +212,14 @@ update manRecToBeUpdated;
                 numberOffAppsPerDeptMember.put(member,0);
             }
         }
-       // List<ID> totalMissingMembers = departmentMemberByDept.get();
+        // List<ID> totalMissingMembers = departmentMemberByDept.get();
         
         system.debug('numberOffAppsPerDeptMember'+numberOffAppsPerDeptMember);
         
         
         List<Id> sortedDeptMembers = new List<Id>();
         
-        for(application__c app : appList)
+        for(application__c app : appList){
             for(String str : AppStatus){
                 List<Id> deptmember = departmentMemberByDept.get(str);
                 system.debug('deptmember'+deptmember+'deptmember.size()'+deptmember.size());
@@ -251,5 +259,78 @@ update manRecToBeUpdated;
                     app.Department_Member__c =  sortedDeptMembers[sortedDeptMembers.size() - 1];
                 }
             }
+        }
+    }
+    // application test association will be created as application status = On Boarded
+    public static void createApplicationTestAssociation(map<id, Application__c> newApplicationMap, map<id, Application__c> oldApplicationMap){
+        system.debug('newApplicationMap'+newApplicationMap);
+        system.debug('oldApplicationMap'+oldApplicationMap);
+        List<Application_Test_Association__c> listToBeInserted = new List<Application_Test_Association__c>();
+        for(Application__c app : newApplicationMap.values()){
+            if( app.Status_of_App__c == 'On Boarded'){ 
+                system.debug('app.Status_of_App__c'+app.Status_of_App__c);
+                //system.debug('oldApplicationMap.get(app.Id).Status_of_App__c'+oldApplicationMap.get(app.Id).Status_of_App__c);
+                System.debug('app.Name'+app.Mandate__c);
+                List<Assignment_Test_Association__c> assisgnmentTestAssociationList = [SELECT Id FROM Assignment_Test_Association__c WHERE Assignment__c =: app.Mandate__c];
+                System.debug('assisgnmentTestAssociationList'+assisgnmentTestAssociationList);
+                for(Assignment_Test_Association__c assisgnmentTestAssociation : assisgnmentTestAssociationList){
+                    Application_Test_Association__c appTestAssociation = new Application_Test_Association__c();
+                    appTestAssociation.Assignment_Test_Association__c = assisgnmentTestAssociation.id;
+                    appTestAssociation.Applicant__c = app.Id;
+                    listToBeInserted.add(appTestAssociation);
+                }
+            }
+        }
+        System.debug('listToBeInserted'+listToBeInserted);
+        insert listToBeInserted;
+    }
+    public static void sendTestsToApplicant(map<id, Application__c> newApplicationMap, map<id, Application__c> oldApplicationMap){
+        system.debug('newApplicationMap'+newApplicationMap);
+        system.debug('oldApplicationMap'+oldApplicationMap);
+        List<Question_Module__c> questionModuleList =  [SELECT Application_Status__c,Assignment_Name__c,Company_Name__c,Name,Test_Master__c FROM Question_Module__c];
+        map<String, Question_Module__c> questionMapByApplicationStatus = new map<String, Question_Module__c>();
+        for(Question_Module__c questionModule : questionModuleList){
+            questionMapByApplicationStatus.put(questionModule.Application_Status__c, questionModule);
+        }
+        List<String> testMasterLists = new  List<String>();
+        string applicantId ;
+        for(Application__c app : newApplicationMap.values()){
+            if(app.Status_of_App__c != oldApplicationMap.get(app.Id).Status_of_App__c && app.Status_of_App__c == 'Under Assessment'){ 
+                system.debug('app.Status_of_App__c'+app.Status_of_App__c);
+                system.debug('oldApplicationMap.get(app.Id).Status_of_App__c'+oldApplicationMap.get(app.Id).Status_of_App__c);
+                Question_Module__c questionModuleRec = questionMapByApplicationStatus.get(app.Status_of_App__c);
+                String allTestMaster = questionModuleRec.Test_Master__c;
+                testMasterLists = allTestMaster.split(',');
+                system.debug('testMasterLists::'+testMasterLists);
+                applicantId = app.Id;
+            }
+        }
+        List<Application_Test_Association__c> applicationTestAssociationList = [SELECT Applicant__c,Assignment_Test_Association__c,Id,Name,Test_Master_Name__c FROM Application_Test_Association__c WHERE Applicant__c=: applicantId];
+        Map<String, id> applicationTestAssociationMapByTestMasterName = new Map<String, id>();
+        for(Application_Test_Association__c appTestAssociationRec : applicationTestAssociationList){
+            applicationTestAssociationMapByTestMasterName.put(appTestAssociationRec.Test_Master_Name__c, appTestAssociationRec.Id);
+        }
+        system.debug('applicationTestAssociationList::'+applicationTestAssociationList);
+        List<string> studentTestAssociationIdList = new List<string>();
+        map<String, string> mapOfApplicatioTestAssociationById = new map<String, string>();//key:Id value:Name
+        for(Application_Test_Association__c appTestAssociationRec : applicationTestAssociationList){
+            for(String testMaster : testMasterLists){
+                if(appTestAssociationRec.Test_Master_Name__c == testMaster){
+                    system.debug('appTestAssociationRec.Test_Master_Name__c::'+appTestAssociationRec.Test_Master_Name__c);
+                    system.debug('testMaster'+testMaster);
+                    if(applicationTestAssociationMapByTestMasterName.containsKey(appTestAssociationRec.Test_Master_Name__c)){
+                        String studentTestAssociationId = applicationTestAssociationMapByTestMasterName.get(appTestAssociationRec.Test_Master_Name__c);
+                        system.debug('studentTestAssociationId::'+studentTestAssociationId);
+                        system.debug('applicantId::'+applicantId);
+                        studentTestAssociationIdList.add(studentTestAssociationId);
+                        mapOfApplicatioTestAssociationById.put(studentTestAssociationId,testMaster);
+                    }
+                }
+            }
+            
+        }
+        system.debug('studentTestAssociationIdList::'+studentTestAssociationIdList);
+        system.debug('mapOfApplicatioTestAssociationById::'+mapOfApplicatioTestAssociationById);
+        emailNotification.sendEmail(applicantId, mapOfApplicatioTestAssociationById);
     }
 }

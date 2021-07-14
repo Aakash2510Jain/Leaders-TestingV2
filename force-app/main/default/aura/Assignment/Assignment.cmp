@@ -1,0 +1,92 @@
+<aura:component  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="AssignmentHelper" access="global" >
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:attribute name="assignmentAsPerStatusList" type="object"/>
+    <aura:attribute name="allAssignment" type="object"/>
+    <aura:attribute name="selectedStatus" type="String" />
+    <aura:attribute name="statusListofAssignment" type="String[]" default=""/>
+   
+    <td>
+        <lightning:select value ="{!v.selectedStatus}" label="Select a status For Assignment" onchange="{!c.onStatusChange}" required="true">
+            <option value="">Choose one...</option>
+            <aura:iteration  items="{!v.statusListofAssignment}" var="stat">
+                <option text="{!stat}"></option>
+            </aura:iteration>
+        </lightning:select>
+    </td>
+    <lightning:card>
+        <lightning:layout>
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped">
+                <thead>
+                    <tr> 
+                        <th>
+                            Company Name 
+                        </th>
+                        <th>
+                            Title Name
+                        </th>
+                        <th>
+                            Number Of Days
+                        </th>
+                        <th>
+                            Assignment Status
+                        </th>
+                        <th>
+                            Company Name French
+                        </th>
+                        <th>
+                            One Pager
+                        </th>
+                        <th>
+                            Job Function
+                        </th>
+                        <th>
+                            Language
+                        </th>
+                        <th>
+                            Number of candidates
+                        </th>
+                        <th>
+                            Number of potential candidates
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.assignmentAsPerStatusList}" var="x" >
+                        <tr>
+                            <td>
+                                {!x.Mandate_Company_Name__c}
+                            </td>
+                            <td>
+                                {!x.Assignment_Title_URL_Compliant__c}
+                            </td>
+                            <td>                       
+                                {!x.number_of_days__c}
+                            </td>
+                            <td>                     
+                                {!x.Assignment_Status__c}
+                            </td>
+                            <td>                        
+                                {!x.Company_Name_French__c}
+                            </td>
+                            <td>                        
+                                {!x.Is_One_Pager_Available__c}
+                            </td>
+                            <td>                        
+                                {!x.Job_Function__c}
+                            </td>
+                            <td>
+                                {!x.Language__c}
+                            </td>
+                            <td>
+                                {!x.Number_of_candidates__c}
+                            </td>
+                            <td>
+                                {!x.Number_of_potential_candidates__c}
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </lightning:layout>
+    </lightning:card>
+</aura:component>

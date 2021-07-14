@@ -1,0 +1,40 @@
+public class AssignmentHelper {
+    public class assignmentWrap{
+
+        public set<String> status ;
+        @auraEnabled
+        public List<Mandate__c> assignmentList ;
+        
+        public assignmentWrap(set<String> status,List<Mandate__c> assignmentList){
+            this.status = status;
+            this.assignmentList = assignmentList;
+        }
+    }
+    @auraEnabled
+    public static List<Mandate__c> getAllAssignment(){
+        List<Mandate__c> mandateList = [SELECT About_Our_Client__c,Additional_Information__c,All_candidate_status_notes__c,All_candidate_status_title__c,Assignment_ID__c,Assignment_Number__c,Assignment_Origin__c,Assignment_Reference__c,Assignment_Sector__c,Assignment_Status__c,Assignment_Title_URL_Compliant__c,Base_Salary_From__c,Base_Salary_To__c,Candidate_education_conga_link__c,Candidate_education_notes__c,Candidate_education_template_EN__c,Candidate_education_template_FR__c,Candidate_education_template__c,Candidate_education_title__c,Candidate_experience_conga_link__c,Candidate_experience_notes__c,Candidate_experience_template_EN__c,Candidate_experience_template_FR__c,Candidate_experience_template__c,Candidate_experience_title__c,Candidate_gender_conga_link__c,Candidate_gender_notes__c,Candidate_gender_template_EN__c,Candidate_gender_template_FR__c,Candidate_gender_template__c,Candidate_gender_title__c,Candidate_region_conga_link__c,Candidate_region_notes__c,Candidate_region_template_EN__c,Candidate_region_template_FR__c,Candidate_region_template__c,Candidate_region_title__c,Candidate_revenue_conga_link__c,Candidate_revenue_notes__c,Candidate_revenue_template_EN__c,Candidate_revenue_template_FR__c,Candidate_revenue_template__c,Candidate_revenue_title__c,candidate_ssl_word_French__c,candidate_ssl_word__c,Candidate_start_date__c,Candidate_status_conga_link__c,Candidate_status_notes__c,Candidate_status_template_EN__c,Candidate_status_template_FR__c,Candidate_status_template__c,Candidate_status_title__c,Candidate_To_Discuss_En__c,Candidate_To_Discuss_Fr__c,Candidate_to_discuss_notes__c,Candidate_to_discuss_title__c,CC_name_1__c,CC_name_2__c,CC_name_3__c,CC_name_4__c,CC_name_5__c,CC_name_6__c,CC_name_7__c,CC_name_8__c,CC_name_9__c,CC_name_10__c,CC_name_11__c,CC_name_12__c,CC_name_14__c,CC_name_15__c,CC_text_1__c,CC_text_2__c,CC_text_3__c,CC_text_4__c,CC_text_5__c,CC_text_6__c,CC_text_7__c,CC_text_8__c,CC_text_9__c,CC_text_10__c,CC_text_11__c,CC_text_12__c,CC_text_13__c,CC_text_14__c,CC_text_15__c,CC_title_1__c,CC_title_2__c,CC_title_3__c,CC_title_4__c,CC_title_5__c,CC_title_6__c,CC_title_7__c,CC_title_8__c,CC_title_9__c,CC_title_10__c,CC_title_11__c,CC_title_12__c,CC_title_13__c,CC_title_14__c,CC_title_15__c,Chart_1_Template__c,Chart_2_Template__c,Chart_3_Template__c,Chart_4_Template__c,Chart_5_Template__c,Chart_6_Template__c,Chart_7_Template__c,Chart_8_Template__c,Chart_9_Template__c,Chart_10_Template__c,Chart_11_Template__c,Chart_12_Template__c,Chart_13_Template__c,Chart_14_Template__c,Chart_15_Template__c,Chart_All_Competencies_EN__c,Chart_All_Competencies_FR__c,Chart_All_Competencies__c,Chart_Candidates_By_status_EN__c,Chart_Candidates_By_status_FR__c,Chart_Candidates_By_status__c,Chart_Candidate_to_discute_EN_Coleman__c,Chart_Candidate_to_discute_EN__c,Chart_Candidate_to_discute_FR__c,Chart_Candidate_to_discute__c,Chart_Competencies_1_EN__c,Chart_Competencies_1_FR__c,Chart_Competencies_2_EN__c,Chart_Competencies_2_FR__c,Chart_Competencies_3_EN__c,Chart_Competencies_3_FR__c,Chart_Competencies_4_EN__c,Chart_Competencies_4_FR__c,Chart_Competencies_5_EN__c,Chart_Competencies_5_FR__c,Chart_Competencies_6_EN__c,Chart_Competencies_6_FR__c,Chart_Competencies_7_EN__c,Chart_Competencies_7_FR__c,Chart_Competencies_8_EN__c,Chart_Competencies_8_FR__c,Chart_Competencies_9_conga_link__c,Chart_Competencies_9_EN__c,Chart_Competencies_9_FR__c,Chart_Competencies_10_conga_link__c,Chart_Competencies_10_EN__c,Chart_Competencies_10_FR__c,Chart_Competencies_11_conga_link__c,Chart_Competencies_11_EN__c,Chart_Competencies_11_FR__c,Chart_Competencies_12_conga_link__c,Chart_Competencies_12_EN__c,Chart_Competencies_12_FR__c,Chart_Competencies_13_conga_link__c,Chart_Competencies_13_EN__c,Chart_Competencies_13_FR__c,Chart_Competencies_14_conga_link__c,Chart_Competencies_14_EN__c,Chart_Competencies_14_FR__c,Chart_Competencies_15_conga_link__c,Chart_Competencies_15_EN__c,Chart_Competencies_15_FR__c,Client_interviews__c,Client__c,Company_Name_French__c,Company__c,Confidential__c,Conga_Report_Cover__c,Consultant__c,Contact_2__c,Country__c,Cover_Conga_Link_Lightning__c,Cover_Conga_Link__c,Cover_Template_Coleman__c,Cover_Template_DE__c,Cover_Template_EN__c,Cover_Template_FR_Desjardins__c,Cover_Template_FR__c,Cover_Template_Team_3__c,Cover_Template_Team_4__c,Cover_Template_Team_7__c,Cover_Template__c,CreatedById,CreatedDate,Date_text__c,Document_Type__c,Duplicates_Deleted__c,Education_Background__c,Education__c,End_Date__c,external_id__c,Final_Candidate__c,Has_Job_Description__c,Has_Research_Strategy__c,Human_Capital_Coleman_Conga_LinkLightnig__c,Human_Capital_Coleman_Conga_Link__c,Human_Capital_Conga_Link_Lightning__c,Human_Capital_Conga_Link__c,Human_Capital_Location_Template_Light_EN__c,Human_Capital_Location_Template_Light_FR__c,Human_Capital_Report_EN__c,Human_Capital_Report_FR__c,Human_Capital_Report__c,Human_Capital_Template_Coleman__c,Human_Capital_Template_Contact_Coleman__c,Human_Capital_Template_DE__c,Human_Capital_Template_EN__c,Human_Capital_Template_FR__c,Human_Capital_Template__c,Id,Import2_Id__c,Industry_Types__c,Industry__c,Information__c,IsDeleted,Is_Assignment_Notes_available__c,Is_One_Pager_Available__c,Job_description_Id__c,Job_Function__c,Language__c,LastActivityDate,LastModifiedById,LastModifiedDate,LastReferencedDate,LastViewedDate,Leaders_interviews__c,Level__c,MandateStartDate__c,Mandate_Company_Name__c,Mandate_End_Date__c,Mandate_from_Candidate_Team_Fr__c,Mandate_from_Candidate_Team__c,Mandate_Start_Date__c,Minimum_Number__c,Module__c,Name,next_follow_up_date__c,Next_Follow_up_meeting__c,Number_of_candidates__c,number_of_days__c,Number_of_potential_candidates__c,Number_of_sources__c,OwnerId,Partner_1_Email__c,Partner_1_Phone__c,Partner_1_required__c,Partner_1_Title__c,Partner_2_Email__c,Partner_2_Phone__c,Partner_2_Required__c,partner_2_title__c,Partner_2__c,Partner_3_Email__c,Partner_3_Phone__c,Partner_3_Required__c,partner_3_title__c,Partner_3__c,Partner__c,Personal_Skills__c,Potential_candidates_Coleman__c,Potential_Candidates_Conga_LinkLightning__c,Potential_Candidates_Conga_Link_2__c,Potential_Candidates_Conga_Link__c,Potential_Candidates_Template_DE__c,Potential_Candidates_Template_EN__c,Potential_Candidates_Template_FR__c,Potential_Candidates_Template__c,Professional_Qualifications__c,RecordTypeId,Report_Cover__c,Report_With_Location__c,Researcher_3__c,Researcher_4__c,Researcher_5__c,Researcher__c,Role_and_Responsibilities__c,SecondPage_URL__c,Send_job_description__c,sortDirection__c,sortExpression__c,Start_Date__c,State__c,Status__c,Summary_Description__c,SystemModstamp,Team__c,Territory__c,Test_Master__c,Today_date__c,Total_Candidates_Required__c,Total_candidates__c,User_By_Partner_Link_Fr__c,User_By_Partner_Link__c FROM Mandate__c];
+        set<string> status = new set<string>();
+        for(Mandate__c mandate : mandateList){
+            status.add(mandate.Assignment_Status__c);
+        }
+        List<assignmentWrap> assignmentWrapList = new List<assignmentWrap>();
+        assignmentWrapList.add(new assignmentWrap(status,mandateList ));
+        system.debug('status::'+status);
+        system.debug('assignmentWrapList::'+assignmentWrapList);
+
+        return mandateList;
+    }
+    @auraEnabled
+    public static List<string> getAllAssignmentStatus(){
+        List<Mandate__c> mandateList = [SELECT Assignment_Status__c FROM Mandate__c];
+        set<string> status = new set<string>();
+        for(Mandate__c mandate : mandateList){
+            status.add(mandate.Assignment_Status__c);
+        }
+        List<string> statusList = new List<string>();
+        for(string str : status){
+            statusList.add(str);
+        }
+        return statusList;
+    }
+}

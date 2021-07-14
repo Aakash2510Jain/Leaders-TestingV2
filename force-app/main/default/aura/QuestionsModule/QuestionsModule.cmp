@@ -40,5 +40,4 @@
             </lightning:layoutItem>
         </lightning:layout>
     </lightning:card>
-    
 </aura:component>

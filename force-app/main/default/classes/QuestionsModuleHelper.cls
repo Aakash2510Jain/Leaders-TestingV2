@@ -1,4 +1,4 @@
-public class QuestionsModuleHelper {
+public without sharing class QuestionsModuleHelper {
     public class QuesWrap{
         @auraEnabled
         public Application_Test_Result__c studentResult ;
@@ -92,101 +92,26 @@ public class QuestionsModuleHelper {
             for(Assessment_Question__c assessmentQuestion : assessmentQuestionList){
                 mapOfAssessmentQuestionByQues.put(assessmentQuestion.Question__c, assessmentQuestion.Answer__c);
             }
-            /*if(!applicationTestResultList.isEmpty()){
-                system.debug('in if');
-                for(Application_Test_Result__c appTest :  listToBeUpdated){
-                    if(mapOfAssessmentQuestionByQues.containsKey(appTest.Question__c) ){
-                        Application_Test_Result__c appTestResult = new Application_Test_Result__c();
-                        if(appTest.Answer__c == mapOfAssessmentQuestionByQues.get(appTest.Question__c)){
-                            appTestResult.Id = appTestResultMapBuQuestion.get(appTest.Question__c).id;
-                            appTestResult.Answer__c = appTest.Answer__c;
-                            appTestResult.Marks__c = 1;
-                        }
-                        else{
-                            appTestResult.Id = appTestResultMapBuQuestion.get(appTest.Question__c).id;
-                            appTestResult.Marks__c = 0;
-                        }
-                        finallistToBeUpdated.add(appTestResult);
+            system.debug('in else');
+            for(Application_Test_Result__c appTest :  listToBeUpdated){
+                if(mapOfAssessmentQuestionByQues.containsKey(appTest.Question__c) ){
+                    if(appTest.Answer__c == mapOfAssessmentQuestionByQues.get(appTest.Question__c) && appTest.Answer__c != null){
+                        appTest.Marks__c = 1;
                     }
-                }
-            //}*/
-            //else{
-                system.debug('in else');
-                for(Application_Test_Result__c appTest :  listToBeUpdated){
-                    if(mapOfAssessmentQuestionByQues.containsKey(appTest.Question__c) ){
-                        if(appTest.Answer__c == mapOfAssessmentQuestionByQues.get(appTest.Question__c) && appTest.Answer__c != null){
-                            appTest.Marks__c = 1;
-                        }
-                        else{
-                            appTest.Marks__c = 0;
-                        }
-                        finallistToBeUpdated.add(appTest);
+                    else{
+                        appTest.Marks__c = 0;
                     }
+                    finallistToBeUpdated.add(appTest);
                 }
-            //}
+            }
             upsert finallistToBeUpdated;
             return finallistToBeUpdated;
         }
         catch(exception ex){
-            List<Application_Test_Result__c> finallistToBeUpdated = new List<Application_Test_Result__c>();
-            system.debug('Erro==>'+ex.getMessage()+'Error==>'+ex.getLineNumber());
-            return finallistToBeUpdated;
+            //List<Application_Test_Result__c> finallistToBeUpdated = new List<Application_Test_Result__c>();
+            system.debug('Error==>'+ex.getMessage()+'Error==>'+ex.getLineNumber());
+            return null;
+            //return finallistToBeUpdated;
         }
-        /* system.debug('reached line number 103+finallistToBeUpdated'+finallistToBeUpdated);
-list<Application_Test_Result__c> resultToBeUpdated = new list<Application_Test_Result__c>();
-list<Application_Test_Result__c> resultToBeInserted = new list<Application_Test_Result__c>();
-
-if(finallistToBeUpdated.size() > 0){
-for(Application_Test_Result__c atr : finallistToBeUpdated ){
-system.debug('id of the object'+atr.Id);
-if(atr.Id != null ){
-resultToBeUpdated.add(atr);
-}else{
-resultToBeInserted.add(atr);
-}
-} 
-}
-system.debug('reached line number 116resultToBeInserted'+resultToBeUpdated);
-system.debug('reached line number 117resultToBeInserted'+resultToBeInserted);
-if(resultToBeUpdated.size() > 0){
-update resultToBeUpdated;
-}
-else if(resultToBeInserted.size() > 0){
-insert resultToBeInserted;
-}
-
-if(resultToBeUpdated.size() > 0){
-return resultToBeUpdated;   
-}else{
-return resultToBeInserted;   
-}
-*/
     }
-    
-    
-    /* public static void updateMarks(string appTestAssociationId){
-List<Application_Test_Result__c> applicationTestResultList = [SELECT Id, Answer__c,Application_Test_Association__c,Marks__c,Question__c FROM Application_Test_Result__c Where Application_Test_Association__c =: appTestAssociationId];
-Map<string, string> mapOfAssessmentQuestionByQues = new Map<string, string>();// key: question, value: answer
-String assignmentTestAssociationId = [Select Assignment_Test_Association__c From Application_Test_Association__c Where Id = :appTestAssociationId].Assignment_Test_Association__c;
-String testMasterId = [Select Test_Master__c From Assignment_Test_Association__c Where Id =:assignmentTestAssociationId].Test_Master__c;
-List<Assessment_Question__c> assessmentQuestionList = [SELECT Answer_Values__c,Answer__c,Category__c,Id,Name,Question__c,Test_Master__c,Type__c FROM Assessment_Question__c Where Test_Master__c =:testMasterId];
-for(Assessment_Question__c assessmentQuestion : assessmentQuestionList){
-mapOfAssessmentQuestionByQues.put(assessmentQuestion.Question__c, assessmentQuestion.Answer__c);
-}
-List<Application_Test_Result__c> appTestResultListToBeUpdated = new List<Application_Test_Result__c>();
-for(Application_Test_Result__c appTestResult : applicationTestResultList){
-if(mapOfAssessmentQuestionByQues.containsKey(appTestResult.Question__c)){
-if(appTestResult.Answer__c == mapOfAssessmentQuestionByQues.get(appTestResult.Question__c )){
-appTestResult.Marks__c = 1;
-}
-else if((appTestResult.Answer__c != mapOfAssessmentQuestionByQues.get(appTestResult.Question__c)) ) {
-appTestResult.Marks__c = 0;
-}
-appTestResultListToBeUpdated.add(appTestResult);
-}
-}
-upsert appTestResultListToBeUpdated;
-// upsert finallistToBeUpdated;
-
-}*/
 }

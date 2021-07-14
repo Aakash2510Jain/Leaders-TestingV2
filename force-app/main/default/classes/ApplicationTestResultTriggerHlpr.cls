@@ -1,4 +1,4 @@
-public class ApplicationTestResultTriggerHlpr {
+public without sharing class ApplicationTestResultTriggerHlpr {
     
     public static void updateResultCategoriesWise(map<id, Application_Test_Result__c> newMap ){
         system.debug('newMap::'+newMap);
